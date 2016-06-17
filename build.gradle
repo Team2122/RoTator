@@ -12,6 +12,14 @@ buildscript {
 	}
 }
 
-apply plugin: 'GradleRIO'
-apply plugin: 'idea'
 apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'GradleRIO'
+
+gradlerio.robotClass = 'org.teamtators.rotator.Robot'
+gradlerio.team = '2122'
+
+def robotManifest = {
+	attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
+    attributes 'Robot-Class': gradlerio.robotClass
+}
