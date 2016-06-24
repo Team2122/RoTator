@@ -23,3 +23,8 @@ def robotManifest = {
 	attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
     attributes 'Robot-Class': gradlerio.robotClass
 }
+
+jar {
+	from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+	manifest robotManifest
+}
