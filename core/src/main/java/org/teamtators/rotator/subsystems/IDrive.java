@@ -22,17 +22,17 @@ public interface IDrive {
     /**
      * @return distance the left side of the drivetrain traveled in inches
      */
-    float getLeftDistance();
+    double getLeftDistance();
 
     /**
      * @return distance the right side of the drivetrain traveled in inches
      */
-    float getRightDistance();
+    double getRightDistance();
 
     /**
      * @return the average distance traveled on either side. Also the distance traveled by the center of the drive train
      */
-    default float getAverageDistance() {
+    default double getAverageDistance() {
         return (getLeftDistance() + getRightDistance()) / 2;
     }
 

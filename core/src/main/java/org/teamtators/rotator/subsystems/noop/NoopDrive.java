@@ -13,12 +13,12 @@ public class NoopDrive implements IDrive{
     }
 
     @Override
-    public float getLeftDistance() {
+    public double getLeftDistance() {
         return 0;
     }
 
     @Override
-    public float getRightDistance() {
+    public double getRightDistance() {
         return 0;
     }
 
