@@ -21,8 +21,8 @@ repositories {
 }
 
 dependencies {
-	compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21'
-	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+	compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.+'
+	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.+'
 }
 
 gradlerio.robotClass = 'org.teamtators.rotator.Robot'
