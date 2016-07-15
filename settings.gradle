@@ -1,0 +1,2 @@
+include 'core', 'rio'
+rootProject.name = 'RoTator'

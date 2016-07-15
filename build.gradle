@@ -12,28 +12,55 @@ buildscript {
 	}
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'GradleRIO'
+allprojects {
+	apply plugin: 'java'
+	apply plugin: 'idea'
 
-repositories {
-	mavenCentral()
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+        compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.6.2'
+        compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'
+		compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.+'
+		compile group: 'org.slf4j', name: 'slf4j-api', version: '1.+'
+	}
 }
 
-dependencies {
-	compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.+'
-	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.+'
+project(':core') {
+
 }
 
-gradlerio.robotClass = 'org.teamtators.rotator.Robot'
-gradlerio.team = '2122'
+project(':rio') {
+	apply plugin: 'GradleRIO'
 
-def robotManifest = {
-	attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
-	attributes 'Robot-Class': gradlerio.robotClass
-}
+    configurations {
+        ideProvider
+    }
 
-jar {
-	from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-	manifest robotManifest
+    dependencies {
+        compile project(':core')
+        ideProvider project(':core')
+        ideProvider group: 'edu.wpi.first.wpilibj', name: 'wpilibJavaFinal', version: '+'
+    }
+
+    evaluationDependsOn(':core')
+
+    idea.module {
+        scopes.PROVIDED.plus += [configurations.ideProvider]
+    }
+
+	gradlerio.robotClass = 'org.teamtators.rotator.Robot'
+	gradlerio.team = '2122'
+
+	def robotManifest = {
+		attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
+		attributes 'Robot-Class': gradlerio.robotClass
+	}
+
+	jar {
+		from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+		manifest robotManifest
+	}
 }
