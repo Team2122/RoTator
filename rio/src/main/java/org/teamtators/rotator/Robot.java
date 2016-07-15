@@ -1,14 +1,14 @@
 package org.teamtators.rotator;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The main robot class for RoTator
  */
 public class Robot extends IterativeRobot {
-    private Logger logger = LoggerFactory.getLogger(Robot.class);
+    private Logger logger = LogManager.getLogger(Robot.class);
 
     @Override
     public void robotInit() {

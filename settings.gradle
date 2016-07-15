@@ -1,2 +1,2 @@
-include 'core', 'rio'
+include 'core', 'rio', 'desktop'
 rootProject.name = 'RoTator'
