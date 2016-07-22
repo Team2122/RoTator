@@ -67,17 +67,10 @@ project(':desktop') {
 
     evaluationDependsOn(':core')
 
-<<<<<<< ed28e99328cd148c2ea129af341c41dd4d82497c
+    mainClassName = 'org.teamtators.rotator.Main'
+
 	jar {
 		from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 		manifest robotManifest
 	}
-}
-
-project(':desktop') {
-    apply plugin: 'application'
-
-=======
->>>>>>> Added scheduler and base commands
-    mainClassName = 'org.teamtators.rotator.Main'
 }
