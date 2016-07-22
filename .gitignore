@@ -24,7 +24,7 @@ Thumbs.db
 .classpath
 .project
 
-# Android Studio
+# IntelliJ
 *.iml
 .idea
 #.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
