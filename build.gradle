@@ -68,9 +68,4 @@ project(':desktop') {
     evaluationDependsOn(':core')
 
     mainClassName = 'org.teamtators.rotator.Main'
-
-	jar {
-		from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-		manifest robotManifest
-	}
 }
