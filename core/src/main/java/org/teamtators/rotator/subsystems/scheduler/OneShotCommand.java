@@ -8,7 +8,6 @@ public class OneShotCommand extends Command {
         this.function = function;
     }
 
-
     @Override
     protected void initialize() {
     }
