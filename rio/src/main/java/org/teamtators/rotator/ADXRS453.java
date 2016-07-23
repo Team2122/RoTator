@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 /**
  * A sensor class for using an ADXRS453 gyroscope
  */
-public class ADXRS453 implements Closeable, PIDSource {
+public class ADXRS453 implements Closeable, PIDSource, IGyro {
     protected static int fixParity(int data) {
         data &= ~kP;
         return data | (calcParity(data) ? 0 : kP);
@@ -260,20 +260,24 @@ public class ADXRS453 implements Closeable, PIDSource {
 
     private double updatePeriod = 1.0 / 120;
 
+    @Override
     public void setUpdatePeriod(double updatePeriod) {
         this.updatePeriod = updatePeriod;
     }
 
+    @Override
     public double getUpdatePeriod() {
         return updatePeriod;
     }
 
     private double calibrationPeriod = 5.0 / getUpdatePeriod();
 
+    @Override
     public void setCalibrationPeriod(double calibrationPeriod) {
         this.calibrationPeriod = calibrationPeriod;
     }
 
+    @Override
     public double getCalibrationPeriod() {
         return calibrationPeriod;
     }
@@ -323,9 +327,7 @@ public class ADXRS453 implements Closeable, PIDSource {
         timer.stop();
     }
 
-    /**
-     * Resets everything
-     */
+    @Override
     public void fullReset() {
         lock.writeLock();
         rate = 0;
@@ -336,11 +338,7 @@ public class ADXRS453 implements Closeable, PIDSource {
         timer.reset();
     }
 
-    /**
-     * Starts calibrating the gyro. Resets the calibration value and begins
-     * sampling gyro values to get the average 0 value. Sample time determined
-     * by calibrationTicks
-     */
+    @Override
     public void startCalibration() {
         lock.writeLock();
         logger.info("Starting gyro calibration");
@@ -349,9 +347,7 @@ public class ADXRS453 implements Closeable, PIDSource {
         isCalibrating = true;
     }
 
-    /**
-     * Finishes calibration. Stops calibrating and sets the calibration value.
-     */
+    @Override
     public void calibrate() {
         lock.writeLock();
         float calibrationValuesSum = 0;
@@ -364,38 +360,22 @@ public class ADXRS453 implements Closeable, PIDSource {
         logger.info("Finished calibrating gyro. Offset is %f", calibrationRate);
     }
 
-    /**
-     * Gets the current calibration rate
-     *
-     * @return The current calibration rate
-     */
+    @Override
     public float getCalibrationRate() {
         return calibrationRate;
     }
 
-    /**
-     * Checks if the gyro is currently calibrating
-     *
-     * @return
-     */
+    @Override
     public boolean isCalibrating() {
         return isCalibrating;
     }
 
-    /**
-     * Gets the rate from the gyro
-     *
-     * @return The rate in degrees per second, positive is clockwise
-     */
+    @Override
     public double getRate() {
         return rate;
     }
 
-    /**
-     * Gets the angle of the gyro
-     *
-     * @return The angle of the gyro in degrees
-     */
+    @Override
     public float getAngle() {
         return angle;
     }
@@ -409,9 +389,7 @@ public class ADXRS453 implements Closeable, PIDSource {
         this.angle = angle;
     }
 
-    /**
-     * Resets the angle of the gyro to zero
-     */
+    @Override
     public void reset() {
         lock.writeLock();
         angle = 0.0f;
