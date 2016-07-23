@@ -36,9 +36,9 @@ public class LogitechF310 extends Joystick implements ILogitechF310 {
     @Override
     public boolean getButtonValue(ButtonKind button) {
         if (button.equals(ButtonKind.TRIGGER_LEFT)) {
-            return getLeftTriggerAxis() >= 0.5;
+            return getAxisValue(AxisKind.LEFT_TRIGGER) >= 0.5;
         } else if (button.equals(ButtonKind.TRIGGER_RIGHT)) {
-            return getRightTriggerAxis() >= 0.5;
+            return getAxisValue(AxisKind.RIGHT_TRIGGER) >= 0.5;
         } else if (button.compareTo(ButtonKind.POV_UP) >= 0 && button.compareTo(ButtonKind.POV_RIGHT) <= 0) {
             ButtonKind currentPOV;
             switch (getPOV()) {
