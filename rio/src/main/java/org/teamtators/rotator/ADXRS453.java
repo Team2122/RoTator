@@ -1,10 +1,7 @@
 package org.teamtators.rotator;
 
 import com.google.common.collect.EvictingQueue;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.PIDSourceType;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +12,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 /**
  * A sensor class for using an ADXRS453 gyroscope
  */
-public class ADXRS453 implements Closeable {
+public class ADXRS453 implements Closeable, PIDSource {
     protected static int fixParity(int data) {
         data &= ~kP;
         return data | (calcParity(data) ? 0 : kP);
@@ -102,10 +99,10 @@ public class ADXRS453 implements Closeable {
     }
 
     protected boolean checkPartID() {
-        int pid = GetPartID();
+        int pid = getPartID();
         if ((pid & 0xff00) == 0x5200) {
             double temperature = getTemperature();
-            int serial = GetSerialNumber();
+            int serial = getSerialNumber();
             logger.info(
                     "Part ID of gyro is correct (%#04x). Temperature: %f C. Serial: (%#08x)",
                     pid, temperature, serial);
@@ -477,7 +474,7 @@ public class ADXRS453 implements Closeable {
      *
      * @return The part ID
      */
-    public int GetPartID() {
+    public int getPartID() {
         return readRegister(REG_PID);
     }
 
@@ -486,18 +483,22 @@ public class ADXRS453 implements Closeable {
      *
      * @return The 32 bit serial number
      */
-    public int GetSerialNumber() {
+    public int getSerialNumber() {
         int serial = 0;
         serial |= readRegister(REG_SN_H) << 16;
         serial |= readRegister(REG_SN_L);
         return serial;
     }
 
-    public void SetPIDSourceType(PIDSourceType pidSource) {
+    public void setPIDSourceType(PIDSourceType pidSource) {
         this.pidSource = pidSource;
     }
 
-    public double PIDGet() {
+    public PIDSourceType getPIDSourceType() {
+        return pidSource;
+    }
+
+    public double pidGet() {
         switch (pidSource) {
             case kDisplacement:
                 return getAngle();
