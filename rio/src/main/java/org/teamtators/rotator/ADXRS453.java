@@ -22,7 +22,7 @@ public class ADXRS453 implements Closeable {
     }
 
     /**
-     * Find the parity of a binary string
+     * Find the parity (even/odd) of an int
      *
      * @param data Data to find parity of
      * @return Whether or not the number of ones is odd
