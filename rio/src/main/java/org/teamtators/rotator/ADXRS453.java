@@ -176,7 +176,7 @@ public class ADXRS453 implements Closeable, PIDSource {
         if (!checkPartID())
             return;
         timer.start();
-        updater.startPeriodic(updatePeriod);
+        updater.startPeriodic(getUpdatePeriod());
     }
 
     protected void update() {
@@ -254,35 +254,29 @@ public class ADXRS453 implements Closeable, PIDSource {
     public static final int REG_SN_H = 0x0E;
     public static final int REG_SN_L = 0x10;
 
-    private static int kSPIClockRate = 3000000;
+    private static final int kSPIClockRate = 3000000;
 
-    private static double kDegreesPerSecondPerLSB = 80.0;
+    private static final double kDegreesPerSecondPerLSB = 80.0;
 
-    public static int getUpdatesPerSecond() {
-        return updatesPerSecond;
+    private double updatePeriod = 1.0 / 120;
+
+    public void setUpdatePeriod(double updatePeriod) {
+        this.updatePeriod = updatePeriod;
     }
 
-    public static void setUpdatesPerSecond(int updatesPerSecond) {
-        ADXRS453.updatesPerSecond = updatesPerSecond;
-    }
-
-    private static int updatesPerSecond = 120;
-
-    public static double getUpdatePeriod() {
+    public double getUpdatePeriod() {
         return updatePeriod;
     }
 
-    private static double updatePeriod = 1.0 / updatesPerSecond;
+    private double calibrationPeriod = 5.0 / getUpdatePeriod();
 
-    public static int getCalibrationTicks() {
-        return calibrationTicks;
+    public void setCalibrationPeriod(double calibrationPeriod) {
+        this.calibrationPeriod = calibrationPeriod;
     }
 
-    public static void setCalibrationTicks(int calibrationTicks) {
-        ADXRS453.calibrationTicks = calibrationTicks;
+    public double getCalibrationPeriod() {
+        return calibrationPeriod;
     }
-
-    private static int calibrationTicks = 5 * updatesPerSecond;
 
     /**
      * Creates a new ADXRS453
@@ -301,7 +295,7 @@ public class ADXRS453 implements Closeable, PIDSource {
     ADXRS453(SPI spi) {
         logger = LogManager.getLogger(this.getClass());
         this.spi = spi;
-        calibrationValues = EvictingQueue.create(calibrationTicks);
+        calibrationValues = EvictingQueue.create((int) (getCalibrationPeriod() / getUpdatePeriod()));
         updater = new Notifier(this::update);
         pidSource = PIDSourceType.kDisplacement;
         fullReset();
