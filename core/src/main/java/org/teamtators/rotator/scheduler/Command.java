@@ -45,11 +45,22 @@ public abstract class Command {
         return this.context != null;
     }
 
-    public void cancel() {
+    protected void startCommand(Command command) {
         if (this.context == null) {
+            throw new IllegalStateException("Tried start command in parent context while not running");
+        }
+        this.context.startCommand(command);
+    }
+
+    protected void cancelCommand(Command command) {
+        if (this.context == null || command.getContext() == null) {
             throw new IllegalStateException("Tried to cancel command that is not running");
         }
-        this.context.cancelCommand(this);
+        this.context.cancelCommand(command);
+    }
+
+    public void cancel() {
+        this.cancelCommand(this);
     }
 
     protected void requires(Subsystem subsystem) {
@@ -75,7 +86,9 @@ public abstract class Command {
         return new SequentialCommand(sequence);
     }
 
+    private static int nextLogCommandNumber = 1;
+
     public static Command log(String message) {
-        return new LogCommand(message);
+        return new LogCommand("LogCommand" + nextLogCommandNumber++, message);
     }
 }

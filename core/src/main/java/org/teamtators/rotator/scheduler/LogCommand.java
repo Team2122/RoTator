@@ -3,9 +3,13 @@ package org.teamtators.rotator.scheduler;
 public class LogCommand extends Command {
     private String message;
 
-    public LogCommand(String message) {
-        super("LogCommand");
+    public LogCommand(String name, String message) {
+        super(name);
         this.message = message;
+    }
+
+    public LogCommand(String message) {
+        this("LogCommand", message);
     }
 
     @Override

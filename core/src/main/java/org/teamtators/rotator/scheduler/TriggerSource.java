@@ -1,6 +1,6 @@
 package org.teamtators.rotator.scheduler;
 
-public interface Trigger {
+public interface TriggerSource {
 
     /**
      * Returns whether or not the trigger is active

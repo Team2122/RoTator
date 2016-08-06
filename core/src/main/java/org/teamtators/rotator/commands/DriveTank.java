@@ -1,16 +1,15 @@
 package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
-import org.teamtators.rotator.ILogitechF310;
-import org.teamtators.rotator.subsystems.AbstractDrive;
-
 import javax.inject.Inject;
+import org.teamtators.rotator.operatorInterface.LogitechF310;
+import org.teamtators.rotator.subsystems.AbstractDrive;
 
 public class DriveTank extends CommandBase {
     @Inject
     AbstractDrive drive;
     @Inject
-    ILogitechF310 driverJoystick;
+    LogitechF310 driverJoystick;
 
     public DriveTank() {
         super("DriveTank");
@@ -29,8 +28,8 @@ public class DriveTank extends CommandBase {
 
     @Override
     protected boolean step() {
-        double leftPower = driverJoystick.getAxisValue(ILogitechF310.AxisKind.LEFT_STICK_Y);
-        double rightPower = driverJoystick.getAxisValue(ILogitechF310.AxisKind.RIGHT_STICK_Y);
+        double leftPower = driverJoystick.getAxisValue(LogitechF310.Axis.LEFT_STICK_Y);
+        double rightPower = driverJoystick.getAxisValue(LogitechF310.Axis.RIGHT_STICK_Y);
 
         drive.setPowers((float) leftPower, (float) rightPower);
 
