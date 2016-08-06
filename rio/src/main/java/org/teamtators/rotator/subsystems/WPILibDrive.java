@@ -2,18 +2,32 @@ package org.teamtators.rotator.subsystems;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.VictorSP;
+import org.teamtators.rotator.config.Configurable;
+import org.teamtators.rotator.config.EncoderConfig;
+import org.teamtators.rotator.config.VictorSPConfig;
 
-public class WPILibDrive implements IDrive {
+public class WPILibDrive implements IDrive, Configurable<WPILibDrive.Config> {
+    public static class Config {
+        public VictorSPConfig leftMotor;
+        public VictorSPConfig rightMotor;
+        public EncoderConfig leftEncoder;
+        public EncoderConfig rightEncoder;
+    }
+
     private VictorSP leftMotor;
     private VictorSP rightMotor;
     private Encoder leftEncoder;
     private Encoder rightEncoder;
 
     public WPILibDrive() {
-        leftMotor = new VictorSP(0);
-        rightMotor = new VictorSP(1);
-        leftEncoder = new Encoder(0, 1);
-        rightEncoder = new Encoder(2, 3);
+    }
+
+    @Override
+    public void configure(Config config) {
+        this.leftMotor = config.leftMotor.create();
+        this.rightMotor = config.rightMotor.create();
+        this.leftEncoder = config.leftEncoder.create();
+        this.rightEncoder = config.rightEncoder.create();
     }
 
     @Override
