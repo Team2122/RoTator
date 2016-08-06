@@ -69,4 +69,17 @@ project(':desktop') {
     evaluationDependsOn(':core')
 
     mainClassName = 'org.teamtators.rotator.Main'
+
+    def jarManifest = {
+        attributes 'Main-Class': mainClassName
+    }
+
+    jar {
+        from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        manifest jarManifest
+    }
+
+    run {
+        workingDir = file('../')
+    }
 }
