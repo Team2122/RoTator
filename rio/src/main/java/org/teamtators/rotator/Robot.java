@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
  * The main robot class for RoTator
  */
 public class Robot extends IterativeRobot {
-    private Logger logger = LogManager.getLogger(Robot.class);
+    private Logger logger = LoggerFactory.getLogger(Robot.class);
 
     @Override
     public void robotInit() {

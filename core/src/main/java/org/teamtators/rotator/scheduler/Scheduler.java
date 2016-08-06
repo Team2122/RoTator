@@ -1,7 +1,7 @@
 package org.teamtators.rotator.scheduler;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,7 +10,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class Scheduler implements CommandRunContext {
-    private static Logger logger = LogManager.getLogger(Scheduler.class);
+    private static Logger logger = LoggerFactory.getLogger(Scheduler.class);
 
     private Map<String, CommandRun> runningCommands = new ConcurrentHashMap<>();
 

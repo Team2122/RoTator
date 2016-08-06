@@ -1,7 +1,7 @@
 package org.teamtators.rotator.scheduler;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -14,7 +14,7 @@ public abstract class Command {
         checkNotNull(name);
         this.name = name;
         String loggerName = String.format("%s(%s)", this.getClass().getName(), name);
-        this.logger = LogManager.getLogger(loggerName);
+        this.logger = LoggerFactory.getLogger(loggerName);
     }
 
     protected abstract void initialize();

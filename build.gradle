@@ -21,8 +21,9 @@ allprojects {
     }
 
     dependencies {
-        compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.6.2'
-        compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'
+        compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.7'
+        compile group: 'ch.qos.logback', name: 'logback-core', version: '1.1.2'
+        compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.2'
         compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.7.5'
         compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.7.5'
         compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.7.5'
