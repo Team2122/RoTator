@@ -1,4 +1,4 @@
-package org.teamtators.rotator.subsystems.scheduler;
+package org.teamtators.rotator.scheduler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

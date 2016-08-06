@@ -1,6 +1,6 @@
 package org.teamtators.rotator;
 
-import org.teamtators.rotator.subsystems.scheduler.Trigger;
+import org.teamtators.rotator.scheduler.Trigger;
 
 public interface ILogitechF310 {
     double getAxisValue(AxisKind axisKind);

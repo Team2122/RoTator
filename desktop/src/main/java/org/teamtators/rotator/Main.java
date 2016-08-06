@@ -2,8 +2,8 @@ package org.teamtators.rotator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.teamtators.rotator.subsystems.scheduler.Command;
-import org.teamtators.rotator.subsystems.scheduler.Scheduler;
+import org.teamtators.rotator.scheduler.Command;
+import org.teamtators.rotator.scheduler.Scheduler;
 
 public class Main {
     private static Logger logger = LogManager.getLogger(Main.class);

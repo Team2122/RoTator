@@ -1,7 +1,7 @@
 package org.teamtators.rotator;
 
 import edu.wpi.first.wpilibj.Joystick;
-import org.teamtators.rotator.subsystems.scheduler.Trigger;
+import org.teamtators.rotator.scheduler.Trigger;
 
 /**
  * A class for interfacing with Logitech F310 joysticks

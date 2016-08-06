@@ -2,7 +2,7 @@ package org.teamtators.rotator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.teamtators.rotator.subsystems.scheduler.Command;
+import org.teamtators.rotator.scheduler.Command;
 
 /**
  * All commands inherit from this

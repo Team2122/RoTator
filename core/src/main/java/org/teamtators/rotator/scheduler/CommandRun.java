@@ -1,4 +1,4 @@
-package org.teamtators.rotator.subsystems.scheduler;
+package org.teamtators.rotator.scheduler;
 
 class CommandRun {
     CommandRun(Command command) {

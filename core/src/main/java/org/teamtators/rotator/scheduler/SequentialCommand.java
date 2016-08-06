@@ -1,4 +1,4 @@
-package org.teamtators.rotator.subsystems.scheduler;
+package org.teamtators.rotator.scheduler;
 
 import java.util.Arrays;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package org.teamtators.rotator.subsystems.scheduler;
+package org.teamtators.rotator.scheduler;
 
 public class CommandException extends IllegalStateException {
     public CommandException(String s) {
