@@ -10,7 +10,8 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.locks.ReadWriteLock;
 
 /**
- * A sensor class for using an ADXRS453 gyroscope
+ * A sensor class for using an ADXRS453 gyroscope.
+ * Measures angle change on the yaw axis.
  */
 public class ADXRS453 implements Closeable, PIDSource, IGyro {
     protected static int fixParity(int data) {
@@ -46,27 +47,31 @@ public class ADXRS453 implements Closeable, PIDSource, IGyro {
 
     protected boolean checkFaults(int data) {
         boolean hasFaults = (data & kFaultBits) != 0;
+        StringBuilder logMessage;
         if (hasFaults) {
-            logger.warn("Faults detected:");
+            logMessage = new StringBuilder("Faults detected:");
         } else {
             return true;
         }
         if ((data & kChk) != 0) {
-            logger.warn(" * Self test enabled");
+            logMessage.append("\n * Self test enabled");
+            logger.warn(logMessage.toString());
             return false;
         }
         if ((data & kCst) != 0)
-            logger.error(" * Continuous self test fault");
+            logMessage.append("\n * Continuous self test fault");
         if ((data & kPwr) != 0)
-            logger.error(" * Power fault");
+            logMessage.append("\n * Power fault");
         if ((data & kPor) != 0)
-            logger.error(" * Non-volatile programming fault");
+            logMessage.append("\n * Non-volatile programming fault");
         if ((data & kNvm) != 0)
-            logger.error(" * Non-volatile checksum fault");
+            logMessage.append("\n * Non-volatile checksum fault");
         if ((data & kQ) != 0)
-            logger.error(" * Quadrature calculation fault");
+            logMessage.append("\n * Quadrature calculation fault");
         if ((data & kPll) != 0)
-            logger.error(" * Phase locked loop fault");
+            logMessage.append("\n * Phase locked loop fault");
+        logger.error(logMessage.toString());
+
         return false;
     }
 
@@ -85,13 +90,14 @@ public class ADXRS453 implements Closeable, PIDSource, IGyro {
             case kReadWrite:
                 if ((data & (kReadBit | kWriteBit)) != 0)
                     return true;
-                logger.error("Read/Write error: ");
+                StringBuilder logMessage = new StringBuilder("Read/Write error: ");
                 if ((data & kSpi) != 0)
-                    logger.error(" * SPI error");
+                    logMessage.append("\n * SPI error");
                 if ((data & kRe) != 0)
-                    logger.error(" * Request error");
+                    logMessage.append("\n * Request error");
                 if ((data & kDu) != 0)
-                    logger.error(" * Data unavailable");
+                    logMessage.append("\n * Data unavailable");
+                logger.error(logMessage.toString());
                 checkFaults(data);
                 return false;
         }
@@ -197,7 +203,7 @@ public class ADXRS453 implements Closeable, PIDSource, IGyro {
         if (isCalibrating) {
             calibrationValues.add(rate);
         }
-        rate -= calibrationRate; // apply calibration value
+        rate -= calibrationOffset; // apply calibration offset
         angle += rate * ellapsed; // intergrate it into the angle
     }
 
@@ -214,7 +220,7 @@ public class ADXRS453 implements Closeable, PIDSource, IGyro {
     protected double rate; ///< the latest rate read from the gyro, zerod
     protected float angle; ///< the calculated angle
     protected boolean isCalibrating; ///< true if we are calibrating right now
-    protected float calibrationRate; ///< the zero value for the rate
+    protected float calibrationOffset; ///< the zero value for the rate
     protected EvictingQueue<Double> calibrationValues;
 
     protected PIDSourceType pidSource;
@@ -242,7 +248,7 @@ public class ADXRS453 implements Closeable, PIDSource, IGyro {
     private static final int kInvalidData = 0x0;
     private static final int kValidData = 0x1;
     private static final int kTestData = 0x2;
-    private static final int kReadWrite = 0x03;
+    private static final int kReadWrite = 0x3;
 
     public static final int REG_RATE = 0x00;
     public static final int REG_TEM = 0x02;
@@ -332,7 +338,7 @@ public class ADXRS453 implements Closeable, PIDSource, IGyro {
         lock.writeLock();
         rate = 0;
         angle = 0;
-        calibrationRate = 0;
+        calibrationOffset = 0;
         isCalibrating = false;
         calibrationValues.clear();
         timer.reset();
@@ -342,7 +348,7 @@ public class ADXRS453 implements Closeable, PIDSource, IGyro {
     public void startCalibration() {
         lock.writeLock();
         logger.info("Starting gyro calibration");
-        calibrationRate = 0;
+        calibrationOffset = 0;
         calibrationValues.clear();
         isCalibrating = true;
     }
@@ -354,15 +360,15 @@ public class ADXRS453 implements Closeable, PIDSource, IGyro {
         for (Double calibrationValue : calibrationValues) {
             calibrationValuesSum += calibrationValue;
         }
-        calibrationRate = calibrationValuesSum / calibrationValues.size();
+        calibrationOffset = calibrationValuesSum / calibrationValues.size();
         angle = 0;
         isCalibrating = false;
-        logger.info("Finished calibrating gyro. Offset is %f", calibrationRate);
+        logger.info("Finished calibrating gyro. Offset is %f", calibrationOffset);
     }
 
     @Override
-    public float getCalibrationRate() {
-        return calibrationRate;
+    public float getCalibrationOffset() {
+        return calibrationOffset;
     }
 
     @Override
