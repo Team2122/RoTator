@@ -16,6 +16,7 @@ import org.teamtators.rotator.ui.SimulationFrame;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.teamtators.rotator.scheduler.*;
 
 public class Main {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
