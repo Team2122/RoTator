@@ -6,20 +6,24 @@ import org.slf4j.LoggerFactory;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class Command {
-    protected final Logger logger;
-    private final String name;
+    protected Logger logger;
+    private String name;
     private CommandRunContext context = null;
 
     public Command(String name) {
         checkNotNull(name);
-        this.name = name;
-        String loggerName = String.format("%s(%s)", this.getClass().getName(), name);
-        this.logger = LoggerFactory.getLogger(loggerName);
+        setName(name);
     }
 
     protected abstract void initialize();
     protected abstract boolean step();
     protected abstract void finish(boolean interrupted);
+
+    public void setName(String name) {
+        this.name = name;
+        String loggerName = String.format("%s(%s)", this.getClass().getName(), name);
+        this.logger = LoggerFactory.getLogger(loggerName);
+    }
 
     public String getName() {
         return name;
@@ -44,12 +48,12 @@ public abstract class Command {
         this.context.cancelCommand(this);
     }
 
-    public static Command oneShot(String name, Runnable function) {
-        return new OneShotCommand(name, function);
+    public static Command oneShot(Runnable function) {
+        return new OneShotCommand(function);
     }
 
-    public static Command sequence(String name, Command... sequence) {
-        return new SequentialCommand(name, sequence);
+    public static Command sequence(Command... sequence) {
+        return new SequentialCommand(sequence);
     }
 
     public static Command log(String message) {

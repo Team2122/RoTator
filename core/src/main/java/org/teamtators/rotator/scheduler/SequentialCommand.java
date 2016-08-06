@@ -14,23 +14,35 @@ public class SequentialCommand extends Command implements CommandRunContext {
 
     public SequentialCommand(String name, Collection<Command> sequence) {
         super(name);
+        setSequence(sequence);
+    }
+
+    public SequentialCommand(String name, Command... sequence) {
+        this(name, Arrays.asList(sequence));
+    }
+
+    public SequentialCommand(Collection<Command> sequence) {
+        this("SequentialCommand", sequence);
+    }
+
+    public SequentialCommand(Command... sequence) {
+        this("SequentialCommand", Arrays.asList(sequence));
+    }
+
+    private CommandRun currentRun() {
+        return sequence.get(currentPosition);
+    }
+
+    protected void setSequence(Collection<Command> sequence) {
         checkNotNull(sequence);
         this.sequence = sequence.stream()
                 .map(CommandRun::new)
                 .collect(Collectors.toList());
     }
 
-    public SequentialCommand(String name, Command[] sequence) {
-        this(name, Arrays.asList(sequence));
-    }
-
-    protected CommandRun currentRun() {
-        return sequence.get(currentPosition);
-    }
-
     @Override
     protected void initialize() {
-        logger.debug("initialize");
+        logger.debug("SequentialCommand initializing");
         for (CommandRun run : sequence) {
             run.initialized = false;
             run.cancel = false;
@@ -72,10 +84,10 @@ public class SequentialCommand extends Command implements CommandRunContext {
                 run.command.setContext(null);
                 currentPosition++;
                 if (currentPosition >= sequence.size()) {
-                    logger.debug("Sequential command finished");
+                    logger.trace("Sequential command finished");
                     return true;
                 }
-                logger.debug("Sequential command advancing to command {}", currentPosition);
+                logger.trace("Sequential command advancing to command {}", currentPosition);
             }
         } while (finished);
         return false;
@@ -89,7 +101,11 @@ public class SequentialCommand extends Command implements CommandRunContext {
 
     @Override
     protected void finish(boolean interrupted) {
-        logger.debug("finish {}", interrupted);
+        if (interrupted) {
+            logger.debug("SequentialCommand interrupted");
+        } else {
+            logger.debug("SequentialCommand finished");
+        }
         if (sequence.size() == 0) return;
         if (interrupted && currentRun().command.isRunning()) {
             currentRun().command.setContext(null);

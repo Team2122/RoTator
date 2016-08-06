@@ -8,6 +8,10 @@ public class OneShotCommand extends Command {
         this.function = function;
     }
 
+    public OneShotCommand(Runnable function) {
+        this("OneShotCommand", function);
+    }
+
     @Override
     protected void initialize() {
     }
