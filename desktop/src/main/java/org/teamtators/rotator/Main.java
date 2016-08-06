@@ -2,8 +2,17 @@ package org.teamtators.rotator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import org.teamtators.rotator.config.ConfigCommandStore;
+import org.teamtators.rotator.config.ConfigException;
+import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.scheduler.Scheduler;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class Main {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -11,23 +20,24 @@ public class Main {
     public static void main(String[] args) {
         logger.info("Robot main");
         Scheduler scheduler = new Scheduler();
-//        scheduler.startCommand(command);
-//        scheduler.startCommand(new OneShotCommand("OneShotTest", () -> {
-//            logger.info("Hello world!");
-//        }));
+        ConfigCommandStore commandStore = new ConfigCommandStore();
+        commandStore.registerClass(TestCommand.class);
+        commandStore.registerClass(LogCommand.class);
 
-        Command command1 = new TestCommand();
-        Command command2 = Command.log("hello 2");
-        Command seq = Command.sequence("TestGroup", command1, command2);
-//        Command command = new TestCommand();
-        scheduler.startCommand(command1);
-        scheduler.startCommand(command2);
+        YAMLMapper yamlMapper = new YAMLMapper();
+        ObjectNode commandsConfig;
+        try (InputStream file = new FileInputStream("./config/commands.yml")) {
+            commandsConfig = (ObjectNode) yamlMapper.reader().readTree(file);
+            commandStore.createCommandsFromConfig(commandsConfig);
+            logger.info("Loaded commands config");
+        } catch (IOException | ConfigException e) {
+            logger.error("Error loading commands config", e);
+            return;
+        }
+
+        Command seq = commandStore.getCommand("$Sequence");
         scheduler.startCommand(seq);
         while (true) {
-//            scheduler.startCommand(command1);
-//            scheduler.startCommand(command2);
-            if (!seq.isRunning())
-                scheduler.startCommand(seq);
             scheduler.execute();
             try {
                 Thread.sleep(250);
@@ -38,7 +48,19 @@ public class Main {
         }
     }
 
-    private static class TestCommand extends Command {
+    public static class TestCommand extends Command implements Configurable<TestCommand.Config> {
+        public static class Config {
+            public int maxCount;
+        }
+
+        private Config config;
+
+        @Override
+        public void configure(Config config) {
+            this.config = config;
+            logger.debug("configured TestCommand, maxCount: " + config.maxCount);
+        }
+
         int count;
         public TestCommand() {
             super("TestCommand");
@@ -46,6 +68,7 @@ public class Main {
 
         @Override
         protected void initialize() {
+            if (config == null) throw new NullPointerException("config is null");
             logger.info("initialize");
             count = 0;
         }
@@ -53,7 +76,7 @@ public class Main {
         @Override
         protected boolean step() {
             logger.info("step count: {}", count);
-            return count++ >= 3;
+            return count++ >= config.maxCount;
         }
 
         @Override
@@ -62,4 +85,35 @@ public class Main {
         }
     }
 
+    public static class LogCommand extends Command implements Configurable<LogCommand.Config> {
+        static class Config {
+            public String message;
+        }
+
+        private Config config;
+
+        public LogCommand() {
+            super("LogCommand");
+        }
+
+        @Override
+        protected void initialize() {
+            logger.info(config.message);
+        }
+
+        @Override
+        protected boolean step() {
+            return true;
+        }
+
+        @Override
+        protected void finish(boolean interrupted) {
+
+        }
+
+        @Override
+        public void configure(Config config) {
+            this.config = config;
+        }
+    }
 }

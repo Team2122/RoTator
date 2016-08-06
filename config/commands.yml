@@ -1,0 +1,10 @@
+TestCommand:
+  maxCount: 3
+$Null:
+$Sequence:
+  - $Null
+  - class: LogCommand
+    message: Before TestCommand
+  - TestCommand
+  - class: LogCommand
+    message: After TestCommand
