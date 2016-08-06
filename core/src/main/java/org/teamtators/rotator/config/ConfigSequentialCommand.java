@@ -42,7 +42,7 @@ public class ConfigSequentialCommand extends SequentialCommand implements Config
             Command command;
             if (node.isObject() && node.has("class")) {
                 ObjectNode commandConfig = (ObjectNode) node;
-                String className = commandConfig.remove("class").asText();
+                String className = commandConfig.get("class").asText();
                 String commandName = findNextCommandName(className);
                 command = commandStore.constructCommandClass(commandName, className);
                 commandStore.configureCommand(command, commandConfig);

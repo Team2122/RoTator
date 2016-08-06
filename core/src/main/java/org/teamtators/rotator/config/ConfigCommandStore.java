@@ -16,6 +16,7 @@ import java.util.Map;
 public class ConfigCommandStore extends org.teamtators.rotator.scheduler.CommandStore {
     protected ObjectMapper objectMapper = new YAMLMapper();
     private Map<String, CommandConstructor> constructors = new HashMap<>();
+    private Map<String, JsonNode> defaultConfigs = new HashMap<>();
 
     public static ObjectNode applyDefaults(ObjectNode object, ObjectNode defaults) {
         ObjectNode result = defaults.deepCopy();
@@ -69,8 +70,11 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
         while (it.hasNext()) {
             Map.Entry<String, JsonNode> field = it.next();
             String commandName = field.getKey();
-            if (commandName.charAt(0) == '$') { // Sequential command config
+            char prefix = commandName.charAt(0);
+            if (prefix == '$') { // Sequential command config
                 putCommand(commandName, new ConfigSequentialCommand(this));
+            } else if (prefix == '^') {
+                defaultConfigs.put(commandName.substring(1), field.getValue());
             } else {
                 createCommandFromConfig(commandName, field.getValue());
             }
@@ -83,13 +87,22 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
     }
 
     public void configureCommand(Command command, JsonNode config) throws ConfigException {
+        if (config.isObject() && config.has("class")) {
+            ObjectNode objectConfig = (ObjectNode) config;
+            String className = objectConfig.remove("class").asText();
+            JsonNode defaultConfig = defaultConfigs.get(className);
+            if (defaultConfig != null && defaultConfig.isObject()) {
+                config = applyDefaults(objectConfig, (ObjectNode) defaultConfig);
+            }
+        }
         Configurables.configureObject(command, config, objectMapper);
     }
 
     public Command createCommandFromConfig(String commandName, JsonNode config) throws ConfigException {
         String className;
-        if (config.has("class")) {
-            className = ((ObjectNode) config).remove("class").asText();
+        JsonNode classNode = config.get("class");
+        if (classNode != null) {
+            className = classNode.asText();
         } else {
             className = commandName;
         }
