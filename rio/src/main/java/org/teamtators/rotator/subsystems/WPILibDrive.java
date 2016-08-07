@@ -41,6 +41,16 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
     }
 
     @Override
+    public double getLeftRate() {
+        return leftEncoder.getRate();
+    }
+
+    @Override
+    public double getRightRate() {
+        return rightEncoder.getRate();
+    }
+
+    @Override
     public double getLeftDistance() {
         return leftEncoder.getDistance();
     }
