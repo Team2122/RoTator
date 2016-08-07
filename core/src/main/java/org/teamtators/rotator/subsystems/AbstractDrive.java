@@ -43,6 +43,23 @@ public abstract class AbstractDrive extends Subsystem {
     }
 
     /**
+     * @return Rate of rotation of the left side of the drivetrain in inches per second
+     */
+    public abstract double getLeftRate();
+
+    /**
+     * @return Rate of rotation of the right side of the drivetrain in inches per second
+     */
+    public abstract double getRightRate();
+
+    /**
+     * @return The average rate of rotation on either side in inches per second
+     */
+    public double getAverageRate() {
+        return (getLeftRate() + getRightRate()) / 2;
+    }
+
+    /**
      * @return distance the left side of the drivetrain traveled in inches
      */
     public abstract double getLeftDistance();
