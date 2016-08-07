@@ -1,20 +1,62 @@
 package org.teamtators.rotator.subsystems;
 
 import org.teamtators.rotator.Steppable;
-import org.teamtators.rotator.config.ConfigException;
 import org.teamtators.rotator.config.Configurable;
 
 public class SimulationDrive extends AbstractDrive implements Configurable<SimulationDrive.Config>, Steppable {
     private Config config;
-    private float leftPower = 0;
-    private float rightPower = 0;
-    private double leftVelocity = 0;
-    private double rightVelocity = 0;
-    private double leftDistance = 0;
-    private double rightDistance = 0;
+    private float leftPower;
+    private float rightPower;
+    private double leftVelocity;
+    private double rightVelocity;
+    private double leftDistance;
+    private double rightDistance;
+    private double x;
+    private double y;
+    private double rotation;
+
+    public SimulationDrive() {
+        reset();
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(double rotation) {
+        this.rotation = rotation;
+    }
+
+    public void reset() {
+        leftPower = 0;
+        rightPower = 0;
+        leftVelocity = 0;
+        rightVelocity = 0;
+        leftDistance = 0;
+        rightDistance = 0;
+        x = 0;
+        y = 0;
+        rotation = 0;
+    }
 
     @Override
-    public void configure(Config config) throws ConfigException {
+    public void configure(Config config) {
         this.config = config;
     }
 
@@ -62,12 +104,25 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
     @Override
     public void step(double delta) {
         leftVelocity = leftPower * config.powerToVelocity;
-        leftDistance += leftVelocity * delta;
+        double dLDist = leftVelocity * delta;
+        leftDistance += dLDist;
         rightVelocity = rightPower * config.powerToVelocity;
-        rightDistance += rightVelocity * delta;
+        double dRDist = rightVelocity * delta;
+        rightDistance += dRDist;
+
+        double dRot = (dLDist - dRDist) / (config.wheelWidth);
+
+        rotation += dRot;
+        double dist = (dLDist + dRDist) / 2;
+        x += Math.cos(rotation) * dist;
+        y += Math.sin(rotation) * dist;
+
+        logger.trace("Drive distances (in.): {} {} rates: {} {}", leftDistance, rightDistance, leftVelocity, rightVelocity);
+        logger.trace("Drive position {} {} rotation {}", x, y, rotation);
     }
 
     public static class Config {
         public double powerToVelocity;
+        public double wheelWidth;
     }
 }
