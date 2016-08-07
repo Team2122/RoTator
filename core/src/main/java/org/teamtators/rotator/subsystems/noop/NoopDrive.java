@@ -18,6 +18,16 @@ public class NoopDrive extends AbstractDrive {
     }
 
     @Override
+    public double getLeftRate() {
+        return 0;
+    }
+
+    @Override
+    public double getRightRate() {
+        return 0;
+    }
+
+    @Override
     public double getLeftDistance() {
         return 0;
     }
