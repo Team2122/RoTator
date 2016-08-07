@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import org.teamtators.rotator.commands.LogCommand;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigException;
 import org.teamtators.rotator.config.Configurable;
@@ -85,35 +86,4 @@ public class Main {
         }
     }
 
-    public static class LogCommand extends Command implements Configurable<LogCommand.Config> {
-        static class Config {
-            public String message;
-        }
-
-        private Config config;
-
-        public LogCommand() {
-            super("LogCommand");
-        }
-
-        @Override
-        protected void initialize() {
-            logger.info(config.message);
-        }
-
-        @Override
-        protected boolean step() {
-            return true;
-        }
-
-        @Override
-        protected void finish(boolean interrupted) {
-
-        }
-
-        @Override
-        public void configure(Config config) {
-            this.config = config;
-        }
-    }
 }
