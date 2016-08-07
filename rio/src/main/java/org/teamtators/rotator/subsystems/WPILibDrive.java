@@ -6,7 +6,7 @@ import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.EncoderConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
 
-public class WPILibDrive implements IDrive, Configurable<WPILibDrive.Config> {
+public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDrive.Config> {
     public static class Config {
         public VictorSPConfig leftMotor;
         public VictorSPConfig rightMotor;
@@ -31,8 +31,12 @@ public class WPILibDrive implements IDrive, Configurable<WPILibDrive.Config> {
     }
 
     @Override
-    public void setPowers(float leftPower, float rightPower) {
+    public void setLeftPower(float leftPower) {
         leftMotor.set(leftPower);
+    }
+
+    @Override
+    public void setRightPower(float rightPower) {
         rightMotor.set(rightPower);
     }
 
