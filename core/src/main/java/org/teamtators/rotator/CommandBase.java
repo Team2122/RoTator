@@ -1,30 +1,26 @@
 package org.teamtators.rotator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.scheduler.Command;
 
 /**
  * All commands inherit from this
  */
 public abstract class CommandBase extends Command {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     public CommandBase(String name) {
         super(name);
     }
 
     @Override
     protected void initialize() {
-        logger.info("Command initializing");
+        logger.info("{} initializing", getName());
     }
 
     @Override
     protected void finish(boolean interrupted) {
         if (interrupted) {
-            logger.info("Command interrupted");
+            logger.info("{} interrupted", getName());
         } else {
-            logger.info("Command ending");
+            logger.info("{} ended", getName());
         }
     }
 

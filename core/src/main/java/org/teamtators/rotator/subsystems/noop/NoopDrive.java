@@ -1,14 +1,19 @@
 package org.teamtators.rotator.subsystems.noop;
 
+import org.teamtators.rotator.subsystems.AbstractDrive;
 import org.teamtators.rotator.subsystems.DriveMode;
-import org.teamtators.rotator.subsystems.IDrive;
 
 /**
  * drive implementation which does nothing
  */
-public class NoopDrive implements IDrive{
+public class NoopDrive extends AbstractDrive {
     @Override
-    public void setPowers(float leftPower, float rightPower) {
+    public void setLeftPower(float leftPower) {
+
+    }
+
+    @Override
+    public void setRightPower(float rightPower) {
 
     }
 

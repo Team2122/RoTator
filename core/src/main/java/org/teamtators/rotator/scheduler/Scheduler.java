@@ -3,16 +3,22 @@ package org.teamtators.rotator.scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class Scheduler implements CommandRunContext {
     private static Logger logger = LoggerFactory.getLogger(Scheduler.class);
 
     private Map<String, CommandRun> runningCommands = new ConcurrentHashMap<>();
+    private Set<Subsystem> subsystems = new HashSet<>();
+
+    public void registerSubsystem(Subsystem subsystem) {
+        subsystems.add(subsystem);
+    }
 
     public void execute() {
         logger.trace("{} commands running", runningCommands.size());
@@ -22,7 +28,7 @@ public final class Scheduler implements CommandRunContext {
                 finishRun(run);
                 continue;
             } else if (!run.initialized) {
-                if (run.command.isRunning()) continue;
+                if (run.command.isRunning() || !takeRequirements(run.command)) continue;
                 run.command.setContext(this);
                 run.command.initialize();
                 run.initialized = true;
@@ -33,9 +39,42 @@ public final class Scheduler implements CommandRunContext {
                 finishRun(run);
             }
         }
+        for (Subsystem subsystem : subsystems) {
+            if (subsystem.getRequiringCommand() == null && subsystem.getDefaultCommand() != null) {
+                startCommand(subsystem.getDefaultCommand());
+            }
+        }
+    }
+
+
+    @Override
+    public boolean takeRequirements(Command command) {
+        if (command.getRequirements() == null)
+            return true;
+        boolean anyRequiring = false;
+        for (Subsystem subsystem : command.getRequirements()) {
+            Command requiringCommand = subsystem.getRequiringCommand();
+            if (requiringCommand != null && requiringCommand != command) {
+                anyRequiring = true;
+                requiringCommand.cancel();
+            } else {
+                subsystem.setRequiringCommand(command);
+            }
+        }
+        return !anyRequiring;
+    }
+
+    @Override
+    public void releaseRequirements(Command command) {
+        if (command.getRequirements() == null)
+            return;
+        for (Subsystem subsystem : command.getRequirements()) {
+            subsystem.setRequiringCommand(null);
+        }
     }
 
     private void finishRun(CommandRun run) {
+        releaseRequirements(run.command);
         run.command.setContext(null);
         runningCommands.remove(run.command.getName());
     }

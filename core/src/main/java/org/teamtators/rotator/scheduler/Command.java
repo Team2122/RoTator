@@ -3,12 +3,16 @@ package org.teamtators.rotator.scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class Command {
     protected Logger logger;
     private String name;
     private CommandRunContext context = null;
+    private Set<Subsystem> requirements = null;
 
     public Command(String name) {
         checkNotNull(name);
@@ -29,7 +33,7 @@ public abstract class Command {
         return name;
     }
 
-    public CommandRunContext getContext() {
+    CommandRunContext getContext() {
         return context;
     }
 
@@ -46,6 +50,21 @@ public abstract class Command {
             throw new IllegalStateException("Tried to cancel command that is not running");
         }
         this.context.cancelCommand(this);
+    }
+
+    protected void requires(Subsystem subsystem) {
+        if (requirements == null) {
+            requirements = new HashSet<>();
+        }
+        requirements.add(subsystem);
+    }
+
+    Set<Subsystem> getRequirements() {
+        return requirements;
+    }
+
+    public boolean doesRequire(Subsystem subsystem) {
+        return requirements != null && requirements.contains(subsystem);
     }
 
     public static Command oneShot(Runnable function) {

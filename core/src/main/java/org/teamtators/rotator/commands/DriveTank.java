@@ -2,7 +2,7 @@ package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.ILogitechF310;
-import org.teamtators.rotator.subsystems.IDrive;
+import org.teamtators.rotator.subsystems.AbstractDrive;
 
 public class DriveTank extends CommandBase {
     public DriveTank() {
@@ -10,7 +10,7 @@ public class DriveTank extends CommandBase {
     }
 
     private ILogitechF310 joystick;
-    private IDrive drive;
+    private AbstractDrive drive;
 
     @Override
     protected void finish(boolean interrupted) {

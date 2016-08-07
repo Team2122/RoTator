@@ -62,13 +62,13 @@ public class SequentialCommand extends Command implements CommandRunContext {
             }
             if (!run.initialized) {
                 if (run.command.isRunning()) {
-                    if (run.command.getContext() == this) {
+                    if (run.command.getContext() == this && takeRequirements(run.command)) {
                         run.initialized = true;
                     } else {
                         run.command.cancel();
                         return false;
                     }
-                } else {
+                } else if (takeRequirements(run.command)) {
                     run.command.setContext(this);
                     run.command.initialize();
                     run.initialized = true;
@@ -82,6 +82,7 @@ public class SequentialCommand extends Command implements CommandRunContext {
             if (finished) {
                 run.command.finish(false);
                 run.command.setContext(null);
+                releaseRequirements(run.command);
                 currentPosition++;
                 if (currentPosition >= sequence.size()) {
                     logger.trace("Sequential command finished");
@@ -96,6 +97,7 @@ public class SequentialCommand extends Command implements CommandRunContext {
     private void cancelRun(CommandRun run) {
         run.command.finish(true);
         run.command.setContext(null);
+        releaseRequirements(run.command);
         getContext().cancelCommand(this);
     }
 
@@ -106,11 +108,29 @@ public class SequentialCommand extends Command implements CommandRunContext {
         } else {
             logger.debug("SequentialCommand finished");
         }
-        if (sequence.size() == 0) return;
-        if (interrupted && currentRun().command.isRunning()) {
-            currentRun().command.setContext(null);
-            currentRun().command.finish(true);
+        if (sequence.size() == 0 || currentPosition >= sequence.size()) return;
+        Command currentCommand = currentRun().command;
+        if (interrupted && currentCommand.isRunning()) {
+            currentCommand.finish(true);
+            currentCommand.setContext(null);
+            releaseRequirements(currentCommand);
         }
+    }
+
+    @Override
+    public boolean takeRequirements(Command command) {
+        checkNotNull(command);
+        if (getContext() == null)
+            throw new CommandException("Cannot take requirements in parent execution context if command group is not running");
+        return getContext().takeRequirements(command);
+    }
+
+    @Override
+    public void releaseRequirements(Command command) {
+        checkNotNull(command);
+        if (getContext() == null)
+            throw new CommandException("Cannot release requirements in parent execution context if command group is not running");
+        getContext().releaseRequirements(command);
     }
 
     @Override
@@ -132,7 +152,7 @@ public class SequentialCommand extends Command implements CommandRunContext {
         }
     }
 
-    public Optional<CommandRun> findCommand(Command command) {
+    private Optional<CommandRun> findCommand(Command command) {
         return sequence.stream()
                 .filter(run -> run.command == command)
                 .findFirst();

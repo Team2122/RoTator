@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,7 +16,7 @@ import java.lang.reflect.Type;
  * Created by alex on 8/5/16.
  */
 public class Configurables {
-    private static final Logger logger = LogManager.getLogger(Configurables.class);
+    private static final Logger logger = LoggerFactory.getLogger(Configurables.class);
 
     public static boolean configureObject(Object toConfigure, JsonNode config, ObjectMapper mapper) throws ConfigException {
         Preconditions.checkNotNull(toConfigure);
