@@ -9,9 +9,6 @@ public class DriveTank extends CommandBase {
         super("DriveTank");
     }
 
-    private ILogitechF310 joystick;
-    private AbstractDrive drive;
-
     @Override
     protected void finish(boolean interrupted) {
         drive.resetPowers();
@@ -25,8 +22,8 @@ public class DriveTank extends CommandBase {
 
     @Override
     protected boolean step() {
-        double leftPower = joystick.getAxisValue(ILogitechF310.AxisKind.LEFT_STICK_Y);
-        double rightPower = joystick.getAxisValue(ILogitechF310.AxisKind.RIGHT_STICK_Y);
+        double leftPower = driverJoystick.getAxisValue(ILogitechF310.AxisKind.LEFT_STICK_Y);
+        double rightPower = driverJoystick.getAxisValue(ILogitechF310.AxisKind.RIGHT_STICK_Y);
 
         drive.setPowers((float) leftPower, (float) rightPower);
 
