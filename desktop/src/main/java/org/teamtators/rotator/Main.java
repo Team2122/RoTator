@@ -1,15 +1,16 @@
 package org.teamtators.rotator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.commands.LogCommand;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigException;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.scheduler.Scheduler;
+import org.teamtators.rotator.scheduler.Subsystem;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,6 +25,8 @@ public class Main {
         ConfigCommandStore commandStore = new ConfigCommandStore();
         commandStore.registerClass(TestCommand.class);
         commandStore.registerClass(LogCommand.class);
+        TestSubsystem testSubsystem = new TestSubsystem();
+        TestCommand.testSubsystem = testSubsystem;
 
         YAMLMapper yamlMapper = new YAMLMapper();
         ObjectNode commandsConfig;
@@ -36,9 +39,13 @@ public class Main {
             return;
         }
 
-        Command seq = commandStore.getCommand("$Sequence");
-        scheduler.startCommand(seq);
+//        Command command1 = commandStore.getCommand("TestCommand");
+//        Command command2 = commandStore.getCommand("TestCommand2");
+//        scheduler.startCommand(command1);
+//        scheduler.startCommand(command2);
+        scheduler.startCommand(commandStore.getCommand("$Seq2"));
         while (true) {
+            scheduler.startCommand(commandStore.getCommand("TestCommand2"));
             scheduler.execute();
             try {
                 Thread.sleep(250);
@@ -49,12 +56,22 @@ public class Main {
         }
     }
 
-    public static class TestCommand extends Command implements Configurable<TestCommand.Config> {
-        public static class Config {
-            public int maxCount;
+    public static class TestSubsystem extends Subsystem {
+        public TestSubsystem() {
+            super("TestSubsystem");
         }
+    }
 
+    public static class TestCommand extends CommandBase implements Configurable<TestCommand.Config> {
+        int count;
         private Config config;
+
+        public static TestSubsystem testSubsystem;
+
+        public TestCommand() {
+            super("TestCommand");
+            requires(testSubsystem);
+        }
 
         @Override
         public void configure(Config config) {
@@ -62,15 +79,9 @@ public class Main {
             logger.debug("configured TestCommand, maxCount: " + config.maxCount);
         }
 
-        int count;
-        public TestCommand() {
-            super("TestCommand");
-        }
-
         @Override
         protected void initialize() {
-            if (config == null) throw new NullPointerException("config is null");
-            logger.info("initialize");
+            super.initialize();
             count = 0;
         }
 
@@ -82,7 +93,11 @@ public class Main {
 
         @Override
         protected void finish(boolean interrupted) {
-            logger.info("finish {}", interrupted);
+            super.finish(interrupted);
+        }
+
+        public static class Config {
+            public int maxCount;
         }
     }
 

@@ -1,5 +1,8 @@
 TestCommand:
   maxCount: 3
+TestCommand2:
+  class: TestCommand
+  maxCount: 5
 $Null:
 ^LogCommand:
   message: This is the default LogCommand message!
@@ -11,3 +14,6 @@ $Sequence:
   - class: LogCommand
     message: After TestCommand
   - class: LogCommand
+$Seq2:
+  - TestCommand
+  - TestCommand
