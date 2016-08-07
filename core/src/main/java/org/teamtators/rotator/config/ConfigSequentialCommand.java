@@ -32,7 +32,7 @@ public class ConfigSequentialCommand extends SequentialCommand implements Config
     }
 
     @Override
-    public void configure(JsonNode config) throws ConfigException {
+    public void configure(JsonNode config) {
         if (config.size() != 0 && !config.isArray())
             throw new ConfigException("SequentialCommand config must be an array");
         Iterator<JsonNode> it = config.elements();

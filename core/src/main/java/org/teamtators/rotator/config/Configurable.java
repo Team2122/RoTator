@@ -10,5 +10,5 @@ public interface Configurable<T> {
      * Configures this object with the specified config
      * @param config The configuration object
      */
-    void configure(T config) throws ConfigException;
+    void configure(T config);
 }
