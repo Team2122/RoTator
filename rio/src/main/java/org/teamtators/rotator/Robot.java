@@ -1,8 +1,8 @@
 package org.teamtators.rotator;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The main robot class for RoTator
