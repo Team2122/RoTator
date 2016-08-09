@@ -8,11 +8,8 @@ import org.teamtators.rotator.commands.DriveTank;
 import org.teamtators.rotator.commands.LogCommand;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigException;
-import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.Configurables;
 import org.teamtators.rotator.scheduler.Scheduler;
-import org.teamtators.rotator.subsystems.SimulationEncoder;
-import org.teamtators.rotator.subsystems.SimulationMotor;
 import org.teamtators.rotator.subsystems.SimulationDrive;
 import org.teamtators.rotator.ui.SimulationFrame;
 import org.teamtators.rotator.ui.WASDJoystick;
@@ -27,6 +24,7 @@ import java.util.List;
 
 public class Main {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
+    private final YAMLMapper yamlMapper = new YAMLMapper();
     private Scheduler scheduler = new Scheduler();
     private ConfigCommandStore commandStore = new ConfigCommandStore();
     private SimulationDrive drive = new SimulationDrive();
@@ -34,7 +32,6 @@ public class Main {
     private JFrame window;
     private List<Steppable> steppables = new ArrayList<>();
     private boolean running;
-    private final YAMLMapper yamlMapper = new YAMLMapper();
 
     public static void main(String[] args) {
         try {
@@ -93,15 +90,26 @@ public class Main {
     }
 
     public void run() {
-        int delay = 20;
+        int periodMS = 20;
+        double periodS = periodMS / 1000.0;
+        long lastRun;
         while (running) {
+            lastRun = System.nanoTime();
             scheduler.execute();
             for (Steppable steppable : steppables) {
-                steppable.step(delay / 1000.0);
+                steppable.step(periodS);
             }
             window.repaint();
+            long nanoTime = System.nanoTime();
+            long elapsed = (nanoTime - lastRun);
+            int elapsedMS = (int) (elapsed / 1000000);
+            logger.trace("Elapsed {} ms, max {} ms", elapsedMS, periodMS);
+            if (elapsedMS >= periodMS) {
+                logger.debug("{} ms elapsed, greater than period of {} ms", elapsedMS, periodMS);
+                continue;
+            }
             try {
-                Thread.sleep(delay);
+                Thread.sleep(periodMS - elapsedMS);
             } catch (InterruptedException e) {
                 break;
             }
