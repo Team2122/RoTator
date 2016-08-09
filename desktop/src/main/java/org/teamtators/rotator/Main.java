@@ -9,12 +9,16 @@ import org.teamtators.rotator.commands.LogCommand;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigException;
 import org.teamtators.rotator.config.Configurable;
+import org.teamtators.rotator.config.Configurables;
 import org.teamtators.rotator.scheduler.Scheduler;
+import org.teamtators.rotator.subsystems.SimulationEncoder;
+import org.teamtators.rotator.subsystems.SimulationMotor;
 import org.teamtators.rotator.subsystems.SimulationDrive;
 import org.teamtators.rotator.ui.SimulationFrame;
 import org.teamtators.rotator.ui.WASDJoystick;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +34,7 @@ public class Main {
     private JFrame window;
     private List<Steppable> steppables = new ArrayList<>();
     private boolean running;
+    private final YAMLMapper yamlMapper = new YAMLMapper();
 
     public static void main(String[] args) {
         try {
@@ -40,17 +45,11 @@ public class Main {
     }
 
     public void start() {
-        logger.info("Starting simulation");
+        logger.info("Starting ui");
 
-        YAMLMapper yamlMapper = new YAMLMapper();
-        ObjectNode commandsConfig;
-        try (InputStream file = new FileInputStream("./config/commands.yml")) {
-            commandsConfig = (ObjectNode) yamlMapper.reader().readTree(file);
-            logger.info("Loaded commands config");
-        } catch (IOException | ConfigException e) {
-            logger.error("Error loading commands config", e);
-            return;
-        }
+        ObjectNode commandsConfig = loadConfig(new File("./config/commands.yml"));
+        ObjectNode simulationConfig = loadConfig(new File("./config/simulation.yml"));
+        if (commandsConfig == null || simulationConfig == null) return;
 
         CommandBase.scheduler = scheduler;
         CommandBase.commandStore = commandStore;
@@ -59,10 +58,7 @@ public class Main {
 
         commandStore.createCommandsFromConfig(commandsConfig);
 
-        SimulationDrive.Config config = new SimulationDrive.Config();
-        config.powerToVelocity = 100.0;
-        config.wheelWidth = 24.0;
-        drive.configure(config);
+        Configurables.configureObject(drive, simulationConfig.get("SimulationDrive"), yamlMapper);
         CommandBase.drive = drive;
 
         CommandBase.driverJoystick = driverJoystick;
@@ -82,6 +78,18 @@ public class Main {
             thread.interrupt();
         }));
         thread.start();
+    }
+
+    private ObjectNode loadConfig(File file) {
+        ObjectNode commandsConfig;
+        try (InputStream fileStream = new FileInputStream(file)) {
+            commandsConfig = (ObjectNode) yamlMapper.reader().readTree(fileStream);
+            logger.info("Loaded commands config");
+        } catch (IOException | ConfigException e) {
+            logger.error("Error loading commands config", e);
+            return null;
+        }
+        return commandsConfig;
     }
 
     public void run() {

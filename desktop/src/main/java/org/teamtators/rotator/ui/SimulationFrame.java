@@ -33,6 +33,11 @@ public class SimulationFrame extends JFrame {
         this.setResizable(false);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        drive.setMaxX(config.fieldLength);
+        drive.setMaxY(config.fieldWidth);
+        drive.setX(config.fieldLength / 2);
+        drive.setY(config.fieldWidth / 2);
+
         try {
             InputStream imageStream = SimulationFrame.class.getClassLoader().getResourceAsStream("2016_Field_Labeled.png");
             fieldImage = ImageIO.read(imageStream);
@@ -50,12 +55,11 @@ public class SimulationFrame extends JFrame {
         g2d.drawImage(fieldImage, fieldImageTransform, this);
         g2d.dispose();
 
-        double width = config.robotLength * config.inchesPerPixel;
-        double height = config.robotWidth * config.inchesPerPixel;
-        double x = drive.getX() * config.inchesPerPixel + (getWidth() / 2);
-        double y = drive.getY() * config.inchesPerPixel + (getHeight() / 2);
+        double width = drive.getLength() * config.inchesPerPixel;
+        double height = drive.getWidth() * config.inchesPerPixel;
+        double x = drive.getX() * config.inchesPerPixel;
+        double y = drive.getY() * config.inchesPerPixel;
         double rot = drive.getRotation();
-
 
         g2d = (Graphics2D) g.create();
         Rectangle rect = new Rectangle((int) -width / 2, (int) -height / 2, (int) width, (int) height);
@@ -83,7 +87,5 @@ public class SimulationFrame extends JFrame {
         public double inchesPerPixel = 2;
         public int fieldWidth = 27 * 12;
         public int fieldLength = 54 * 12;
-        public int robotWidth = 28;
-        public int robotLength = 32;
     }
 }

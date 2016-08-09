@@ -1,0 +1,13 @@
+SimulationDrive:
+  wheelWidth: 26
+  scrubCoef: .5
+  width: 28
+  length: 32
+  motor:
+    maxRPM: 5330
+    maxTorque: 42.66 # 21.33in-lbf * 2 (2 CIMS)
+    gearRatio: 15.0
+    momentum: 50
+    dampening: 4
+  encoder:
+    multiplier: 25.13 # 8 * pi

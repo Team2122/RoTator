@@ -5,18 +5,34 @@ import org.teamtators.rotator.config.Configurable;
 
 public class SimulationDrive extends AbstractDrive implements Configurable<SimulationDrive.Config>, Steppable {
     private Config config;
-    private float leftPower;
-    private float rightPower;
-    private double leftVelocity;
-    private double rightVelocity;
-    private double leftDistance;
-    private double rightDistance;
+    private SimulationMotor leftMotor = new SimulationMotor();
+    private SimulationMotor rightMotor = new SimulationMotor();
+    private SimulationEncoder leftEncoder = new SimulationEncoder();
+    private SimulationEncoder rightEncoder = new SimulationEncoder();
+    private double maxX;
+    private double maxY;
     private double x;
     private double y;
     private double rotation;
 
     public SimulationDrive() {
         reset();
+    }
+
+    public double getMaxX() {
+        return maxX;
+    }
+
+    public void setMaxX(double maxX) {
+        this.maxX = maxX;
+    }
+
+    public double getMaxY() {
+        return maxY;
+    }
+
+    public void setMaxY(double maxY) {
+        this.maxY = maxY;
     }
 
     public double getX() {
@@ -44,12 +60,8 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
     }
 
     public void reset() {
-        leftPower = 0;
-        rightPower = 0;
-        leftVelocity = 0;
-        rightVelocity = 0;
-        leftDistance = 0;
-        rightDistance = 0;
+        leftMotor.reset();
+        rightMotor.reset();
         x = 0;
         y = 0;
         rotation = 0;
@@ -58,42 +70,46 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
     @Override
     public void configure(Config config) {
         this.config = config;
+        leftMotor.configure(config.motor);
+        rightMotor.configure(config.motor);
+        leftEncoder.configure(config.encoder);
+        rightEncoder.configure(config.encoder);
     }
 
     @Override
     public void setLeftPower(float leftPower) {
-        this.leftPower = leftPower;
+        this.leftMotor.setPower(leftPower);
     }
 
     @Override
     public void setRightPower(float rightPower) {
-        this.rightPower = rightPower;
+        this.rightMotor.setPower(rightPower);
     }
 
     @Override
     public double getLeftRate() {
-        return leftVelocity;
+        return this.leftEncoder.getRate();
     }
 
     @Override
     public double getRightRate() {
-        return rightVelocity;
+        return this.rightEncoder.getRate();
     }
 
     @Override
     public double getLeftDistance() {
-        return leftDistance;
+        return this.leftEncoder.getRotations();
     }
 
     @Override
     public double getRightDistance() {
-        return rightDistance;
+        return this.rightEncoder.getRotations();
     }
 
     @Override
     public void resetEncoders() {
-        leftDistance = 0.0;
-        rightDistance = 0.0;
+        leftEncoder.resetRotations();
+        rightEncoder.resetRotations();
     }
 
     @Override
@@ -103,12 +119,23 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
 
     @Override
     public void step(double delta) {
-        leftVelocity = leftPower * config.powerToVelocity;
-        double dLDist = leftVelocity * delta;
-        leftDistance += dLDist;
-        rightVelocity = rightPower * config.powerToVelocity;
-        double dRDist = rightVelocity * delta;
-        rightDistance += dRDist;
+        leftMotor.step(delta);
+        rightMotor.step(delta);
+
+        double leftRate = leftMotor.getRate();
+        double rightRate = rightMotor.getRate();
+        double dRate = leftRate - rightRate;
+        double scrub = dRate * Math.pow(config.scrubCoef, 1 / delta);
+        leftRate -= scrub;
+        rightRate += scrub;
+
+        leftEncoder.setRawRate(leftRate);
+        rightEncoder.setRawRate(rightRate);
+        leftEncoder.step(delta);
+        rightEncoder.step(delta);
+
+        double dLDist = leftEncoder.getRate() * delta;
+        double dRDist = rightEncoder.getRate() * delta;
 
         double dRot = (dLDist - dRDist) / (config.wheelWidth);
 
@@ -117,12 +144,32 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
         x += Math.cos(rotation) * dist;
         y += Math.sin(rotation) * dist;
 
-        logger.trace("Drive distances (in.): {} {} rates: {} {}", leftDistance, rightDistance, leftVelocity, rightVelocity);
-        logger.trace("Drive position {} {} rotation {}", x, y, rotation);
+        if (x < 0) {
+            x = 0;
+            rotation = Math.round(rotation / (.5 * Math.PI)) * .5 * Math.PI;
+        }
+        if (x > maxX)
+            x = maxX;
+        if (y < 0)
+            y = 0;
+        if (y > maxY)
+            y = maxY;
+    }
+
+    public int getWidth() {
+        return config.width;
+    }
+
+    public int getLength() {
+        return config.length;
     }
 
     public static class Config {
-        public double powerToVelocity;
         public double wheelWidth;
+        public double scrubCoef;
+        public int width;
+        public int length;
+        public SimulationMotor.Config motor;
+        public SimulationEncoder.Config encoder;
     }
 }
