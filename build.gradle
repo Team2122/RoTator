@@ -29,6 +29,8 @@ allprojects {
         compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.7.5'
         compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.5'
         compile group: 'com.google.guava', name: 'guava', version: '19.0'
+        compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
+        compile group: 'com.google.inject.extensions', name: 'guice-multibindings', version: '4.1.0'
     }
 }
 

@@ -1,8 +1,10 @@
 package org.teamtators.rotator.subsystems;
 
+import com.google.inject.Singleton;
 import org.teamtators.rotator.Steppable;
 import org.teamtators.rotator.config.Configurable;
 
+@Singleton
 public class SimulationDrive extends AbstractDrive implements Configurable<SimulationDrive.Config>, Steppable {
     private Config config;
     private SimulationMotor leftMotor = new SimulationMotor();

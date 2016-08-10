@@ -5,38 +5,29 @@ import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.subsystems.SimulationDrive;
 
 import javax.imageio.ImageIO;
+import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Created by alex on 8/7/16.
- */
 public class SimulationFrame extends JFrame {
     private static final Logger logger = LoggerFactory.getLogger(SimulationFrame.class);
     private Config config = new Config();
     private Image fieldImage;
-    private SimulationDrive drive;
-    private WASDJoystick driverJoystick;
     private AffineTransform fieldImageTransform;
 
-    public SimulationFrame(SimulationDrive drive, WASDJoystick driverJoystick) throws HeadlessException {
-        super("RoTator Simulation");
-        this.drive = drive;
-        this.driverJoystick = driverJoystick;
+    private SimulationDrive drive;
+    private WASDJoystick driverJoystick;
 
-        this.addKeyListener(driverJoystick);
+    public SimulationFrame() throws HeadlessException {
+        super("RoTator Simulation");
+
         this.setSize((int) (config.fieldLength * config.inchesPerPixel),
                 (int) (config.fieldWidth * config.inchesPerPixel));
         this.setResizable(false);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        drive.setMaxX(config.fieldLength);
-        drive.setMaxY(config.fieldWidth);
-        drive.setX(config.fieldLength / 2);
-        drive.setY(config.fieldWidth / 2);
 
         try {
             InputStream imageStream = SimulationFrame.class.getClassLoader().getResourceAsStream("2016_Field_Labeled.png");
@@ -46,6 +37,21 @@ public class SimulationFrame extends JFrame {
         }
 
         updateFieldTransform();
+    }
+
+    @Inject
+    public void setDrive(SimulationDrive drive) {
+        this.drive = drive;
+        this.drive.setMaxX(config.fieldLength);
+        this.drive.setMaxY(config.fieldWidth);
+        this.drive.setX(config.fieldLength / 2);
+        this.drive.setY(config.fieldWidth / 2);
+    }
+
+    @Inject
+    public void setDriverJoystick(WASDJoystick driverJoystick) {
+        this.driverJoystick = driverJoystick;
+        this.addKeyListener(this.driverJoystick);
     }
 
     @Override

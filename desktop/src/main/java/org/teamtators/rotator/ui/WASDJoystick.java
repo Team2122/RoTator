@@ -1,5 +1,6 @@
 package org.teamtators.rotator.ui;
 
+import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.ILogitechF310;
@@ -8,8 +9,12 @@ import org.teamtators.rotator.scheduler.Trigger;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+@Singleton
 public class WASDJoystick implements ILogitechF310, KeyListener {
     private static final Logger logger = LoggerFactory.getLogger(WASDJoystick.class);
+
+    public WASDJoystick() {
+    }
 
     private boolean up = false;
     private boolean left = false;

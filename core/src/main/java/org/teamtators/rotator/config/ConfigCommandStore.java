@@ -4,19 +4,28 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.google.inject.Injector;
 import org.teamtators.rotator.scheduler.Command;
-import org.teamtators.rotator.scheduler.CommandConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.security.ProviderException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 public class ConfigCommandStore extends org.teamtators.rotator.scheduler.CommandStore {
     protected ObjectMapper objectMapper = new YAMLMapper();
-    private Map<String, CommandConstructor> constructors = new HashMap<>();
+    private Injector injector;
+    private Map<String, Provider<Command>> commandProviders = new HashMap<>();
     private Map<String, JsonNode> defaultConfigs = new HashMap<>();
+
+    @Inject
+    public void setInjector(Injector injector) {
+        this.injector = injector;
+    }
 
     public static ObjectNode applyDefaults(ObjectNode object, ObjectNode defaults) {
         ObjectNode result = defaults.deepCopy();
@@ -28,20 +37,24 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
         return result;
     }
 
-    public Map<String, CommandConstructor> getConstructors() {
-        return constructors;
+    public void registerCommandProviders(Map<String, Provider<Command>> commandProviders) {
+        this.commandProviders.putAll(commandProviders);
     }
 
-    public void registerConstructor(String name, CommandConstructor constructor) {
-        constructors.put(name, constructor);
+    public Map<String, Provider<Command>> getCommandProviders() {
+        return commandProviders;
     }
 
-    public CommandConstructor getConstructor(String className) throws ConfigException {
-        CommandConstructor constructor = constructors.get(className);
-        if (constructor == null) {
-            throw new ConfigException(String.format("Missing Command constructor \"%s\"", className));
+    public void registerCommand(String name, Provider<Command> constructor) {
+        commandProviders.put(name, constructor);
+    }
+
+    public Provider<Command> getCommandProvider(String className) throws ConfigException {
+        Provider<Command> provider = commandProviders.get(className);
+        if (provider == null) {
+            throw new ConfigException(String.format("Missing Command provider \"%s\"", className));
         }
-        return constructor;
+        return provider;
     }
 
     public <T extends Command> void registerClass(Class<T> commandClass, String name) {
@@ -51,14 +64,14 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(commandClass.toString() + " does not have a no argument constructor");
         }
-        CommandConstructor commandConstructor = () -> {
+        Provider<Command> commandProvider = () -> {
             try {
                 return constructor.newInstance();
-            } catch (IllegalAccessException | InstantiationException e) {
-                throw new InvocationTargetException(e);
+            } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                throw new ProviderException("Error constructing command", e);
             }
         };
-        registerConstructor(name, commandConstructor);
+        registerCommand(name, commandProvider);
     }
 
     public <T extends Command> void registerClass(Class<T> commandClass) {
@@ -110,11 +123,13 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
     }
 
     public Command constructCommandClass(String commandName, String className) throws ConfigException {
-        CommandConstructor constructor = getConstructor(className);
+        Provider<Command> constructor = getCommandProvider(className);
         Command command;
         try {
-            command = constructor.constructCommand();
-        } catch (InvocationTargetException e) {
+            command = constructor.get();
+            if (injector != null)
+                injector.injectMembers(command);
+        } catch (Exception e) {
             throw new ConfigException("Exception thrown while constructing Command " + commandName, e);
         }
         putCommand(commandName, command);

@@ -1,5 +1,6 @@
 package org.teamtators.rotator.scheduler;
 
+import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Singleton
 public final class Scheduler implements CommandRunContext {
     private static Logger logger = LoggerFactory.getLogger(Scheduler.class);
 
