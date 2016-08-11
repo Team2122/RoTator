@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -15,6 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class Scheduler implements CommandRunContext {
     private static Logger logger = LoggerFactory.getLogger(Scheduler.class);
 
+    private Map<TriggerSource, List<TriggerScheduler>> triggerSchedulers = new HashMap<>();
     private Map<String, CommandRun> runningCommands = new ConcurrentHashMap<>();
     private Set<Subsystem> subsystems = new HashSet<>();
 
@@ -22,7 +24,27 @@ public final class Scheduler implements CommandRunContext {
         subsystems.add(subsystem);
     }
 
+    public void addTrigger(TriggerSource source, TriggerScheduler scheduler) {
+        List<TriggerScheduler> schedulers = triggerSchedulers.get(source);
+        if (schedulers == null) {
+            triggerSchedulers.put(source, new ArrayList<>(Collections.singletonList(scheduler)));
+        } else {
+            schedulers.add(scheduler);
+        }
+    }
+
+    public TriggerAdder onTrigger(TriggerSource triggerSource) {
+        return new TriggerAdder(this, triggerSource);
+    }
+
     public void execute() {
+        for (Map.Entry<TriggerSource, List<TriggerScheduler>> entry : triggerSchedulers.entrySet()) {
+            TriggerSource triggerSource = entry.getKey();
+            boolean active = triggerSource.getActive();
+            for (TriggerScheduler scheduler : entry.getValue()) {
+                scheduler.processTrigger(active);
+            }
+        }
         logger.trace("{} commands running", runningCommands.size());
         for (CommandRun run : runningCommands.values()) {
             if (run.cancel) {
