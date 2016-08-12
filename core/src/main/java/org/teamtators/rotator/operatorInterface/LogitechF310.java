@@ -3,11 +3,48 @@ package org.teamtators.rotator.operatorInterface;
 import org.teamtators.rotator.scheduler.TriggerSource;
 
 public interface LogitechF310 {
+    /**
+     * A method to return the value of an axis on the joystick
+     *
+     * @param axisKind The axis to get the value of
+     * @return the value of the axis, between -1 and 1
+     */
     double getAxisValue(Axis axisKind);
 
+    /**
+     * Get the state of a given button
+     *
+     * @return State of the given button
+     */
     boolean getButtonValue(Button button);
 
-    TriggerSource getTriggerSource(Button button);
+    /**
+     * Gets a trigger source for the specified button on the joystick
+     *
+     * @param button Button to get the trigger source for
+     * @return A TriggerSource
+     */
+    default TriggerSource getTriggerSource(Button button) {
+        return new LogitechTrigger(this, button);
+    }
+
+    /**
+     * A class representing a button on a WPILibLogitechF310 gamepad, used for binding commands to buttons
+     */
+    class LogitechTrigger implements TriggerSource {
+        private LogitechF310 joystick;
+        private Button button;
+
+        public LogitechTrigger(LogitechF310 joystick, Button button) {
+            this.joystick = joystick;
+            this.button = button;
+        }
+
+        @Override
+        public boolean getActive() {
+            return joystick.getButtonValue(button);
+        }
+    }
 
     /**
      * Enum containing the location of all the buttons on a Logitech F310 gamepad

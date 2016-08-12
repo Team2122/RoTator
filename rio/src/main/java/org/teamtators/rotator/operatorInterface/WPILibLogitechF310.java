@@ -21,22 +21,11 @@ public class WPILibLogitechF310 extends Joystick implements LogitechF310 {
         super(port);
     }
 
-    /**
-     * A method to return the value of the joystick
-     *
-     * @param axisKind The stick and direction
-     * @return the value of the axis
-     */
     @Override
     public double getAxisValue(Axis axisKind) {
         return getRawAxis(axisKind.getAxisNumber());
     }
 
-    /**
-     * Get the state of a given button
-     *
-     * @return State of the given button
-     */
     @Override
     public boolean getButtonValue(Button button) {
         if (button.equals(Button.TRIGGER_LEFT)) {
@@ -64,38 +53,6 @@ public class WPILibLogitechF310 extends Joystick implements LogitechF310 {
             return button.equals(currentPOV);
         } else {
             return getRawButton(button.getButtonNumber());
-        }
-    }
-
-    /**
-     * Get the button for the given Button
-     *
-     * @param button Button to get the button for
-     * @return A button for the given Button
-     */
-    @Override
-    public TriggerSource getTriggerSource(Button button) {
-        TriggerSource triggerSource = triggerSourceCache.get(button);
-        if (triggerSource == null) {
-            triggerSource = new LogitechTrigger(button);
-            triggerSourceCache.put(button, triggerSource);
-        }
-        return triggerSource;
-    }
-
-    /**
-     * A class representing a button on a WPILibLogitechF310 gamepad, used for binding commands to buttons
-     */
-    private class LogitechTrigger implements TriggerSource {
-        private Button button;
-
-        public LogitechTrigger(Button button) {
-            this.button = button;
-        }
-
-        @Override
-        public boolean getActive() {
-            return WPILibLogitechF310.this.getButtonValue(button);
         }
     }
 }

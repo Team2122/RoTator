@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
+import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.subsystems.SimulationDrive;
 import org.teamtators.rotator.ui.SimulationFrame;
@@ -17,6 +18,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.teamtators.rotator.scheduler.*;
+import org.teamtators.rotator.ui.WASDJoystick;
 
 public class Main {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -42,7 +44,14 @@ public class Main {
         ConfigLoader configLoader = injector.getInstance(ConfigLoader.class);
         ConfigCommandStore commandStore = injector.getInstance(ConfigCommandStore.class);
         SimulationDrive drive = injector.getInstance(SimulationDrive.class);
+        WASDJoystick joystick = injector.getInstance(WASDJoystick.class);
         scheduler = injector.getInstance(Scheduler.class);
+
+        scheduler.onTrigger(joystick.getTriggerSource(LogitechF310.Button.A))
+                .start(Command.log("Button A pressed"))
+                .whenPressed()
+                .start(Command.log("Button A released"))
+                .whenReleased();
 
         ObjectNode commandsConfig = (ObjectNode) configLoader.load("commands.yml");
         ObjectNode simulationConfig = (ObjectNode) configLoader.load("simulation.yml");

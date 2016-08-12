@@ -3,26 +3,41 @@ package org.teamtators.rotator.ui;
 import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.teamtators.rotator.ILogitechF310;
-import org.teamtators.rotator.scheduler.Trigger;
+import org.teamtators.rotator.operatorInterface.LogitechF310;
+import org.teamtators.rotator.scheduler.TriggerSource;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.EnumMap;
 
 @Singleton
-public class WASDJoystick implements ILogitechF310, KeyListener {
+public class WASDJoystick implements LogitechF310, KeyListener {
     private static final Logger logger = LoggerFactory.getLogger(WASDJoystick.class);
+    private boolean up;
+    private boolean left;
+    private boolean down;
+    private boolean right;
+    private double leftTrigger;
+    private double rightTrigger;
+
+    private EnumMap<Button, Boolean> buttonValues = new EnumMap<Button, Boolean>(Button.class);
 
     public WASDJoystick() {
+        reset();
     }
 
-    private boolean up = false;
-    private boolean left = false;
-    private boolean down = false;
-    private boolean right = false;
+    public void reset() {
+        up = false;
+        left = false;
+        down = false;
+        right = false;
+        leftTrigger = 0;
+        rightTrigger = 0;
+        buttonValues.clear();
+    }
 
     @Override
-    public double getAxisValue(AxisKind axisKind) {
+    public double getAxisValue(Axis axisKind) {
         switch (axisKind) {
             case LEFT_STICK_Y:
                 if (left)
@@ -38,23 +53,25 @@ public class WASDJoystick implements ILogitechF310, KeyListener {
                 else if (down) return -1;
                 else if (left || up) return 1;
                 else return 0;
+            case LEFT_TRIGGER:
+                return leftTrigger;
+            case RIGHT_TRIGGER:
+                return rightTrigger;
         }
         return 0;
     }
 
     @Override
-    public boolean getButtonValue(ButtonKind button) {
+    public boolean getButtonValue(Button button) {
+        if (buttonValues.containsKey(button)) {
+            return buttonValues.get(button);
+        }
         return false;
     }
 
     @Override
-    public Trigger getTrigger(ButtonKind button) {
+    public TriggerSource getTriggerSource(Button button) {
         return () -> getButtonValue(button);
-    }
-
-    @Override
-    public ButtonKind getPressedButton() {
-        return null;
     }
 
     @Override
@@ -63,51 +80,80 @@ public class WASDJoystick implements ILogitechF310, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-            case KeyEvent.VK_W:
-                up = true;
-                break;
-            case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_A:
-                left = true;
-                break;
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_S:
-                down = true;
-                break;
-            case KeyEvent.VK_RIGHT:
-            case KeyEvent.VK_D:
-                right = true;
-                break;
-            default:
-                return;
-        }
-        logger.trace("Key {} pressed. w {} a {} s {} d {}", e.getKeyCode(), up, left, down, right);
+        setKeyValue(e.getKeyCode(), true);
+        logger.trace("Key {} pressed", e.getKeyCode());
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
+        setKeyValue(e.getKeyCode(), false);
+        logger.trace("Key {} released");
+    }
+
+    private void setKeyValue(int keyCode, boolean value) {
+        switch (keyCode) {
             case KeyEvent.VK_UP:
-            case KeyEvent.VK_W:
-                up = false;
+                up = value;
                 break;
             case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_A:
-                left = false;
+                left = value;
                 break;
             case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_S:
-                down = false;
+                down = value;
                 break;
             case KeyEvent.VK_RIGHT:
-            case KeyEvent.VK_D:
-                right = false;
+                right = value;
                 break;
-            default:
-                return;
+            case KeyEvent.VK_K:
+                buttonValues.put(Button.X, value);
+                break;
+            case KeyEvent.VK_O:
+                buttonValues.put(Button.Y, value);
+                break;
+            case KeyEvent.VK_L:
+                buttonValues.put(Button.A, value);
+                break;
+            case KeyEvent.VK_P:
+                buttonValues.put(Button.B, value);
+                break;
+            case KeyEvent.VK_1:
+                buttonValues.put(Button.BUMPER_LEFT, value);
+                break;
+            case KeyEvent.VK_0:
+                buttonValues.put(Button.BUMPER_RIGHT, value);
+                break;
+            case KeyEvent.VK_2:
+                leftTrigger = value ? 1.0 : 0.0;
+                buttonValues.put(Button.TRIGGER_LEFT, value);
+                break;
+            case KeyEvent.VK_9:
+                rightTrigger = value ? 1.0 : 0.0;
+                buttonValues.put(Button.TRIGGER_RIGHT, value);
+                break;
+            case KeyEvent.VK_3:
+                buttonValues.put(Button.STICK_LEFT, value);
+                break;
+            case KeyEvent.VK_8:
+                buttonValues.put(Button.STICK_RIGHT, value);
+                break;
+            case KeyEvent.VK_5:
+                buttonValues.put(Button.BACK, value);
+                break;
+            case KeyEvent.VK_6:
+                buttonValues.put(Button.START, value);
+                break;
+            case KeyEvent.VK_W:
+                buttonValues.put(Button.POV_UP, value);
+                break;
+            case KeyEvent.VK_A:
+                buttonValues.put(Button.POV_LEFT, value);
+                break;
+            case KeyEvent.VK_S:
+                buttonValues.put(Button.POV_DOWN, value);
+                break;
+            case KeyEvent.VK_D:
+                buttonValues.put(Button.POV_RIGHT, value);
+                break;
         }
-        logger.trace("Key {} released. w {} a {} s {} d {}", e.getKeyCode(), up, left, down, right);
     }
 }
