@@ -2,8 +2,8 @@ package org.teamtators.rotator;
 
 import com.google.common.collect.EvictingQueue;
 import edu.wpi.first.wpilibj.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.nio.ByteBuffer;
@@ -302,7 +302,7 @@ public class ADXRS453 implements Closeable, PIDSource, IGyro {
      * @param spi The spi to use
      */
     ADXRS453(SPI spi) {
-        logger = LogManager.getLogger(this.getClass());
+        logger = LoggerFactory.getLogger(ADXRS453.class);
         this.spi = spi;
         calibrationValues = EvictingQueue.create((int) (getCalibrationPeriod() / getUpdatePeriod()));
         updater = new Notifier(this::update);
