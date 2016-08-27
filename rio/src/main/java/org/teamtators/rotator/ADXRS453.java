@@ -26,13 +26,12 @@ public class ADXRS453 implements Closeable, PIDSource, IGyro {
      * @return Whether or not the number of ones is odd
      */
     protected static boolean calcParity(int data) {
-        int ones = 0;
-        for (int i = 0; i < 32; i++) {
-            if ((data & (1 << i)) != 0) {
-                ones++;
-            }
+        int parity = 0;
+        while (data != 0) {
+            parity ^= (data & 1);
+            data >>= 1;
         }
-        return (ones % 2) == 1;
+        return (parity % 2) == 1;
     }
 
     protected boolean checkParity(int data) {
