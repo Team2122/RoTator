@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Closeable;
 import java.nio.ByteBuffer;
 import java.util.concurrent.locks.ReadWriteLock;
 
@@ -13,7 +12,7 @@ import java.util.concurrent.locks.ReadWriteLock;
  * A sensor class for using an ADXRS453 gyroscope.
  * Measures angle change on the yaw axis.
  */
-public class ADXRS453 implements Closeable, PIDSource, IGyro {
+public class ADXRS453 implements PIDSource, IGyro {
     protected static int fixParity(int data) {
         data &= ~kP;
         return data | (calcParity(data) ? 0 : kP);
@@ -486,7 +485,7 @@ public class ADXRS453 implements Closeable, PIDSource, IGyro {
         }
     }
 
-    public void close() {
+    public void finalize() {
         spi.free();
         updater.stop();
     }
