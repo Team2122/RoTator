@@ -44,7 +44,7 @@ public class Configurables {
                 }
             }
         }
-        logger.debug("Attempted to configure object of " + clazz.toString() + ", which is not Configurable");
+        logger.trace("Attempted to configure object of " + clazz.toString() + ", which is not Configurable");
         return false;
     }
 }

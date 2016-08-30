@@ -48,7 +48,7 @@ project(':rio') {
     evaluationDependsOn(':core')
 
     gradlerio.robotClass = 'org.teamtators.rotator.Robot'
-    gradlerio.team = '2122'
+    gradlerio.team = '212'
 
     def robotManifest = {
         attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
