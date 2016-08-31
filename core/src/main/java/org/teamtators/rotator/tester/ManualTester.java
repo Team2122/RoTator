@@ -1,6 +1,7 @@
 package org.teamtators.rotator.tester;
 
 import com.google.inject.Inject;
+import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.Command;
 
@@ -25,8 +26,8 @@ public class ManualTester extends Command {
     }
 
     @Inject
-    public void setJoystick(LogitechF310 joystick) {
-        this.joystick = joystick;
+    public void setJoystick(AbstractOperatorInterface joystick) {
+        this.joystick = joystick.driverJoystick();
     }
 
     @Override
