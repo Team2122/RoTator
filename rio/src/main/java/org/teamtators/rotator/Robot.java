@@ -15,6 +15,7 @@ import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.*;
 import org.teamtators.rotator.subsystems.AbstractDrive;
+import org.teamtators.rotator.subsystems.ITestable;
 import org.teamtators.rotator.tester.ManualTester;
 
 import javax.inject.Inject;
@@ -72,6 +73,9 @@ public class Robot extends IterativeRobot {
             if (config != null)
                 Configurables.configureObject(subsystem, config, objectMapper);
             scheduler.registerSubsystem(subsystem);
+            if(subsystem instanceof ITestable) {
+                manualTester.registerTestGroup(((ITestable) subsystem).getTestGroup());
+            }
         }
 
         logger.debug("Creating commands");
