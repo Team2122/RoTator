@@ -39,39 +39,48 @@ public class ManualTester extends Command {
 
     @Override
     protected boolean step() {
-        getCurrentTest().step();
-        getCurrentTest().updateAxis(LogitechF310.Axis.RIGHT_STICK_Y,
-                joystick.getAxisValue(LogitechF310.Axis.RIGHT_STICK_Y));
-        for (LogitechF310.Button button : LogitechF310.Button.values()) {
-            boolean value = joystick.getButtonValue(button);
-            if (lastStates.containsKey(button)) {
-                boolean lastValue = lastStates.get(button);
-                if (value && !lastValue) {
-                    if (button == LogitechF310.Button.POV_DOWN) {
-                        nextTestGroup();
-                    } else if (button == LogitechF310.Button.POV_UP) {
-                        previousTestGroup();
-                    } else if (button == LogitechF310.Button.POV_LEFT) {
-                        previousTest();
-                    } else if (button == LogitechF310.Button.POV_RIGHT) {
-                        nextTest();
-                    } else {
-                        getCurrentTest().onButtonDown(button);
+        ComponentTest test = getCurrentTest();
+        if(test != null) {
+            test.step();
+            test.updateAxis(LogitechF310.Axis.RIGHT_STICK_Y,
+                    joystick.getAxisValue(LogitechF310.Axis.RIGHT_STICK_Y));
+            for (LogitechF310.Button button : LogitechF310.Button.values()) {
+                boolean value = joystick.getButtonValue(button);
+                if (lastStates.containsKey(button)) {
+                    boolean lastValue = lastStates.get(button);
+                    if (value && !lastValue) {
+                        if (button == LogitechF310.Button.POV_DOWN) {
+                            nextTestGroup();
+                        } else if (button == LogitechF310.Button.POV_UP) {
+                            previousTestGroup();
+                        } else if (button == LogitechF310.Button.POV_LEFT) {
+                            previousTest();
+                        } else if (button == LogitechF310.Button.POV_RIGHT) {
+                            nextTest();
+                        } else {
+                            test.onButtonDown(button);
+                        }
+                    } else if (lastValue && !value) {
+                        test.onButtonUp(button);
                     }
-                } else if (lastValue && !value) {
-                    getCurrentTest().onButtonUp(button);
                 }
+                lastStates.put(button, value);
             }
-            lastStates.put(button, value);
         }
         return false;
     }
 
     private ComponentTest getCurrentTest() {
-        return getCurrentTestGroup().get(testIndex);
+        TestGroup group = getCurrentTestGroup();
+        if(group != null) {
+            return group.getTest(testIndex);
+        }
+        else {
+            return null;
+        }
     }
 
-    private List<ComponentTest> getCurrentTestGroup() {
+    private TestGroup getCurrentTestGroup() {
         return testGroups.get(testGroupIndex);
     }
 
@@ -80,26 +89,33 @@ public class ManualTester extends Command {
         getCurrentTest().stop();
     }
 
+    private void stopTest() {
+        ComponentTest test = getCurrentTest();
+        if(test != null) {
+            test.stop();
+        }
+    }
+
     public void nextTest() {
-        getCurrentTest().stop();
+        stopTest();
         testIndex++;
-        if (testIndex >= getCurrentTestGroup().size()) {
+        if (testIndex >= getCurrentTestGroup().count()) {
             testIndex = 0;
         }
         startNextTest();
     }
 
     public void previousTest() {
-        getCurrentTest().stop();
+        stopTest();
         testIndex--;
         if (testIndex < 0) {
-            testIndex = getCurrentTestGroup().size() - 1;
+            testIndex = getCurrentTestGroup().count() - 1;
         }
         startNextTest();
     }
 
     public void nextTestGroup() {
-        getCurrentTest().stop();
+        stopTest();
         testGroupIndex++;
         if (testGroupIndex >= testGroups.size()) {
             testGroupIndex = 0;
@@ -108,7 +124,7 @@ public class ManualTester extends Command {
     }
 
     public void previousTestGroup() {
-        getCurrentTest().stop();
+        stopTest();
         testGroupIndex--;
         if (testGroupIndex < 0) {
             testGroupIndex = testGroups.size() - 1;
@@ -117,18 +133,24 @@ public class ManualTester extends Command {
     }
 
     private void startNextTest() {
-        logger.info("Starting {}", getCurrentTest().getName());
-        getCurrentTest().start();
+        ComponentTest test = getCurrentTest();
+        if(test != null) {
+            logger.info("Starting {}", test.getName());
+            test.start();
+        }
+        else {
+            logger.warn("Test group is empty!");
+        }
     }
 
-    private List<List<ComponentTest>> testGroups = new ArrayList<>();
+    private List<TestGroup> testGroups = new ArrayList<>();
 
     /**
      * Register a new test group
      *
      * @param group the test group to register
      */
-    public void registerTestGroup(List<ComponentTest> group) {
+    public void registerTestGroup(TestGroup group) {
         testGroups.add(group);
     }
 }
