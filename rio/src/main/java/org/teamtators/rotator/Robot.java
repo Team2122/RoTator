@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
+import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.scheduler.Scheduler;
@@ -30,7 +31,7 @@ public class Robot extends IterativeRobot {
     @Inject
     private ConfigCommandStore commandStore;
     @Inject
-    private LogitechF310 joystick;
+    private AbstractOperatorInterface operatorInterface;
     @Inject
     private List<Subsystem> subsystems;
     @Inject
@@ -61,6 +62,8 @@ public class Robot extends IterativeRobot {
         Injector injector = coreInjector.createChildInjector(new RioModule());
         injector.injectMembers(this);
 
+        commandStore.setInjector(injector);
+
         logger.debug("Creating commands");
         commandStore.createCommandsFromConfig(commandsConfig);
 
@@ -68,12 +71,13 @@ public class Robot extends IterativeRobot {
         for (Subsystem subsystem : subsystems) {
             String name = subsystem.getName();
             JsonNode config = subsystemsConfig.get(name);
-            Configurables.configureObject(subsystem, config, objectMapper);
+            if (config != null)
+                Configurables.configureObject(subsystem, config, objectMapper);
             scheduler.registerSubsystem(subsystem);
         }
 
         logger.debug("Configuring triggers");
-        scheduler.onTrigger(joystick.getTriggerSource(LogitechF310.Button.A))
+        scheduler.onTrigger(operatorInterface.driverJoystick().getTriggerSource(LogitechF310.Button.A))
                 .start(Command.log("Button A pressed"))
                 .whenPressed()
                 .start(Command.log("Button A released"))

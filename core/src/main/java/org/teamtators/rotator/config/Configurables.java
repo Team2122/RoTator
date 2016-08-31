@@ -19,8 +19,8 @@ public class Configurables {
     private static final Logger logger = LoggerFactory.getLogger(Configurables.class);
 
     public static boolean configureObject(Object toConfigure, JsonNode config, ObjectMapper mapper) throws ConfigException {
-        Preconditions.checkNotNull(toConfigure);
-        Preconditions.checkNotNull(config);
+        Preconditions.checkNotNull(toConfigure, "Cannot config null object");
+        Preconditions.checkNotNull(config, "config for object must not be null");
 
         Class<?> clazz = toConfigure.getClass();
         Type[] interfaces = clazz.getGenericInterfaces();

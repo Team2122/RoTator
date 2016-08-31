@@ -37,11 +37,14 @@ public class RioModule extends AbstractModule {
         bind(AbstractDrive.class).to(WPILibDrive.class);
         bind(AbstractOperatorInterface.class).to(WPILibOperatorInterface.class);
 
-        bind(ObjectNode.class).annotatedWith(Names.named("commands")).toInstance(commandsConfig);
-        bind(ObjectNode.class).annotatedWith(Names.named("subsystems")).toInstance(subsystemsConfig);
+        if (commandsConfig != null)
+            bind(ObjectNode.class).annotatedWith(Names.named("commands")).toInstance(commandsConfig);
+        if (subsystemsConfig != null)
+            bind(ObjectNode.class).annotatedWith(Names.named("subsystems")).toInstance(subsystemsConfig);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public List<Subsystem> providesSubsystems(AbstractDrive drive, AbstractOperatorInterface operatorInterface) {
         return Arrays.asList(drive, operatorInterface);
     }

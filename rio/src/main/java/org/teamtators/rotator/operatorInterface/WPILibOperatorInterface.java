@@ -1,7 +1,9 @@
 package org.teamtators.rotator.operatorInterface;
 
+import com.google.inject.Singleton;
 import org.teamtators.rotator.config.Configurable;
 
+@Singleton
 public class WPILibOperatorInterface
         extends AbstractOperatorInterface
         implements Configurable<WPILibOperatorInterface.Config> {
@@ -9,6 +11,7 @@ public class WPILibOperatorInterface
 
     @Override
     public void configure(Config config) {
+        logger.trace("Configuring operator interface");
         driverJoystick = new WPILibLogitechF310(config.driverJoystick);
     }
 
