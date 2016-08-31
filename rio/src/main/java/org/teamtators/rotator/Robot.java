@@ -1,5 +1,6 @@
 package org.teamtators.rotator;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Guice;
@@ -13,9 +14,11 @@ import org.teamtators.rotator.config.Configurables;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.scheduler.Scheduler;
+import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.subsystems.AbstractDrive;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * The main robot class for RoTator
@@ -29,7 +32,7 @@ public class Robot extends IterativeRobot {
     @Inject
     private LogitechF310 joystick;
     @Inject
-    private AbstractDrive drive;
+    private List<Subsystem> subsystems;
     @Inject
     private ObjectMapper objectMapper;
     @Inject
@@ -62,7 +65,12 @@ public class Robot extends IterativeRobot {
         commandStore.createCommandsFromConfig(commandsConfig);
 
         logger.debug("Configuring subsystems");
-        Configurables.configureObject(drive, subsystemsConfig.get("Drive"), objectMapper);
+        for (Subsystem subsystem : subsystems) {
+            String name = subsystem.getName();
+            JsonNode config = subsystemsConfig.get(name);
+            Configurables.configureObject(subsystem, config, objectMapper);
+            scheduler.registerSubsystem(subsystem);
+        }
 
         logger.debug("Configuring triggers");
         scheduler.onTrigger(joystick.getTriggerSource(LogitechF310.Button.A))

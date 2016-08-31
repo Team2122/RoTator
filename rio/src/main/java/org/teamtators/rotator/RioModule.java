@@ -9,8 +9,13 @@ import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.operatorInterface.WPILibLogitechF310;
 import org.teamtators.rotator.operatorInterface.WPILibOperatorInterface;
+import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.subsystems.AbstractDrive;
 import org.teamtators.rotator.subsystems.WPILibDrive;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class RioModule extends AbstractModule {
     private ObjectNode commandsConfig;
@@ -34,5 +39,10 @@ public class RioModule extends AbstractModule {
 
         bind(ObjectNode.class).annotatedWith(Names.named("commands")).toInstance(commandsConfig);
         bind(ObjectNode.class).annotatedWith(Names.named("subsystems")).toInstance(subsystemsConfig);
+    }
+
+    @Provides @Singleton
+    public List<Subsystem> providesSubsystems(AbstractDrive drive, AbstractOperatorInterface operatorInterface) {
+        return Arrays.asList(drive, operatorInterface);
     }
 }
