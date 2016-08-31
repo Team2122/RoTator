@@ -15,6 +15,7 @@ import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.*;
 import org.teamtators.rotator.subsystems.AbstractDrive;
+import org.teamtators.rotator.tester.ManualTester;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -36,6 +37,8 @@ public class Robot extends IterativeRobot {
     private ObjectMapper objectMapper;
     @Inject
     private Scheduler scheduler;
+    @Inject
+    private ManualTester manualTester;
 
     @Override
     public void robotInit() {
@@ -81,6 +84,7 @@ public class Robot extends IterativeRobot {
                 .start(Commands.log("Button A released"))
                 .whenReleased();
         scheduler.registerDefaultCommand(commandStore.getCommand("DriveTank"));
+        scheduler.registerDefaultCommand(manualTester);
 
         logger.info("Robot initialized");
     }

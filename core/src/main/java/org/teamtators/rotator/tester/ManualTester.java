@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.Command;
+import org.teamtators.rotator.scheduler.RobotState;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -23,6 +24,7 @@ public class ManualTester extends Command {
 
     public ManualTester() {
         super("ManualTester");
+        validIn(RobotState.TEST);
     }
 
     @Inject
