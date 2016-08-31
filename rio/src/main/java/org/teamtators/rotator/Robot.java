@@ -2,7 +2,6 @@ package org.teamtators.rotator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -16,13 +15,25 @@ import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.subsystems.AbstractDrive;
 
+import javax.inject.Inject;
+
 /**
  * The main robot class for RoTator
  */
 public class Robot extends IterativeRobot {
-    private Scheduler scheduler;
+    private static final Logger logger = LoggerFactory.getLogger(Robot.class);
+    @Inject
+    private ConfigLoader configLoader;
+    @Inject
     private ConfigCommandStore commandStore;
-    private Logger logger = LoggerFactory.getLogger(Robot.class);
+    @Inject
+    private LogitechF310 joystick;
+    @Inject
+    private AbstractDrive drive;
+    @Inject
+    private ObjectMapper objectMapper;
+    @Inject
+    private Scheduler scheduler;
 
     @Override
     public void robotInit() {
@@ -36,19 +47,16 @@ public class Robot extends IterativeRobot {
     private void initialize() {
         logger.info("Robot is initializing");
 
-        Injector injector = Guice.createInjector(new RioModule());
+        Injector coreInjector = Guice.createInjector(new CoreModule()
+                .withConfigDir("/home/lvuser/config"));
+        configLoader = coreInjector.getInstance(ConfigLoader.class);
 
-        ConfigLoader configLoader = injector.getInstance(ConfigLoader.class);
-        commandStore = injector.getInstance(ConfigCommandStore.class);
-        LogitechF310 joystick = injector.getInstance(LogitechF310.class);
-        AbstractDrive drive = injector.getInstance(AbstractDrive.class);
-        ObjectMapper objectMapper = injector.getInstance(ObjectMapper.class);
-        scheduler = injector.getInstance(Scheduler.class);
-
-        logger.debug("Created injector");
-
+        logger.debug("Created injector. Loading configs");
         ObjectNode commandsConfig = (ObjectNode) configLoader.load("commands.yml");
         ObjectNode subsystemsConfig = (ObjectNode) configLoader.load("subsystems.yml");
+
+        Injector injector = coreInjector.createChildInjector(new RioModule());
+        injector.injectMembers(this);
 
         logger.debug("Creating commands");
         commandStore.createCommandsFromConfig(commandsConfig);

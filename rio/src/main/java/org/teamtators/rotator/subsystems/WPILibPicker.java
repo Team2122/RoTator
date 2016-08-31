@@ -6,6 +6,9 @@ import edu.wpi.first.wpilibj.VictorSP;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.VictorSPConfig;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class WPILibPicker extends AbstractPicker implements Configurable<WPILibPicker.Config> {
 
     public static class Config {

@@ -24,6 +24,10 @@ public final class Scheduler implements CommandRunContext {
         subsystems.add(subsystem);
     }
 
+    public void registerSubsystems(Collection<Subsystem> subsystems) {
+        this.subsystems.addAll(subsystems);
+    }
+
     public void addTrigger(TriggerSource source, TriggerScheduler scheduler) {
         List<TriggerScheduler> schedulers = triggerSchedulers.get(source);
         if (schedulers == null) {

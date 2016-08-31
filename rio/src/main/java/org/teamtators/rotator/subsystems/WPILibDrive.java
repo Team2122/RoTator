@@ -6,6 +6,9 @@ import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.EncoderConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDrive.Config> {
     public static class Config {
         public VictorSPConfig leftMotor;
