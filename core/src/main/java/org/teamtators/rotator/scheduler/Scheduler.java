@@ -4,9 +4,6 @@ import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,6 +16,9 @@ public final class Scheduler implements CommandRunContext {
     private Map<TriggerSource, List<TriggerScheduler>> triggerSchedulers = new HashMap<>();
     private Map<String, CommandRun> runningCommands = new ConcurrentHashMap<>();
     private Set<Subsystem> subsystems = new HashSet<>();
+    private Set<Command> defaultCommands = new HashSet<>();
+
+    private RobotState robotState = RobotState.DISABLED;
 
     public void registerSubsystem(Subsystem subsystem) {
         subsystems.add(subsystem);
@@ -26,6 +26,22 @@ public final class Scheduler implements CommandRunContext {
 
     public void registerSubsystems(Collection<Subsystem> subsystems) {
         this.subsystems.addAll(subsystems);
+    }
+
+    public void clearSubsystems() {
+        this.subsystems.clear();
+    }
+
+    public void registerDefaultCommand(Command defaultCommand) {
+        defaultCommands.add(defaultCommand);
+    }
+
+    public void registerDefaultCommands(Collection<Command> defaultCommands) {
+        this.defaultCommands.addAll(defaultCommands);
+    }
+
+    public void clearDefaultCommands() {
+        defaultCommands.clear();
     }
 
     public void addTrigger(TriggerSource source, TriggerScheduler scheduler) {
@@ -42,6 +58,8 @@ public final class Scheduler implements CommandRunContext {
     }
 
     public void execute() {
+        logger.trace("Scheduler in state {}, {} triggers, {} commands", robotState, triggerSchedulers.size(),
+                runningCommands.size());
         for (Map.Entry<TriggerSource, List<TriggerScheduler>> entry : triggerSchedulers.entrySet()) {
             TriggerSource triggerSource = entry.getKey();
             boolean active = triggerSource.getActive();
@@ -49,61 +67,40 @@ public final class Scheduler implements CommandRunContext {
                 scheduler.processTrigger(active);
             }
         }
-        logger.trace("{} commands running", runningCommands.size());
         for (CommandRun run : runningCommands.values()) {
             if (run.cancel) {
-                run.command.finish(true);
-                finishRun(run);
+                logger.trace("Cancelling command {} by request", run.command.getName());
+                finishRun(run, true);
+                continue;
+            } else if (!run.command.isValidInState(robotState)) {
+                logger.trace("Cancelling command {} because of state conflict in {}", run.command.getName(),
+                        robotState);
+                finishRun(run, true);
                 continue;
             } else if (!run.initialized) {
-                if (run.command.isRunning() || !takeRequirements(run.command)) continue;
-                run.command.setContext(this);
-                run.command.initialize();
+                if (!run.command.startRun(this)) {
+                    logger.trace("Command {} not ready to run yet because of requirements", run.command.getName());
+                    continue;
+                }
                 run.initialized = true;
             }
             boolean finished = run.command.step();
             if (finished || run.cancel) {
-                run.command.finish(run.cancel);
-                finishRun(run);
+                logger.trace("Command {} finished, it was cancelled?: {}", run.command.getName(), run.cancel);
+                finishRun(run, run.cancel);
             }
         }
-        for (Subsystem subsystem : subsystems) {
-            if (subsystem.getRequiringCommand() == null && subsystem.getDefaultCommand() != null) {
-                startCommand(subsystem.getDefaultCommand());
+        for (Command command : defaultCommands) {
+            if (command.checkRequirements()
+                    && command.isValidInState(robotState)
+                    && !command.isRunning()) {
+                startCommand(command);
             }
         }
     }
 
-
-    @Override
-    public boolean takeRequirements(Command command) {
-        if (command.getRequirements() == null)
-            return true;
-        boolean anyRequiring = false;
-        for (Subsystem subsystem : command.getRequirements()) {
-            Command requiringCommand = subsystem.getRequiringCommand();
-            if (requiringCommand != null && requiringCommand != command) {
-                anyRequiring = true;
-                requiringCommand.cancel();
-            } else {
-                subsystem.setRequiringCommand(command);
-            }
-        }
-        return !anyRequiring;
-    }
-
-    @Override
-    public void releaseRequirements(Command command) {
-        if (command.getRequirements() == null)
-            return;
-        for (Subsystem subsystem : command.getRequirements()) {
-            subsystem.setRequiringCommand(null);
-        }
-    }
-
-    private void finishRun(CommandRun run) {
-        releaseRequirements(run.command);
-        run.command.setContext(null);
+    private void finishRun(CommandRun run, boolean cancelled) {
+        run.command.finishRun(cancelled);
         runningCommands.remove(run.command.getName());
     }
 
@@ -131,5 +128,13 @@ public final class Scheduler implements CommandRunContext {
     public void cancelCommand(Command command) {
         checkNotNull(command);
         cancelCommand(command.getName());
+    }
+
+    public RobotState getRobotState() {
+        return robotState;
+    }
+
+    public void enterState(RobotState currentState) {
+        this.robotState = currentState;
     }
 }

@@ -1,9 +1,6 @@
 package org.teamtators.rotator.scheduler;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -35,6 +32,14 @@ public class SequentialCommand extends Command implements CommandRunContext {
 
     protected void setSequence(Collection<Command> sequence) {
         checkNotNull(sequence);
+
+        // The valid states of a sequential command are the intersection of the valid states of the
+        // child commands. So if a single command cannot run in Teleop, the whole sequential command
+        // can not either.
+        EnumSet<RobotState> validStates = EnumSet.allOf(RobotState.class);
+        sequence.forEach(command -> validStates.retainAll(command.getValidStates()));
+        setValidStates(validStates);
+
         this.sequence = sequence.stream()
                 .map(CommandRun::new)
                 .collect(Collectors.toList());
@@ -62,15 +67,13 @@ public class SequentialCommand extends Command implements CommandRunContext {
             }
             if (!run.initialized) {
                 if (run.command.isRunning()) {
-                    if (run.command.getContext() == this && takeRequirements(run.command)) {
+                    if (run.command.getContext() == this && run.command.checkRequirements()) {
                         run.initialized = true;
                     } else {
                         run.command.cancel();
                         return false;
                     }
-                } else if (takeRequirements(run.command)) {
-                    run.command.setContext(this);
-                    run.command.initialize();
+                } else if (run.command.startRun(this)) {
                     run.initialized = true;
                 }
             }
@@ -80,9 +83,7 @@ public class SequentialCommand extends Command implements CommandRunContext {
                 return true;
             }
             if (finished) {
-                run.command.finish(false);
-                run.command.setContext(null);
-                releaseRequirements(run.command);
+                run.command.finishRun(false);
                 currentPosition++;
                 if (currentPosition >= sequence.size()) {
                     logger.trace("Sequential command finished");
@@ -95,9 +96,7 @@ public class SequentialCommand extends Command implements CommandRunContext {
     }
 
     private void cancelRun(CommandRun run) {
-        run.command.finish(true);
-        run.command.setContext(null);
-        releaseRequirements(run.command);
+        run.command.finishRun(true);
         getContext().cancelCommand(this);
     }
 
@@ -111,26 +110,8 @@ public class SequentialCommand extends Command implements CommandRunContext {
         if (sequence.size() == 0 || currentPosition >= sequence.size()) return;
         Command currentCommand = currentRun().command;
         if (interrupted && currentCommand.isRunning()) {
-            currentCommand.finish(true);
-            currentCommand.setContext(null);
-            releaseRequirements(currentCommand);
+            currentCommand.finishRun(true);
         }
-    }
-
-    @Override
-    public boolean takeRequirements(Command command) {
-        checkNotNull(command);
-        if (getContext() == null)
-            throw new CommandException("Cannot take requirements in parent execution context if command group is not running");
-        return getContext().takeRequirements(command);
-    }
-
-    @Override
-    public void releaseRequirements(Command command) {
-        checkNotNull(command);
-        if (getContext() == null)
-            throw new CommandException("Cannot release requirements in parent execution context if command group is not running");
-        getContext().releaseRequirements(command);
     }
 
     @Override

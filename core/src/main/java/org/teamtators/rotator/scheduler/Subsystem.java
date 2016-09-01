@@ -25,12 +25,4 @@ public class Subsystem {
     void setRequiringCommand(Command requiringCommand) {
         this.requiringCommand = requiringCommand;
     }
-
-    Command getDefaultCommand() {
-        return defaultCommand;
-    }
-
-    public void setDefaultCommand(Command defaultCommand) {
-        this.defaultCommand = defaultCommand;
-    }
 }

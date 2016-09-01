@@ -3,6 +3,8 @@ package org.teamtators.rotator.scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +15,7 @@ public abstract class Command {
     private String name;
     private CommandRunContext context = null;
     private Set<Subsystem> requirements = null;
+    private EnumSet<RobotState> validStates = EnumSet.allOf(RobotState.class);
 
     public Command(String name) {
         checkNotNull(name);
@@ -20,8 +23,14 @@ public abstract class Command {
     }
 
     protected abstract void initialize();
+
     protected abstract boolean step();
+
     protected abstract void finish(boolean interrupted);
+
+    public String getName() {
+        return name;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -29,15 +38,11 @@ public abstract class Command {
         this.logger = LoggerFactory.getLogger(loggerName);
     }
 
-    public String getName() {
-        return name;
-    }
-
     CommandRunContext getContext() {
         return context;
     }
 
-    void setContext(CommandRunContext context) {
+    private void setContext(CommandRunContext context) {
         this.context = context;
     }
 
@@ -64,6 +69,7 @@ public abstract class Command {
     }
 
     protected void requires(Subsystem subsystem) {
+        checkNotNull(subsystem, "Cannot require a null subsystem");
         if (requirements == null) {
             requirements = new HashSet<>();
         }
@@ -78,17 +84,69 @@ public abstract class Command {
         return requirements != null && requirements.contains(subsystem);
     }
 
-    public static Command oneShot(Runnable function) {
-        return new OneShotCommand(function);
+    public boolean checkRequirements() {
+        if (requirements == null)
+            return true;
+        for (Subsystem subsystem : requirements) {
+            Command requiringCommand = subsystem.getRequiringCommand();
+            if (requiringCommand != null && requiringCommand != this)
+                return false;
+        }
+        return true;
     }
 
-    public static Command sequence(Command... sequence) {
-        return new SequentialCommand(sequence);
+    private boolean takeRequirements() {
+        if (requirements == null)
+            return true;
+        boolean anyRequiring = false;
+        for (Subsystem subsystem : requirements) {
+            Command requiringCommand = subsystem.getRequiringCommand();
+            if (requiringCommand != null && requiringCommand != this) {
+                anyRequiring = true;
+                requiringCommand.cancel();
+            } else {
+                subsystem.setRequiringCommand(this);
+            }
+        }
+        return !anyRequiring;
     }
 
-    private static int nextLogCommandNumber = 1;
+    boolean startRun(CommandRunContext context) {
+        if (isRunning() || !takeRequirements()) return false;
+        setContext(context);
+        initialize();
+        return true;
+    }
 
-    public static Command log(String message) {
-        return new LogCommand("LogCommand" + nextLogCommandNumber++, message);
+    void finishRun(boolean cancelled) {
+        if (isRunning()) {
+            finish(cancelled);
+            setContext(null);
+        }
+        releaseRequirements();
+    }
+
+    private void releaseRequirements() {
+        if (requirements == null)
+            return;
+        for (Subsystem subsystem : requirements) {
+            subsystem.setRequiringCommand(null);
+        }
+    }
+
+    public boolean isValidInState(RobotState state) {
+        return validStates.contains(state);
+    }
+
+    protected void validIn(RobotState... states) {
+        setValidStates(EnumSet.copyOf(Arrays.asList(states)));
+    }
+
+    public EnumSet<RobotState> getValidStates() {
+        return validStates;
+    }
+
+    protected void setValidStates(EnumSet<RobotState> validStates) {
+        this.validStates = validStates;
     }
 }
