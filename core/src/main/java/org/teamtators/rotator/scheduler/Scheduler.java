@@ -118,10 +118,11 @@ public final class Scheduler implements CommandRunContext {
 
     public void cancelCommand(String commandName) {
         checkNotNull(commandName);
-        if (!runningCommands.containsKey(commandName))
-            throw new CommandException("Cannot cancel command that is not running on this scheduler");
         CommandRun run = runningCommands.get(commandName);
-        run.cancel = true;
+        if (run == null)
+            logger.debug("Attempted to cancel not command that was not running: {}", commandName);
+        else
+            run.cancel = true;
     }
 
     @Override
