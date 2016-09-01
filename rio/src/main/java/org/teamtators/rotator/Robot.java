@@ -13,9 +13,7 @@ import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
-import org.teamtators.rotator.scheduler.Command;
-import org.teamtators.rotator.scheduler.Scheduler;
-import org.teamtators.rotator.scheduler.Subsystem;
+import org.teamtators.rotator.scheduler.*;
 import org.teamtators.rotator.subsystems.AbstractDrive;
 
 import javax.inject.Inject;
@@ -78,10 +76,11 @@ public class Robot extends IterativeRobot {
 
         logger.debug("Configuring triggers");
         scheduler.onTrigger(operatorInterface.driverJoystick().getTriggerSource(LogitechF310.Button.A))
-                .start(Command.log("Button A pressed"))
+                .start(Commands.log("Button A pressed"))
                 .whenPressed()
-                .start(Command.log("Button A released"))
+                .start(Commands.log("Button A released"))
                 .whenReleased();
+        scheduler.registerDefaultCommand(commandStore.getCommand("DriveTank"));
 
         logger.info("Robot initialized");
     }
@@ -89,26 +88,30 @@ public class Robot extends IterativeRobot {
     @Override
     public void disabledInit() {
         logger.info("Robot disabled");
+        scheduler.enterState(RobotState.DISABLED);
     }
 
     @Override
     public void autonomousInit() {
         logger.info("Robot enabled in autonomous");
+        scheduler.enterState(RobotState.AUTONOMOUS);
     }
 
     @Override
     public void teleopInit() {
         logger.info("Robot enabled in teleop");
-        scheduler.startCommand(commandStore.getCommand("DriveTank"));
+        scheduler.enterState(RobotState.TELEOP);
     }
 
     @Override
     public void testInit() {
         logger.info("Robot enabled in test");
+        scheduler.enterState(RobotState.TEST);
     }
 
     @Override
     public void disabledPeriodic() {
+        scheduler.execute();
     }
 
     @Override
@@ -123,5 +126,6 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void testPeriodic() {
+        scheduler.execute();
     }
 }
