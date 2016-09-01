@@ -4,20 +4,22 @@ import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
+import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.subsystems.AbstractDrive;
 
 import javax.inject.Inject;
 
 public class DriveTank extends CommandBase {
-    @Inject
     private AbstractDrive drive;
-    @Inject
-    private AbstractOperatorInterface operatorInterface;
-
     private LogitechF310 driverJoystick;
 
-    public DriveTank() {
+    @Inject
+    public DriveTank(AbstractDrive drive, AbstractOperatorInterface operatorInterface) {
         super("DriveTank");
+        this.drive = drive;
+        requires(drive);
+        validIn(RobotState.TELEOP);
+        driverJoystick = operatorInterface.driverJoystick();
     }
 
     @Override
@@ -29,7 +31,6 @@ public class DriveTank extends CommandBase {
     @Override
     protected void initialize() {
         super.initialize();
-        driverJoystick = operatorInterface.driverJoystick();
     }
 
     @Override

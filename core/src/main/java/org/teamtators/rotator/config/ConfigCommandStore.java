@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Injector;
+import com.google.inject.ProvisionException;
 import org.teamtators.rotator.scheduler.Command;
 
 import javax.inject.Inject;
@@ -58,19 +60,7 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
     }
 
     public <T extends Command> void registerClass(Class<T> commandClass, String name) {
-        Constructor<T> constructor;
-        try {
-            constructor = commandClass.getConstructor();
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(commandClass.toString() + " does not have a no argument constructor");
-        }
-        Provider<Command> commandProvider = () -> {
-            try {
-                return constructor.newInstance();
-            } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                throw new ProviderException("Error constructing command", e);
-            }
-        };
+        Provider<Command> commandProvider = () -> injector.getInstance(commandClass);
         registerCommand(name, commandProvider);
     }
 
@@ -127,8 +117,6 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
         Command command;
         try {
             command = constructor.get();
-            if (injector != null)
-                injector.injectMembers(command);
         } catch (Exception e) {
             throw new ConfigException("Exception thrown while constructing Command " + commandName, e);
         }
