@@ -127,8 +127,10 @@ public class ManualTester extends CommandBase {
 
     public void beginTestGroup(int index) {
         testGroupIndex = index;
-        if (getCurrentTestGroup() == null)
+        if (getCurrentTestGroup() == null) {
             logger.info("There are no test groups");
+            return;
+        }
         logger.info("Entering Test Group {}", getCurrentTestGroup().getName());
         beginTest(0);
     }
