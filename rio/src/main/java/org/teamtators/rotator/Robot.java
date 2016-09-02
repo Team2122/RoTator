@@ -14,8 +14,7 @@ import org.teamtators.rotator.config.Configurables;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.*;
-import org.teamtators.rotator.subsystems.AbstractDrive;
-import org.teamtators.rotator.subsystems.ITestable;
+import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.ManualTester;
 
 import javax.inject.Inject;

@@ -50,7 +50,6 @@ public interface LogitechF310 {
      * Enum containing the location of all the buttons on a Logitech F310 gamepad
      */
     enum Button {
-        NONE(0),
         A(1),
         B(2),
         X(3),

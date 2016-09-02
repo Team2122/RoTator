@@ -48,7 +48,7 @@ public class WPILibLogitechF310 extends Joystick implements LogitechF310 {
                     currentPOV = Button.POV_LEFT;
                     break;
                 default:
-                    currentPOV = Button.NONE;
+                    currentPOV = null;
             }
             return button.equals(currentPOV);
         } else {

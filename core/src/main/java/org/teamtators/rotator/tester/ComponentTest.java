@@ -50,12 +50,11 @@ public abstract class ComponentTest {
     }
 
     /**
-     * Called repeatedly with axis values
+     * Called repeatedly with the value of the analog axis for tests
      *
-     * @param axis  The axis to update
      * @param value The value of the axis
      */
-    public void updateAxis(LogitechF310.Axis axis, double value) {
+    public void updateAxis(double value) {
     }
 
     /**
