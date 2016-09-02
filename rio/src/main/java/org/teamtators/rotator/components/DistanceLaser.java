@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 public class DistanceLaser {
     private double minDistance;
     private double maxDistance;
+    private AnalogInput distanceLaser;
 
     public DistanceLaser(int channel, double minDistance, double maxDistance) {
         distanceLaser = new AnalogInput(channel);
@@ -12,16 +13,24 @@ public class DistanceLaser {
         this.maxDistance = maxDistance;
     }
 
-    private AnalogInput distanceLaser;
-
-    double getDistance() {
-        double x = distanceLaser.getVoltage() / 5.0;
-        x = (x * (maxDistance - minDistance)) + minDistance;
-        return x;
+    public double getDistance() {
+        double prop = distanceLaser.getVoltage() / 5.0;
+        return (prop * (maxDistance - minDistance)) + minDistance;
     }
 
-    double getVoltage() {
+    public double getVoltage() {
         return distanceLaser.getVoltage();
     }
 
+    public double getMinDistance() {
+        return minDistance;
+    }
+
+    public double getMaxDistance() {
+        return maxDistance;
+    }
+
+    AnalogInput getAnalogInput() {
+        return distanceLaser;
+    }
 }

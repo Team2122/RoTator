@@ -24,6 +24,14 @@ public class DistanceLaserConfig {
         this.maxDistance = maxDistance;
     }
 
+    double getMinDistance() {
+        return minDistance;
+    }
+
+    double getMaxDistance() {
+        return maxDistance;
+    }
+
     public DistanceLaser create() {
         DistanceLaser distanceLaser = new DistanceLaser(channel, minDistance, maxDistance);
         return distanceLaser;
