@@ -1,7 +1,7 @@
 Drive:
   leftMotor: { channel: 0, inverted: false }
   rightMotor: { channel: 1, inverted: true }
-  leftEncoder: { aChannel: 0, bChannel: 1 }
-  rightEncoder: { aChannel: 2, bChannel: 3 }
+  leftEncoder: { aChannel: 2, bChannel: 3 }
+  rightEncoder: { aChannel: 0, bChannel: 1 }
 OperatorInterface:
   driverJoystick: 0
