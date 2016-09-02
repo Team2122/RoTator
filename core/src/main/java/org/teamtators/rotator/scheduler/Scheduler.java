@@ -58,8 +58,8 @@ public final class Scheduler implements CommandRunContext {
     }
 
     public void execute() {
-        logger.trace("Scheduler in state {}, {} triggers, {} commands", robotState, triggerSchedulers.size(),
-                runningCommands.size());
+//        logger.trace("Scheduler in state {}, {} triggers, {} commands", robotState, triggerSchedulers.size(),
+//                runningCommands.size());
         for (Map.Entry<TriggerSource, List<TriggerScheduler>> entry : triggerSchedulers.entrySet()) {
             TriggerSource triggerSource = entry.getKey();
             boolean active = triggerSource.getActive();
@@ -108,7 +108,7 @@ public final class Scheduler implements CommandRunContext {
     public void startCommand(Command command) {
         checkNotNull(command);
         CommandRun run = runningCommands.get(command.getName());
-        if (run != null)
+        if (run != null || !command.isValidInState(robotState))
             return;
         if (command.getContext() != null) {
             command.cancel();

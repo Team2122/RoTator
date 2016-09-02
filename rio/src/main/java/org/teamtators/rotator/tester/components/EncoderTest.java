@@ -25,7 +25,7 @@ public class EncoderTest extends ComponentTest {
             encoder.reset();
             logger.info("Encoder reset");
         } else if (button == LogitechF310.Button.A) {
-            logger.info("Ticks: %i, Distance: %f", encoder.get(), encoder.getDistance());
+            logger.info("Distance: {} (ticks: {}), Rate: {}", encoder.getDistance(), encoder.get(), encoder.getRate());
         }
     }
 }

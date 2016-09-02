@@ -29,14 +29,17 @@ public class ManualTester extends CommandBase {
         validIn(RobotState.TEST);
     }
 
-    @Inject
-    public void setJoystick(AbstractOperatorInterface joystick) {
-        this.joystick = joystick.driverJoystick();
+    public void setJoystick(LogitechF310 joystick) {
+        this.joystick = joystick;
     }
 
     @Override
     protected void initialize() {
         super.initialize();
+        if (joystick == null) {
+            logger.error("Joystick must be set before using ManualTester");
+            this.cancel();
+        }
         lastStates.clear();
         beginTestGroup(0);
     }
@@ -78,13 +81,13 @@ public class ManualTester extends CommandBase {
     private ComponentTest getCurrentTest() {
         ComponentTestGroup group = getCurrentTestGroup();
         if (group == null) return null;
-        if (testIndex <= group.getTests().size()) return null;
+        if (testIndex >= group.getTests().size()) return null;
         return group.getTests().get(testIndex);
 
     }
 
     private ComponentTestGroup getCurrentTestGroup() {
-        if (testGroupIndex <= testGroups.size()) return null;
+        if (testGroupIndex >= testGroups.size()) return null;
         return testGroups.get(testGroupIndex);
     }
 

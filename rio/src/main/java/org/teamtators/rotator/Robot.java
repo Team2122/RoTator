@@ -73,9 +73,11 @@ public class Robot extends IterativeRobot {
                 Configurables.configureObject(subsystem, config, objectMapper);
             scheduler.registerSubsystem(subsystem);
             if(subsystem instanceof ITestable) {
+                logger.trace("Registering test group for subsystem {}", subsystem.getName());
                 manualTester.registerTestGroup(((ITestable) subsystem).getTestGroup());
             }
         }
+        manualTester.setJoystick(operatorInterface.driverJoystick());
 
         logger.debug("Creating commands");
         commandStore.createCommandsFromConfig(commandsConfig);
