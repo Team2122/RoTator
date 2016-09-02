@@ -62,9 +62,6 @@ public class Robot extends IterativeRobot {
 
         commandStore.setInjector(injector);
 
-        logger.debug("Creating commands");
-        commandStore.createCommandsFromConfig(commandsConfig);
-
         logger.debug("Configuring subsystems");
         for (Subsystem subsystem : subsystems) {
             String name = subsystem.getName();
@@ -73,6 +70,9 @@ public class Robot extends IterativeRobot {
                 Configurables.configureObject(subsystem, config, objectMapper);
             scheduler.registerSubsystem(subsystem);
         }
+
+        logger.debug("Creating commands");
+        commandStore.createCommandsFromConfig(commandsConfig);
 
         logger.debug("Configuring triggers");
         scheduler.onTrigger(operatorInterface.driverJoystick().getTriggerSource(LogitechF310.Button.A))
