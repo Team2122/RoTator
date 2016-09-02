@@ -31,6 +31,26 @@ public class TriggerAdder {
         });
     }
 
+    public void whilePressed(Command command) {
+        scheduler.addTrigger(triggerSource, (active) -> {
+            if (active && !command.isRunning()) {
+                scheduler.startCommand(command);
+            } else if (!active && command.isRunning()) {
+                scheduler.cancelCommand(command);
+            }
+        });
+    }
+
+    public void whileReleased(Command command) {
+        scheduler.addTrigger(triggerSource, (active) -> {
+            if (!active && !command.isRunning()) {
+                scheduler.startCommand(command);
+            } else if (active && command.isRunning()) {
+                scheduler.cancelCommand(command);
+            }
+        });
+    }
+
     public class TriggerBinder {
         Runnable runnable;
 
