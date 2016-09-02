@@ -14,10 +14,12 @@ import org.teamtators.rotator.scheduler.Commands;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.subsystems.SimulationDrive;
+import org.teamtators.rotator.ui.SimulationDisplay;
 import org.teamtators.rotator.ui.SimulationFrame;
 import org.teamtators.rotator.ui.WASDJoystick;
 
 import javax.inject.Inject;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,8 @@ public class Main {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
     @Inject
     private ObjectMapper objectMapper;
+    @Inject
+    private SimulationDisplay simulationDisplay;
     @Inject
     private SimulationFrame simulationFrame;
     @Inject
@@ -79,7 +83,7 @@ public class Main {
         logger.info("Opening window");
         simulationFrame.setVisible(true);
 
-        scheduler.enterState(RobotState.TELEOP);
+        scheduler.enterState(RobotState.DISABLED);
         scheduler.registerDefaultCommand(commandStore.getCommand("DriveTank"));
 
         running = true;
@@ -109,6 +113,7 @@ public class Main {
             for (Steppable steppable : steppables) {
                 steppable.step(periodS);
             }
+            simulationDisplay.repaint();
             simulationFrame.repaint();
             long nanoTime = System.nanoTime();
             long elapsed = (nanoTime - lastRun);

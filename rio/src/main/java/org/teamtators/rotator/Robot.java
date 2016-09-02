@@ -96,25 +96,21 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void disabledInit() {
-        logger.info("Robot disabled");
         scheduler.enterState(RobotState.DISABLED);
     }
 
     @Override
     public void autonomousInit() {
-        logger.info("Robot enabled in autonomous");
         scheduler.enterState(RobotState.AUTONOMOUS);
     }
 
     @Override
     public void teleopInit() {
-        logger.info("Robot enabled in teleop");
         scheduler.enterState(RobotState.TELEOP);
     }
 
     @Override
     public void testInit() {
-        logger.info("Robot enabled in test");
         scheduler.enterState(RobotState.TEST);
     }
 
