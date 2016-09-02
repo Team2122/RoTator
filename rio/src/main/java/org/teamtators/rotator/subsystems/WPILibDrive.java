@@ -89,10 +89,10 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
     @Override
     public ComponentTestGroup getTestGroup() {
         List<ComponentTest> l = new ArrayList<>();
-        l.add(new VictorSPTest("Left Motor", leftMotor));
-        l.add(new VictorSPTest("Right Motor", rightMotor));
-        l.add(new EncoderTest("Left Encoder", leftEncoder));
-        l.add(new EncoderTest("Right Encoder", rightEncoder));
+        l.add(new VictorSPTest("leftMotor", leftMotor));
+        l.add(new VictorSPTest("rightMotor", rightMotor));
+        l.add(new EncoderTest("leftEncoder", leftEncoder));
+        l.add(new EncoderTest("rightEncoder", rightEncoder));
         return new ComponentTestGroup("Drive", l);
     }
 }
