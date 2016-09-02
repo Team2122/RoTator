@@ -5,11 +5,18 @@ import edu.wpi.first.wpilibj.VictorSP;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.EncoderConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
+import org.teamtators.rotator.tester.ComponentTest;
+import org.teamtators.rotator.tester.ComponentTestGroup;
+import org.teamtators.rotator.tester.ITestable;
+import org.teamtators.rotator.tester.components.EncoderTest;
+import org.teamtators.rotator.tester.components.VictorSPTest;
 
 import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
 
 @Singleton
-public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDrive.Config> {
+public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDrive.Config>, ITestable {
     public static class Config {
         public VictorSPConfig leftMotor;
         public VictorSPConfig rightMotor;
@@ -77,5 +84,15 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
             case PID:
                 throw new IllegalStateException("PID mode is not implemented yet");
         }
+    }
+
+    @Override
+    public ComponentTestGroup getTestGroup() {
+        List<ComponentTest> l = new ArrayList<>();
+        l.add(new VictorSPTest("Left Motor", leftMotor));
+        l.add(new VictorSPTest("Right Motor", rightMotor));
+        l.add(new EncoderTest("Left Encoder", leftEncoder));
+        l.add(new EncoderTest("Right Encoder", rightEncoder));
+        return new ComponentTestGroup("Drive", l);
     }
 }
