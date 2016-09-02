@@ -45,7 +45,6 @@ public class ManualTester extends CommandBase {
     protected boolean step() {
         ComponentTest test = getCurrentTest();
         if (test == null) return false;
-        test.step();
         test.updateAxis(joystick.getAxisValue(TEST_AXIS));
         for (LogitechF310.Button button : LogitechF310.Button.values()) {
             boolean value = joystick.getButtonValue(button);
@@ -72,6 +71,7 @@ public class ManualTester extends CommandBase {
             }
             lastStates.put(button, value);
         }
+        test.step();
         return false;
     }
 
