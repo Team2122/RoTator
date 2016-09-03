@@ -6,5 +6,6 @@ public class CoreCommands {
     public static void register(ConfigCommandStore commandStore) {
         commandStore.registerClass(DriveTank.class);
         commandStore.registerClass(LogCommand.class);
+        commandStore.registerClass(PickerSetPosition.class);
     }
 }
