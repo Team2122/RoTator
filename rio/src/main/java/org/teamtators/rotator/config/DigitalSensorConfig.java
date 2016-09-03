@@ -6,18 +6,18 @@ import org.teamtators.rotator.components.SensorType;
 public class DigitalSensorConfig {
 
     private int channel;
-    private SensorType sensorType;
+    private SensorType type;
 
     public int getChannel() {
         return channel;
     }
 
     public SensorType getType() {
-        return sensorType;
+        return type;
     }
 
-    public void setSensorType(SensorType sensorType) {
-        this.sensorType = sensorType;
+    public void setType(SensorType type) {
+        this.type = type;
     }
 
     public void setChannel(int channel) {
@@ -25,6 +25,6 @@ public class DigitalSensorConfig {
     }
 
     public void create() {
-        DigitalSensor digitalSensor = new DigitalSensor(channel, sensorType);
+        DigitalSensor digitalSensor = new DigitalSensor(channel, type);
     }
 }

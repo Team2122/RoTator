@@ -6,19 +6,20 @@ import org.teamtators.rotator.components.SensorType;
 public class DigitalSensor {
 
     private DigitalInput digitalSensor;
-    private SensorType sensorType;
+    private SensorType type;
 
     public DigitalSensor(int channel, SensorType sensorType) {
         digitalSensor = new DigitalInput(channel);
-        this.sensorType = sensorType;
+        this.type = sensorType;
     }
 
     public boolean get() {
-        boolean value = getRawValue()  ;
-        if (sensorType == SensorType.NPN) {
-            return !value;
-        } else {
-            return value;
+        boolean value = getRawValue();
+        switch (type) {
+            case NPN:
+                return !value;
+            default:
+                return value;
         }
     }
 
@@ -26,8 +27,8 @@ public class DigitalSensor {
         return digitalSensor.get();
     }
 
-    public SensorType getSensorType() {
-        return sensorType;
+    public SensorType getType() {
+        return type;
     }
 
 }
