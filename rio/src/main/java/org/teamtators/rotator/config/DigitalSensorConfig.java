@@ -24,7 +24,8 @@ public class DigitalSensorConfig {
         this.channel = channel;
     }
 
-    public void create() {
+    public DigitalSensor create() {
         DigitalSensor digitalSensor = new DigitalSensor(channel, type);
+        return digitalSensor;
     }
 }

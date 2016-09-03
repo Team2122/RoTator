@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 import org.teamtators.rotator.config.Configurable;
+import org.teamtators.rotator.components.DigitalSensor;
+import org.teamtators.rotator.config.DigitalSensorConfig;
 import org.teamtators.rotator.config.EncoderConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
 
@@ -20,6 +22,9 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         public VictorSPConfig kingRollerMotor;
         public VictorSPConfig pinchRollerMotor;
         public VictorSPConfig turretRotationMotor;
+        public DigitalSensorConfig leftLimit;
+        public DigitalSensorConfig rightLimit;
+        public DigitalSensorConfig centerLimit;
     }
 
     private VictorSP shooterWheelMotor;
@@ -33,6 +38,9 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     private VictorSP kingRollerMotor;
     private VictorSP pinchRollerMotor;
     private VictorSP turretRotationMotor;
+    private DigitalSensor leftLimit;
+    private DigitalSensor rightLimit;
+    private DigitalSensor centerLimit;
 
     @Override
     public void configure(Config config) {
@@ -46,6 +54,9 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         this.pinchRollerMotor = config.pinchRollerMotor.create();
         this.kingRollerMotor = config.kingRollerMotor.create();
         this.turretRotationMotor = config.turretRotationMotor.create();
+        this.leftLimit = config.leftLimit.create();
+        this.rightLimit = config.rightLimit.create();
+        this.centerLimit = config.centerLimit.create();
     }
 
     @Override
@@ -120,19 +131,18 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         encoder.reset();
     }
 
-    //TODO: finish the limit switches
     @Override
     public boolean isAtRightLimit() {
-        return false;
+        return rightLimit.get();
     }
 
     @Override
     public boolean isAtLeftLimit() {
-        return false;
+        return leftLimit.get();
     }
 
     @Override
     public boolean isAtCenterLimit() {
-        return false;
+        return centerLimit.get();
     }
 }
