@@ -1,5 +1,6 @@
 package org.teamtators.rotator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -8,12 +9,13 @@ import com.google.inject.Injector;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.teamtators.rotator.config.ConfigCommandStore;
-import org.teamtators.rotator.config.ConfigLoader;
-import org.teamtators.rotator.config.Configurables;
+import org.teamtators.rotator.config.*;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
-import org.teamtators.rotator.scheduler.*;
+import org.teamtators.rotator.scheduler.Commands;
+import org.teamtators.rotator.scheduler.RobotState;
+import org.teamtators.rotator.scheduler.Scheduler;
+import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.ManualTester;
 
@@ -60,6 +62,7 @@ public class Robot extends IterativeRobot {
         logger.debug("Created injector. Loading configs");
         ObjectNode commandsConfig = (ObjectNode) configLoader.load("commands.yml");
         ObjectNode subsystemsConfig = (ObjectNode) configLoader.load("subsystems.yml");
+        ObjectNode triggersConfig = (ObjectNode) configLoader.load("triggers.yml");
 
         Injector injector = coreInjector.createChildInjector(new RioModule());
         injector.injectMembers(this);
@@ -83,6 +86,14 @@ public class Robot extends IterativeRobot {
         commandStore.createCommandsFromConfig(commandsConfig);
 
         logger.debug("Configuring triggers");
+        try {
+            TriggersConfig triggers = objectMapper.treeToValue(triggersConfig, TriggersConfig.class);
+            ButtonBinder binder = new ButtonBinder();
+            binder.bindButtonsToLogitechF310(triggers.getDriverButtons(), operatorInterface.driverJoystick());
+        } catch (JsonProcessingException e) {
+            logger.error("Parsing config triggers failed");
+            e.printStackTrace();
+        }
         scheduler.onTrigger(operatorInterface.driverJoystick().getTriggerSource(LogitechF310.Button.A))
                 .start(Commands.log("Button A pressed"))
                 .whenPressed()
