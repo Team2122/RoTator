@@ -1,6 +1,6 @@
 package org.teamtators.rotator.subsystems;
 
-import org.teamtators.rotator.Steppable;
+import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.config.Configurable;
 
 public class SimulationEncoder implements Steppable, Configurable<SimulationEncoder.Config> {

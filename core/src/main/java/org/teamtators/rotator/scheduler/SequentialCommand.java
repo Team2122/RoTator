@@ -118,7 +118,7 @@ public class SequentialCommand extends Command implements CommandRunContext {
     public void startCommand(Command command) {
         checkNotNull(command);
         if (getContext() == null)
-            logger.debug("Tried to start command in parent execution context while SequentialCommand was not running");
+            logger.debug("Tried to add command in parent execution context while SequentialCommand was not running");
         getContext().startCommand(command);
     }
 

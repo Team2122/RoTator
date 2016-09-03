@@ -18,7 +18,7 @@ public class VictorSPTest extends ComponentTest {
     @Override
     public void start() {
         logger.info("Push joystick in direction to move, where forward is positive");
-        logger.info("Press back/start to drive backward/forward at full speed");
+        logger.info("Press back/add to drive backward/forward at full speed");
         fullspeed = 0;
         axisValue = 0;
     }

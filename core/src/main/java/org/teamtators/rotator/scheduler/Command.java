@@ -52,7 +52,7 @@ public abstract class Command {
 
     protected void startCommand(Command command) {
         if (this.context == null) {
-            throw new IllegalStateException("Tried start command in parent context while not running");
+            throw new IllegalStateException("Tried add command in parent context while not running");
         }
         this.context.startCommand(command);
     }

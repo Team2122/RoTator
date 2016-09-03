@@ -5,6 +5,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
+import org.teamtators.rotator.control.ITimeProvider;
+import org.teamtators.rotator.control.WPILibTimeProvider;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.operatorInterface.WPILibLogitechF310;
@@ -37,6 +39,7 @@ public class RioModule extends AbstractModule {
         bind(AbstractPicker.class).to(WPILibPicker.class);
         bind(AbstractTurret.class).to(WPILibTurret.class);
         bind(AbstractOperatorInterface.class).to(WPILibOperatorInterface.class);
+        bind(ITimeProvider.class).to(WPILibTimeProvider.class);
 
         if (commandsConfig != null)
             bind(ObjectNode.class).annotatedWith(Names.named("commands")).toInstance(commandsConfig);

@@ -1,7 +1,7 @@
 package org.teamtators.rotator.subsystems;
 
 import com.google.inject.Singleton;
-import org.teamtators.rotator.Steppable;
+import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.config.Configurable;
 
 @Singleton

@@ -12,8 +12,8 @@ import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
 import org.teamtators.rotator.config.TriggerBinder;
+import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
-import org.teamtators.rotator.scheduler.Commands;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.scheduler.Subsystem;
@@ -44,6 +44,8 @@ public class Robot extends IterativeRobot {
     private ManualTester manualTester;
     @Inject
     private TriggerBinder triggerBinder;
+    @Inject
+    private Stepper stepper;
 
     @Override
     public void robotInit() {
@@ -94,6 +96,9 @@ public class Robot extends IterativeRobot {
 
         scheduler.registerDefaultCommand(commandStore.getCommand("DriveTank"));
         scheduler.registerDefaultCommand(manualTester);
+
+        logger.debug("Starting stepper");
+        stepper.start();
 
         logger.info("Robot initialized");
     }

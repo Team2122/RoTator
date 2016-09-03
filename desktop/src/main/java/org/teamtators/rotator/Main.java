@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
+import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.Commands;
 import org.teamtators.rotator.scheduler.RobotState;
@@ -19,9 +20,6 @@ import org.teamtators.rotator.ui.SimulationFrame;
 import org.teamtators.rotator.ui.WASDJoystick;
 
 import javax.inject.Inject;
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -41,10 +39,10 @@ public class Main {
     private SimulationDrive drive;
     @Inject
     private WASDJoystick joystick;
-
-    private List<Steppable> steppables = new ArrayList<>();
-    private boolean running;
-    private Thread thread;
+    @Inject
+    private Stepper stepper;
+    @Inject
+    private Stepper uiStepper;
 
     public static void main(String[] args) {
         try {
@@ -78,7 +76,12 @@ public class Main {
                 .start(Commands.log("Button A released"))
                 .whenReleased();
 
-        steppables.add(drive);
+        stepper.add(drive);
+        uiStepper.setPeriod(1000 / 50);
+        uiStepper.add(delta -> {
+            scheduler.execute();
+            simulationFrame.repaint();
+        });
 
         logger.info("Opening window");
         simulationFrame.setVisible(true);
@@ -86,48 +89,16 @@ public class Main {
         scheduler.enterState(RobotState.DISABLED);
         scheduler.registerDefaultCommand(commandStore.getCommand("DriveTank"));
 
-        running = true;
-        thread = new Thread(this::run);
-        thread.setUncaughtExceptionHandler((t, e) -> {
-                    logger.error("Uncaught exception in thread {}", t, e);
-                    System.exit(-1);
-                }
-        );
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
-        thread.start();
+
+        logger.debug("Starting steppers");
+        stepper.start();
+        uiStepper.start();
     }
 
     private void stop() {
-        logger.info("Stopping run loop");
-        running = false;
-        thread.interrupt();
-    }
-
-    public void run() {
-        int periodMS = 20;
-        double periodS = periodMS / 1000.0;
-        long lastRun;
-        while (running) {
-            lastRun = System.nanoTime();
-            scheduler.execute();
-            for (Steppable steppable : steppables) {
-                steppable.step(periodS);
-            }
-            simulationDisplay.repaint();
-            simulationFrame.repaint();
-            long nanoTime = System.nanoTime();
-            long elapsed = (nanoTime - lastRun);
-            int elapsedMS = (int) (elapsed / 1000000);
-//            logger.trace("Elapsed {} ms, max {} ms", elapsedMS, periodMS);
-            if (elapsedMS >= periodMS) {
-                logger.debug("{} ms elapsed, greater than period of {} ms", elapsedMS, periodMS);
-                continue;
-            }
-            try {
-                Thread.sleep(periodMS - elapsedMS);
-            } catch (InterruptedException e) {
-                break;
-            }
-        }
+        logger.info("Stopping steppers");
+        stepper.stop();
+        uiStepper.stop();
     }
 }
