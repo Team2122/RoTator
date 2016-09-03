@@ -94,11 +94,9 @@ public class Robot extends IterativeRobot {
             logger.error("Parsing config triggers failed");
             e.printStackTrace();
         }
-        scheduler.onTrigger(operatorInterface.driverJoystick().getTriggerSource(LogitechF310.Button.A))
-                .start(Commands.log("Button A pressed"))
-                .whenPressed()
-                .start(Commands.log("Button A released"))
-                .whenReleased();
+        // add some commands for testing triggers
+        commandStore.putCommand("buttonPressTest", Commands.log("Button A pressed"));
+        commandStore.putCommand("buttonReleaseTest", Commands.log("Button A released"));
         scheduler.registerDefaultCommand(commandStore.getCommand("DriveTank"));
         scheduler.registerDefaultCommand(manualTester);
 
