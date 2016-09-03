@@ -69,10 +69,9 @@ public class Robot extends IterativeRobot {
         for (Subsystem subsystem : subsystems) {
             String name = subsystem.getName();
             JsonNode config = subsystemsConfig.get(name);
-            if (config != null)
-                Configurables.configureObject(subsystem, config, objectMapper);
+            Configurables.configureObject(subsystem, config, objectMapper);
             scheduler.registerSubsystem(subsystem);
-            if(subsystem instanceof ITestable) {
+            if (subsystem instanceof ITestable) {
                 logger.trace("Registering test group for subsystem {}", subsystem.getName());
                 manualTester.registerTestGroup(((ITestable) subsystem).getTestGroup());
             }

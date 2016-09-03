@@ -3,5 +3,9 @@ Drive:
   rightMotor: { channel: 1, inverted: true }
   leftEncoder: { aChannel: 2, bChannel: 3 }
   rightEncoder: { aChannel: 0, bChannel: 1 }
+Picker:
+  pickMotor: { channel: 2, inverted: false }
+  longCylinder: 0
+  shortCylinder: 1
 OperatorInterface:
   driverJoystick: 0
