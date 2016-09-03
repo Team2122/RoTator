@@ -5,11 +5,18 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.VictorSPConfig;
+import org.teamtators.rotator.tester.ComponentTest;
+import org.teamtators.rotator.tester.ComponentTestGroup;
+import org.teamtators.rotator.tester.ITestable;
+import org.teamtators.rotator.tester.components.SolenoidTest;
+import org.teamtators.rotator.tester.components.VictorSPTest;
 
 import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
 
 @Singleton
-public class WPILibPicker extends AbstractPicker implements Configurable<WPILibPicker.Config> {
+public class WPILibPicker extends AbstractPicker implements Configurable<WPILibPicker.Config>, ITestable {
 
     public static class Config {
         public VictorSPConfig pickMotor;
@@ -62,5 +69,14 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
     @Override
     public PickerPosition getPosition() {
         return pickerPosition;
+    }
+
+    @Override
+    public ComponentTestGroup getTestGroup() {
+        List<ComponentTest> l = new ArrayList<>();
+        l.add(new VictorSPTest("pickMotor", pickMotor));
+        l.add(new SolenoidTest("shortCylinder", shortCylinder));
+        l.add(new SolenoidTest("longCylinder", longCylinder));
+        return new ComponentTestGroup("Picker", l);
     }
 }
