@@ -28,3 +28,6 @@ Turret:
   leftLimit: { channel: 11, type: NPN }
   rightLimit: { channel: 10, type: NPN }
   centerLimit: { channel: 12, type: NPN }
+Vision:
+  ledPower: { channel: 7, inverted: false } #not finalized
+  tableName: TatorVision
