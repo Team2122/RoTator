@@ -26,11 +26,6 @@ public class PickerSetPosition extends CommandBase {
     }
 
     @Override
-    protected void initialize() {
-        super.initialize();
-    }
-
-    @Override
     protected boolean step() {
         picker.setPosition(pickerPosition);
         return true;
