@@ -26,6 +26,8 @@ public abstract class AbstractTurret extends Subsystem {
         setWheelPower(0);
     }
 
+    public abstract double getWheelSpeed();
+
     /**
      * Sets the hood position
      *
@@ -83,7 +85,7 @@ public abstract class AbstractTurret extends Subsystem {
     /**
      * @return the turret's position
      */
-    public abstract int getTurretPosition();
+    public abstract double getTurretPosition();
 
     /**
      * Resets the turret's position

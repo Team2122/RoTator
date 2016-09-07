@@ -13,31 +13,29 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
 
     public static class Config {
         public VictorSPConfig shooterWheelMotor;
-        public EncoderConfig encoder;
+        public EncoderConfig shooterWheelEncoder;
         public int shortSolenoid;
         public int longSolenoid;
         public int hoodDeploySolenoid;
-        public double ballDist;
-        public float power;
         public VictorSPConfig kingRollerMotor;
         public VictorSPConfig pinchRollerMotor;
         public VictorSPConfig turretRotationMotor;
+        public EncoderConfig turretRotationEncoder;
         public DigitalSensorConfig leftLimit;
         public DigitalSensorConfig rightLimit;
         public DigitalSensorConfig centerLimit;
     }
 
     private VictorSP shooterWheelMotor;
-    private Encoder encoder;
+    private Encoder shooterWheelEncoder;
     private Solenoid shortSolenoid;
     private Solenoid longSolenoid;
     private Solenoid hoodDeploySolenoid;
     private HoodPosition hoodPosition;
-    private double ballDist;
-    private float power;
     private VictorSP kingRollerMotor;
     private VictorSP pinchRollerMotor;
     private VictorSP turretRotationMotor;
+    private Encoder turretRotationEncoder;
     private DigitalSensor leftLimit;
     private DigitalSensor rightLimit;
     private DigitalSensor centerLimit;
@@ -45,15 +43,14 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     @Override
     public void configure(Config config) {
         this.shooterWheelMotor = config.shooterWheelMotor.create();
-        this.encoder = config.encoder.create();
-        this.ballDist = config.ballDist;
-        this.power = config.power;
+        this.shooterWheelEncoder = config.shooterWheelEncoder.create();
         this.shortSolenoid = new Solenoid(config.shortSolenoid);
         this.longSolenoid = new Solenoid(config.longSolenoid);
         this.hoodDeploySolenoid = new Solenoid(config.hoodDeploySolenoid);
         this.pinchRollerMotor = config.pinchRollerMotor.create();
         this.kingRollerMotor = config.kingRollerMotor.create();
         this.turretRotationMotor = config.turretRotationMotor.create();
+        this.turretRotationEncoder = config.turretRotationEncoder.create();
         this.leftLimit = config.leftLimit.create();
         this.rightLimit = config.rightLimit.create();
         this.centerLimit = config.centerLimit.create();
@@ -67,6 +64,11 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     @Override
     public void resetPower() {
         super.resetPower();
+    }
+
+    @Override
+    public double getWheelSpeed() {
+        return shooterWheelEncoder.getRate();
     }
 
     @Override
@@ -122,13 +124,13 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     }
 
     @Override
-    public int getTurretPosition() {
-        return encoder.get();
+    public double getTurretPosition() {
+        return turretRotationEncoder.getDistance();
     }
 
     @Override
     public void resetTurretPosition() {
-        encoder.reset();
+        turretRotationEncoder.reset();
     }
 
     @Override
