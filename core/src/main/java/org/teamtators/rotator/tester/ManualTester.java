@@ -123,7 +123,7 @@ public class ManualTester extends CommandBase {
     public void previousTest() {
         if (getCurrentTestGroup() == null) return;
         int newTestIndex = testIndex - 1;
-        if (newTestIndex <= 0)
+        if (newTestIndex < 0)
             newTestIndex = getCurrentTestGroup().getTests().size() - 1;
         beginTest(newTestIndex);
     }
@@ -149,7 +149,7 @@ public class ManualTester extends CommandBase {
     public void previousTestGroup() {
         if (testGroups.isEmpty()) return;
         int nextGroupIndex = testGroupIndex - 1;
-        if (nextGroupIndex <= 0)
+        if (nextGroupIndex < 0)
             nextGroupIndex = testGroups.size() - 1;
         beginTestGroup(nextGroupIndex);
     }
