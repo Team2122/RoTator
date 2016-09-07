@@ -21,7 +21,7 @@ public class DigitalSensorTest extends ComponentTest {
     @Override
     public void onButtonDown(LogitechF310.Button button) {
         if (button == LogitechF310.Button.A) {
-            logger.info("Digital sensor value {} (type {})", digitalSensor.get(), digitalSensor.getType())
+            logger.info("Digital sensor value {} (type {})", digitalSensor.get(), digitalSensor.getType());
         }
     }
 }
