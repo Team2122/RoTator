@@ -15,7 +15,7 @@ public abstract class Command {
     private String name;
     private CommandRunContext context = null;
     private Set<Subsystem> requirements = null;
-    private EnumSet<RobotState> validStates = EnumSet.allOf(RobotState.class);
+    private EnumSet<RobotState> validStates = EnumSet.of(RobotState.AUTONOMOUS, RobotState.TELEOP);
 
     public Command(String name) {
         checkNotNull(name);
