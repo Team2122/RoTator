@@ -107,18 +107,18 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     }
 
     @Override
-    public void setPinchRollerPower(float power) {
-        pinchRollerMotor.set((double) power);
+    public void setPinchRollerPower(double power) {
+        pinchRollerMotor.set(power);
     }
 
     @Override
-    public void setKingRollerPower(float power) {
-        kingRollerMotor.set((double) power);
+    public void setKingRollerPower(double power) {
+        kingRollerMotor.set(power);
     }
 
     @Override
-    public void setTurretRotation(float power) {
-        turretRotationMotor.set((double) power);
+    public void setTurretRotation(double power) {
+        turretRotationMotor.set(power);
     }
 
     @Override

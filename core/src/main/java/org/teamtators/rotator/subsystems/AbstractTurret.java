@@ -43,7 +43,7 @@ public abstract class AbstractTurret extends Subsystem {
      *
      * @param power the power of the pinch roller
      */
-    public abstract void setPinchRollerPower(float power);
+    public abstract void setPinchRollerPower(double power);
 
     /**
      * Resets the pinch roller's power
@@ -57,7 +57,7 @@ public abstract class AbstractTurret extends Subsystem {
      *
      * @param power the king roller's power
      */
-    public abstract void setKingRollerPower(float power);
+    public abstract void setKingRollerPower(double power);
 
     /**
      * Resets the king roller's power
@@ -71,7 +71,7 @@ public abstract class AbstractTurret extends Subsystem {
      *
      * @param power power for the turret's rotation
      */
-    public abstract void setTurretRotation(float power);
+    public abstract void setTurretRotation(double power);
 
     /**
      * Resets the turret's rotation
