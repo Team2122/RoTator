@@ -7,25 +7,27 @@ public class PIDController extends PController {
     private double kI;
     private double kD;
     private double kF;
-    private double maxError = Double.POSITIVE_INFINITY;
+    private double maxIError = Double.POSITIVE_INFINITY;
 
-    private double lastInput = Double.NaN;
-    private double totalError = 0;
+    private double lastInput;
+    private double totalError;
 
     public PIDController(String name) {
         super(name);
+        reset();
     }
 
     public PIDController(String name, double kP, double kI, double kD) {
         super(name, kP);
         setkI(kI);
         setkD(kD);
+        reset();
     }
 
     public PIDController(String name, double kP, double kI, double kD, double kF, double maxError) {
         this(name, kP, kI, kD);
         setkF(kF);
-        setMaxError(maxError);
+        setMaxIError(maxError);
     }
 
     public double getkI() {
@@ -44,12 +46,12 @@ public class PIDController extends PController {
         this.kD = kD;
     }
 
-    public double getMaxError() {
-        return maxError;
+    public double getMaxIError() {
+        return maxIError;
     }
 
-    public void setMaxError(double maxError) {
-        this.maxError = maxError;
+    public void setMaxIError(double maxIError) {
+        this.maxIError = maxIError;
     }
 
     public double getkF() {
@@ -63,17 +65,28 @@ public class PIDController extends PController {
     @Override
     protected double computeOutput(double delta) {
         double output = super.computeOutput(delta);
-        if (getError() < maxError) {
+        if (getError() < maxIError) {
             output += kI * totalError;
         }
         if (lastInput != Double.NaN && delta != 0) {
             output += kD * (getInput() - lastInput) / delta;
         }
-        output += kF*getSetpoint();
+        output += kF * getSetpoint();
 
         lastInput = getInput();
         totalError += getError() * delta;
 
         return output;
+    }
+
+    public void resetTotalError() {
+        totalError = 0;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        lastInput = Double.NaN;
+        resetTotalError();
     }
 }
