@@ -46,6 +46,7 @@ public class Robot extends IterativeRobot {
             initialize();
         } catch (Throwable t) {
             logger.error("Exception during robot initialization", t);
+            System.exit(1);
         }
     }
 
