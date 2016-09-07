@@ -6,6 +6,7 @@ package org.teamtators.rotator.control;
 public class PIDController extends PController {
     private double kI;
     private double kD;
+    private double kF;
     private double maxError = Double.POSITIVE_INFINITY;
 
     private double lastInput = Double.NaN;
@@ -21,9 +22,10 @@ public class PIDController extends PController {
         setkD(kD);
     }
 
-    public PIDController(String name, double kP, double kI, double kD, double maxError) {
+    public PIDController(String name, double kP, double kI, double kD, double kF, double maxError) {
         this(name, kP, kI, kD);
-        this.maxError = maxError;
+        setkF(kF);
+        setMaxError(maxError);
     }
 
     public double getkI() {
@@ -50,19 +52,28 @@ public class PIDController extends PController {
         this.maxError = maxError;
     }
 
+    public double getkF() {
+        return kF;
+    }
+
+    public void setkF(double kF) {
+        this.kF = kF;
+    }
+
     @Override
     protected double computeOutput(double delta) {
-        double tr = super.computeOutput(delta);
+        double output = super.computeOutput(delta);
         if (getError() < maxError) {
-            tr += kI * totalError;
+            output += kI * totalError;
         }
         if (lastInput != Double.NaN && delta != 0) {
-            tr += kD * (getInput() - lastInput) / delta;
+            output += kD * (getInput() - lastInput) / delta;
         }
+        output += kF*getSetpoint();
 
         lastInput = getInput();
         totalError += getError() * delta;
 
-        return tr;
+        return output;
     }
 }
