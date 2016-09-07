@@ -80,7 +80,9 @@ public class Robot extends IterativeRobot {
             String name = subsystem.getName();
             JsonNode config = subsystemsConfig.get(name);
             Configurables.configureObject(subsystem, config, objectMapper);
-            scheduler.registerSubsystem(subsystem);
+            if (subsystem instanceof StateListener) {
+                scheduler.registerStateListener((StateListener) subsystem);
+            }
             if (subsystem instanceof ITestable) {
                 logger.trace("Registering test group for subsystem {}", subsystem.getName());
                 manualTester.registerTestGroup(((ITestable) subsystem).getTestGroup());

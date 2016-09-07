@@ -1,5 +1,6 @@
 package org.teamtators.rotator.scheduler;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,22 +16,11 @@ public final class Scheduler implements CommandRunContext {
 
     private Map<TriggerSource, List<TriggerScheduler>> triggerSchedulers = new HashMap<>();
     private Map<String, CommandRun> runningCommands = new ConcurrentHashMap<>();
-    private Set<Subsystem> subsystems = new HashSet<>();
     private Set<Command> defaultCommands = new HashSet<>();
 
+    private Set<StateListener> stateListeners = new HashSet<>();
+
     private RobotState robotState = RobotState.DISABLED;
-
-    public void registerSubsystem(Subsystem subsystem) {
-        subsystems.add(subsystem);
-    }
-
-    public void registerSubsystems(Collection<Subsystem> subsystems) {
-        this.subsystems.addAll(subsystems);
-    }
-
-    public void clearSubsystems() {
-        this.subsystems.clear();
-    }
 
     public void registerDefaultCommand(Command defaultCommand) {
         defaultCommands.add(defaultCommand);
@@ -42,6 +32,16 @@ public final class Scheduler implements CommandRunContext {
 
     public void clearDefaultCommands() {
         defaultCommands.clear();
+    }
+
+    /**
+     * Register a StateListener to be updated on RobotState change
+     *
+     * @param subsystem Subsystem to add to the set
+     */
+    public void registerStateListener(StateListener subsystem) {
+        Preconditions.checkNotNull(subsystem);
+        stateListeners.add(subsystem);
     }
 
     public void addTrigger(TriggerSource source, TriggerScheduler scheduler) {
@@ -150,6 +150,9 @@ public final class Scheduler implements CommandRunContext {
             case TEST:
                 logger.info("Robot enabled in test");
                 break;
+        }
+        for (StateListener listener : stateListeners) {
+            listener.onEnterState(currentState);
         }
     }
 }
