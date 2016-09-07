@@ -26,10 +26,6 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
     private double lastDistance;
     private double lastAngle;
 
-    public WPILibVision() {
-
-    }
-
     @Override
     public void configure(WPILibVision.Config config) {
         this.ledPower = config.ledPower.create();
