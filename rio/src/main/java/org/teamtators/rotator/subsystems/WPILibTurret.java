@@ -1,5 +1,6 @@
 package org.teamtators.rotator.subsystems;
 
+import com.google.inject.Singleton;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
@@ -9,6 +10,7 @@ import org.teamtators.rotator.config.DigitalSensorConfig;
 import org.teamtators.rotator.config.EncoderConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
 
+@Singleton
 public class WPILibTurret extends AbstractTurret implements Configurable<WPILibTurret.Config> {
 
     public static class Config {

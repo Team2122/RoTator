@@ -10,10 +10,7 @@ import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.operatorInterface.WPILibLogitechF310;
 import org.teamtators.rotator.operatorInterface.WPILibOperatorInterface;
 import org.teamtators.rotator.scheduler.Subsystem;
-import org.teamtators.rotator.subsystems.AbstractDrive;
-import org.teamtators.rotator.subsystems.AbstractPicker;
-import org.teamtators.rotator.subsystems.WPILibDrive;
-import org.teamtators.rotator.subsystems.WPILibPicker;
+import org.teamtators.rotator.subsystems.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +35,7 @@ public class RioModule extends AbstractModule {
         // Subsystem bindings
         bind(AbstractDrive.class).to(WPILibDrive.class);
         bind(AbstractPicker.class).to(WPILibPicker.class);
+        bind(AbstractTurret.class).to(WPILibTurret.class);
         bind(AbstractOperatorInterface.class).to(WPILibOperatorInterface.class);
 
         if (commandsConfig != null)
@@ -48,8 +46,8 @@ public class RioModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public List<Subsystem> providesSubsystems(AbstractDrive drive, AbstractPicker picker,
+    public List<Subsystem> providesSubsystems(AbstractDrive drive, AbstractPicker picker, AbstractTurret turret,
                                               AbstractOperatorInterface operatorInterface) {
-        return Arrays.asList(drive, picker, operatorInterface);
+        return Arrays.asList(drive, picker, turret, operatorInterface);
     }
 }
