@@ -10,11 +10,11 @@ public abstract class AbstractVision extends Subsystem{
 
     public AbstractVision() {super("Vision");}
 
-    public abstract void setLEDPower(float power);
+    public abstract void setLEDPower(double power);
 
     public void resetLEDPower() {setLEDPower(0f);}
 
-    public abstract float getDistance();
+    public abstract double getDistance();
 
-    public abstract float getAngle();
+    public abstract double getAngle();
 }

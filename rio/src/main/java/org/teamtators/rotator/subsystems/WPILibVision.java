@@ -2,7 +2,6 @@ package org.teamtators.rotator.subsystems;
 
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.tables.ITable;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.VictorSPConfig;
 import org.teamtators.rotator.tester.ComponentTest;
@@ -24,8 +23,8 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
 
     private VictorSP ledPower;
     private NetworkTable table;
-    private float lastDistance;
-    private float lastAngle;
+    private double lastDistance;
+    private double lastAngle;
 
     public WPILibVision() {
 
@@ -38,21 +37,21 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
     }
 
     @Override
-    public void setLEDPower(float power) {
+    public void setLEDPower(double power) {
         if(power < 0.0f) power *= -1.0f;    //prevents reverse polarity without raising an exception
         ledPower.set(power);
     }
 
     @Override
-    public float getDistance() {
-        float distance = (float)table.getNumber("distance", lastDistance);
+    public double getDistance() {
+        double distance = table.getNumber("distance", lastDistance);
         lastDistance = distance;
         return distance;
     }
 
     @Override
-    public float getAngle() {
-        float angle = (float)table.getNumber("angle", lastAngle);
+    public double getAngle() {
+        double angle = table.getNumber("angle", lastAngle);
         lastAngle = angle;
         return angle;
     }
