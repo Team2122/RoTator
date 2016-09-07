@@ -23,6 +23,7 @@ public class RioModule extends AbstractModule {
         bind(AbstractDrive.class).to(WPILibDrive.class);
         bind(AbstractPicker.class).to(WPILibPicker.class);
         bind(AbstractTurret.class).to(WPILibTurret.class);
+        bind(AbstractVision.class).to(WPILibVision.class);
         bind(AbstractOperatorInterface.class).to(WPILibOperatorInterface.class);
         bind(ITimeProvider.class).to(WPILibTimeProvider.class);
     }
