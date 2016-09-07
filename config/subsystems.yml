@@ -10,15 +10,15 @@ Picker:
 OperatorInterface:
   driverJoystick: 0
 Turret:
-  shooterWheelMotor: { channel: 2, inverted: false }
-  shooterWheelEncoder: { aChannel: 0, bChannel: 1 }
-  shortSolenoid: 0
-  longSolenoid: 1
-  hoodDeploySolenoid: 2
-  kingRollerMotor: { channel: 3, inverted: false }
-  pinchRollerMotor: { channel: 4, inverted: false }
-  turretRotationMotor: { channel: 5, inverted: false }
-  turretRotationEncoder: { aChannel: 0, bChannel: 1 }
-  leftLimit: { channel: 0, type: NPN }
-  rightLimit: { channel: 2, type: NPN }
-  centerLimit: { channel: 4, type: NPN }
+  shooterWheelMotor: { channel: 3, inverted: false }
+  shooterWheelEncoder: { aChannel: 4, bChannel: 5 }
+  shortSolenoid: 2
+  longSolenoid: 3
+  hoodDeploySolenoid: 4
+  kingRollerMotor: { channel: 4, inverted: false }
+  pinchRollerMotor: { channel: 5, inverted: false }
+  turretRotationMotor: { channel: 6, inverted: false }
+  turretRotationEncoder: { aChannel: 6, bChannel: 7 }
+  leftLimit: { channel: 8, type: NPN }
+  rightLimit: { channel: 9, type: NPN }
+  centerLimit: { channel: 10, type: NPN }
