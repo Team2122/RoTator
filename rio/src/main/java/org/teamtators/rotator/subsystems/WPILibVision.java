@@ -38,7 +38,7 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
 
     @Override
     public void setLEDPower(double power) {
-        if(power < 0.0f) power *= -1.0f;    //prevents reverse polarity without raising an exception
+        if (power < 0.0f) power *= -1.0f;    //prevents reverse polarity without raising an exception
         ledPower.set(power);
     }
 
