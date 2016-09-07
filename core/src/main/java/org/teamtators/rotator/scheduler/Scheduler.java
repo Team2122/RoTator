@@ -137,5 +137,19 @@ public final class Scheduler implements CommandRunContext {
 
     public void enterState(RobotState currentState) {
         this.robotState = currentState;
+        switch (currentState) {
+            case DISABLED:
+                logger.info("Robot disabled");
+                break;
+            case AUTONOMOUS:
+                logger.info("Robot enabled in autonomous");
+                break;
+            case TELEOP:
+                logger.info("Robot enabled in teleop");
+                break;
+            case TEST:
+                logger.info("Robot enabled in test");
+                break;
+        }
     }
 }
