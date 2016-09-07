@@ -4,14 +4,24 @@ import com.google.inject.Singleton;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
-import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.components.DigitalSensor;
+import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.DigitalSensorConfig;
 import org.teamtators.rotator.config.EncoderConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
+import org.teamtators.rotator.tester.ComponentTest;
+import org.teamtators.rotator.tester.ComponentTestGroup;
+import org.teamtators.rotator.tester.ITestable;
+import org.teamtators.rotator.tester.components.DigitalSensorTest;
+import org.teamtators.rotator.tester.components.EncoderTest;
+import org.teamtators.rotator.tester.components.SolenoidTest;
+import org.teamtators.rotator.tester.components.VictorSPTest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Singleton
-public class WPILibTurret extends AbstractTurret implements Configurable<WPILibTurret.Config> {
+public class WPILibTurret extends AbstractTurret implements Configurable<WPILibTurret.Config>, ITestable {
 
     public static class Config {
         public VictorSPConfig shooterWheelMotor;
@@ -148,5 +158,22 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     @Override
     public boolean isAtCenterLimit() {
         return centerLimit.get();
+    }
+
+    public ComponentTestGroup getTestGroup() {
+        List<ComponentTest> l = new ArrayList<>();
+        l.add(new VictorSPTest("shooterWheelMotor", shooterWheelMotor));
+        l.add(new EncoderTest("shooterWheelEncoder", shooterWheelEncoder));
+        l.add(new SolenoidTest("shortSolenoid", shortSolenoid));
+        l.add(new SolenoidTest("longSolenoid", longSolenoid));
+        l.add(new SolenoidTest("hoodDeploySolenoid", hoodDeploySolenoid));
+        l.add(new VictorSPTest("kingRollerMotor", kingRollerMotor));
+        l.add(new VictorSPTest("pinchRollerMotor", pinchRollerMotor));
+        l.add(new VictorSPTest("turretRotationMotor", turretRotationMotor));
+        l.add(new EncoderTest("turretRotationEncoder", turretRotationEncoder));
+        l.add(new DigitalSensorTest("leftLimit", leftLimit));
+        l.add(new DigitalSensorTest("rightLimit", rightLimit));
+        l.add(new DigitalSensorTest("centerLimit", centerLimit));
+        return new ComponentTestGroup("Picker", l);
     }
 }
