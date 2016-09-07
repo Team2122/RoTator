@@ -174,6 +174,6 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         l.add(new DigitalSensorTest("leftLimit", leftLimit));
         l.add(new DigitalSensorTest("rightLimit", rightLimit));
         l.add(new DigitalSensorTest("centerLimit", centerLimit));
-        return new ComponentTestGroup("Picker", l);
+        return new ComponentTestGroup("Turret", l);
     }
 }
