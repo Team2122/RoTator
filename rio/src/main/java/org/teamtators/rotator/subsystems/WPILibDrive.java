@@ -5,15 +5,12 @@ import edu.wpi.first.wpilibj.VictorSP;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.EncoderConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
-import org.teamtators.rotator.tester.ComponentTest;
 import org.teamtators.rotator.tester.ComponentTestGroup;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.components.EncoderTest;
 import org.teamtators.rotator.tester.components.VictorSPTest;
 
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.List;
 
 @Singleton
 public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDrive.Config>, ITestable {
@@ -88,11 +85,10 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
 
     @Override
     public ComponentTestGroup getTestGroup() {
-        List<ComponentTest> l = new ArrayList<>();
-        l.add(new VictorSPTest("leftMotor", leftMotor));
-        l.add(new VictorSPTest("rightMotor", rightMotor));
-        l.add(new EncoderTest("leftEncoder", leftEncoder));
-        l.add(new EncoderTest("rightEncoder", rightEncoder));
-        return new ComponentTestGroup("Drive", l);
+        return new ComponentTestGroup("Drive",
+                new VictorSPTest("leftMotor", leftMotor),
+                new VictorSPTest("rightMotor", rightMotor),
+                new EncoderTest("leftEncoder", leftEncoder),
+                new EncoderTest("rightEncoder", rightEncoder));
     }
 }

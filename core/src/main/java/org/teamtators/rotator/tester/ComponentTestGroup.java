@@ -1,19 +1,16 @@
 package org.teamtators.rotator.tester;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ComponentTestGroup {
     private List<ComponentTest> tests;
     private String name;
 
-    public ComponentTestGroup(String name, List<ComponentTest> tests) {
+    public ComponentTestGroup(String name, ComponentTest... tests) {
         this.name = name;
-        this.tests = tests;
-    }
-
-    public ComponentTestGroup(String name) {
-        this(name, new ArrayList<>());
+        this.tests = Arrays.asList(tests);
     }
 
     public String getName() {
