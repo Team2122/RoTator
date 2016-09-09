@@ -12,9 +12,9 @@ OperatorInterface:
 Turret:
   shooterWheelMotor: { channel: 2, inverted: false }
   shooterWheelEncoder: { aChannel: 4, bChannel: 5 }
-  shortSolenoid: 0
+  shortSolenoid: 2
   longSolenoid: 1
-  hoodDeploySolenoid: 2
+  hoodDeploySolenoid: 0
   kingRollerMotor: { channel: 3, inverted: true }
   pinchRollerMotor: { channel: 5, inverted: true }
   turretRotationMotor: { channel: 4, inverted: false }
