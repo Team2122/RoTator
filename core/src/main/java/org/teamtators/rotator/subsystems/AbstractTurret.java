@@ -106,4 +106,9 @@ public abstract class AbstractTurret extends Subsystem {
      * @return whether or not the turret is in the center
      */
     public abstract boolean isAtCenterLimit();
+
+    /**
+     * @return how far the ball is from the ballSensor
+     */
+    public abstract float getBallDistance();
 }

@@ -5,16 +5,11 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 import org.teamtators.rotator.components.DigitalSensor;
-import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.config.DigitalSensorConfig;
-import org.teamtators.rotator.config.EncoderConfig;
-import org.teamtators.rotator.config.VictorSPConfig;
+import org.teamtators.rotator.components.DistanceLaser;
+import org.teamtators.rotator.config.*;
 import org.teamtators.rotator.tester.ComponentTestGroup;
 import org.teamtators.rotator.tester.ITestable;
-import org.teamtators.rotator.tester.components.DigitalSensorTest;
-import org.teamtators.rotator.tester.components.EncoderTest;
-import org.teamtators.rotator.tester.components.SolenoidTest;
-import org.teamtators.rotator.tester.components.VictorSPTest;
+import org.teamtators.rotator.tester.components.*;
 
 @Singleton
 public class WPILibTurret extends AbstractTurret implements Configurable<WPILibTurret.Config>, ITestable {
@@ -32,6 +27,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         public DigitalSensorConfig leftLimit;
         public DigitalSensorConfig rightLimit;
         public DigitalSensorConfig centerLimit;
+        public DistanceLaserConfig ballSensor;
     }
 
     private VictorSP shooterWheelMotor;
@@ -47,6 +43,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     private DigitalSensor leftLimit;
     private DigitalSensor rightLimit;
     private DigitalSensor centerLimit;
+    private DistanceLaser ballSensor;
 
     @Override
     public void configure(Config config) {
@@ -62,6 +59,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         this.leftLimit = config.leftLimit.create();
         this.rightLimit = config.rightLimit.create();
         this.centerLimit = config.centerLimit.create();
+        this.ballSensor = config.ballSensor.create();
     }
 
     @Override
@@ -156,6 +154,11 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         return centerLimit.get();
     }
 
+    @Override
+    public float getBallDistance() {
+        return (float) ballSensor.getDistance();
+    }
+
     public ComponentTestGroup getTestGroup() {
         return new ComponentTestGroup("Turret",
                 new VictorSPTest("shooterWheelMotor", shooterWheelMotor),
@@ -169,6 +172,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
                 new EncoderTest("turretRotationEncoder", turretRotationEncoder),
                 new DigitalSensorTest("leftLimit", leftLimit),
                 new DigitalSensorTest("rightLimit", rightLimit),
-                new DigitalSensorTest("centerLimit", centerLimit));
+                new DigitalSensorTest("centerLimit", centerLimit),
+                new DistanceLaserTest("ballSensor", ballSensor));
     }
 }
