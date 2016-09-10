@@ -18,16 +18,15 @@ public class HoodSetPosition extends CommandBase {
         public HoodPosition hoodPosition;
     }
 
-    public HoodPosition hoodPosition;
+    private Config config;
 
     public void configure(Config config) {
-        this.hoodPosition = hoodPosition;
+        this.config = config;
     }
 
     @Override
     protected boolean step() {
-        turret.setHoodPosition(hoodPosition);
+        turret.setHoodPosition(config.hoodPosition);
         return true;
     }
-}
 }
