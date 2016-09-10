@@ -1,13 +1,13 @@
 DriveTank:
 
-ButtonPressTest:
-  class: LogCommand
-  message: Button was pressed
+PickerToHome:
+  class: PickerSetPosition
+  pickerPosition: HOME
 
-ButtonReleaseTest:
-  class: LogCommand
-  message: Button was released
+PickerToCheval:
+  class: PickerSetPosition
+  pickerPosition: CHEVAL
 
-ButtonHeldTest:
-  class: LogCommand
-  message: Button is held
+PickerToPick:
+  class: PickerSetPosition
+  pickerPosition: PICK
