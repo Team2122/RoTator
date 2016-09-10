@@ -15,6 +15,8 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     static class Config {
         public double pickRollerPower;
         public double pinchRollerPower;
+        public double kingRollerPower;
+        public double distance;
     }
 
     private Config config;
@@ -28,6 +30,15 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         this.turret = turret;
     }
 
+    public boolean ballPresent() {
+        //Checks for if ball is present
+        if (turret.getBallDistance() <= config.distance) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public void configure(Config config) {
         this.config = config;
@@ -35,15 +46,27 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
 
     @Override
     protected void initialize() {
+        /**
+         * if(turretPosition != center) {
+         *  return true;
+         * }
+         */
         super.initialize();
-        picker.setPosition(PickerPosition.PICK);
     }
 
     @Override
     protected boolean step() {
-        picker.setPower((float) config.pickRollerPower);
-        turret.setPinchRollerPower(config.pinchRollerPower);
-        return false;
+        if (ballPresent()) {
+            return true;
+        } else {
+            //Extends the picker
+            picker.setPosition(PickerPosition.PICK);
+            //Starts the rollers
+            picker.setPower((float) config.pickRollerPower);
+            turret.setPinchRollerPower(config.pinchRollerPower);
+            turret.setKingRollerPower(config.kingRollerPower);
+            return false;
+        }
     }
 
     @Override
