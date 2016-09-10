@@ -5,6 +5,15 @@ import edu.wpi.first.wpilibj.Encoder;
 public class EncoderConfig {
     private int aChannel, bChannel;
     private boolean reverse = false;
+    private double distancePerPulse = 1.0;
+
+    public double getDistancePerPulse() {
+        return distancePerPulse;
+    }
+
+    public void setDistancePerPulse(double distancePerPulse) {
+        this.distancePerPulse = distancePerPulse;
+    }
 
     public int getaChannel() {
         return aChannel;
@@ -31,6 +40,8 @@ public class EncoderConfig {
     }
 
     public Encoder create() {
-        return new Encoder(aChannel, bChannel, reverse);
+        Encoder encoder = new Encoder(aChannel, bChannel, reverse);
+        encoder.setDistancePerPulse(distancePerPulse);
+        return encoder;
     }
 }
