@@ -54,27 +54,11 @@ project(':rio') {
 
     evaluationDependsOn(':core')
 
-//    remotes {
-//        rio {
-//            host = "roboRIO-$teamNumber-FRC.local"
-//            user = 'lvuser'
-//            password = ''
-//            knownHosts = allowAnyHosts
-//        }
-//        rioUSB {
-//            host = "172.22.11.2"
-//            user = 'lvuser'
-//            password = ''
-//            knownHosts = allowAnyHosts
-//        }
-//    }
-
-    def robotClass = 'org.teamtators.rotator.Robot'
-
     rio {
         teamNumber = 212
-        host = "localhost"
     }
+
+    def robotClass = 'org.teamtators.rotator.Robot'
 
     def robotManifest = {
         attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
