@@ -5,8 +5,8 @@ Drive:
   rightEncoder: { aChannel: 0, bChannel: 1 }
 Picker:
   pickMotor: { channel: 6, inverted: true }
-  longCylinder: 3
-  shortCylinder: 4
+  longCylinder: 4
+  shortCylinder: 3
 OperatorInterface:
   driverJoystick: 0
 Turret:
