@@ -205,7 +205,7 @@ public class ADXRS453 implements PIDSource, IGyro {
         angle += rate * ellapsed; // intergrate it into the angle
     }
 
-    protected Logger logger;
+    protected static final Logger logger = LoggerFactory.getLogger(ADXRS453.class);
 
     protected Timer timer; ///< the timer used for measuring the delay between runs
     protected SPI spi; ///< the spi class used for communication with the gyro
@@ -301,7 +301,6 @@ public class ADXRS453 implements PIDSource, IGyro {
      * @param spi The spi to use
      */
     ADXRS453(SPI spi) {
-        logger = LoggerFactory.getLogger(ADXRS453.class);
         this.spi = spi;
         calibrationValues = EvictingQueue.create((int) (getCalibrationPeriod() / getUpdatePeriod()));
         updater = new Notifier(this::update);
