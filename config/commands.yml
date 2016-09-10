@@ -34,3 +34,7 @@ HoodUp4:
 
 TurretHome:
   speed: .15
+
+PickerPick:
+  pickRollerPower: 1
+  pinchRollerPower: 1

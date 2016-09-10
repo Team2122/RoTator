@@ -9,5 +9,6 @@ public class CoreCommands {
         commandStore.registerClass(PickerSetPosition.class);
         commandStore.registerClass(HoodSetPosition.class);
         commandStore.registerClass(TurretHome.class);
+        commandStore.registerClass(PickerPick.class);
     }
 }
