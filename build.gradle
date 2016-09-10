@@ -1,16 +1,4 @@
-buildscript {
-    repositories {
-        maven {
-            name = "Jaci"
-            url = "http://dev.imjac.in/maven"
-        }
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath group: 'jaci.openrio.gradle', name: 'GradleRIO', version: '4.4.3'
-    }
-}
+import org.teamtators.gradle.RioPlugin
 
 allprojects {
     apply plugin: 'java'
@@ -38,21 +26,59 @@ project(':core') {
 
 }
 
+
 project(':rio') {
-    apply plugin: 'GradleRIO'
+    apply plugin: RioPlugin
+
+    repositories {
+        maven {
+            it.name = "WPI"
+            it.url = "http://first.wpi.edu/FRC/roborio/maven/release"
+        }
+    }
+
+    configurations {
+        source
+    }
 
     dependencies {
         compile project(':core')
+
+        compile 'edu.wpi.first.wpilib.networktables.java:NetworkTables:+:desktop'
+        compile 'edu.wpi.first.wpilib.networktables.java:NetworkTables:+:arm'
+        compile 'edu.wpi.first.wpilibj:wpilibJavaFinal:+'
+
+        source 'edu.wpi.first.wpilib.networktables.java:NetworkTables:+:sources'
+        source 'edu.wpi.first.wpilibj:wpilibJavaFinal:+:sources'
     }
 
     evaluationDependsOn(':core')
 
-    gradlerio.robotClass = 'org.teamtators.rotator.Robot'
-    gradlerio.team = '212'
+//    remotes {
+//        rio {
+//            host = "roboRIO-$teamNumber-FRC.local"
+//            user = 'lvuser'
+//            password = ''
+//            knownHosts = allowAnyHosts
+//        }
+//        rioUSB {
+//            host = "172.22.11.2"
+//            user = 'lvuser'
+//            password = ''
+//            knownHosts = allowAnyHosts
+//        }
+//    }
+
+    def robotClass = 'org.teamtators.rotator.Robot'
+
+    rio {
+        teamNumber = 212
+        host = "localhost"
+    }
 
     def robotManifest = {
         attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
-        attributes 'Robot-Class': gradlerio.robotClass
+        attributes 'Robot-Class': robotClass
     }
 
     jar {
@@ -84,4 +110,8 @@ project(':desktop') {
     run {
         workingDir = file('../')
     }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.0'
 }
