@@ -20,7 +20,7 @@ public class DesktopModule extends AbstractModule {
     }
 
     @Provides @Singleton
-    public AbstractOperatorInterface providesOperatorInterface(LogitechF310 joystick) {
-        return new SimulationOperatorInterface(joystick);
+    public AbstractOperatorInterface providesOperatorInterface(LogitechF310 driverJoystick, LogitechF310 gunnerJoystick) {
+        return new SimulationOperatorInterface(driverJoystick, gunnerJoystick);
     }
 }

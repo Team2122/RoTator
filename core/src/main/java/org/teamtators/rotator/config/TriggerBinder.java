@@ -50,6 +50,7 @@ public class TriggerBinder {
      */
     public void bindButtonsToJoysticks(TriggersConfig triggersConfig) {
         bindButtonsToLogitechF310(triggersConfig.getDriver(), operatorInterface.driverJoystick());
+        bindButtonsToLogitechF310(triggersConfig.getGunner(), operatorInterface.gunnerJoystick());
     }
 
     /**

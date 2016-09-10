@@ -9,6 +9,7 @@ Picker:
   shortCylinder: 3
 OperatorInterface:
   driverJoystick: 0
+  gunnerJoystick: 1
 Turret:
   pinchRollerMotor: { channel: 5, inverted: true }
   kingRollerMotor: { channel: 3, inverted: true }
