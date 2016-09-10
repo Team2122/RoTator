@@ -131,10 +131,10 @@ public class ManualTester extends CommandBase {
     public void beginTestGroup(int index) {
         testGroupIndex = index;
         if (getCurrentTestGroup() == null) {
-            logger.info("There are no test groups");
+            logger.info("==== There are no test groups ====");
             return;
         }
-        logger.info("Entering Test Group {}", getCurrentTestGroup().getName());
+        logger.info("==== Entering Test Group '{}' ====", getCurrentTestGroup().getName());
         beginTest(0);
     }
 
@@ -157,9 +157,9 @@ public class ManualTester extends CommandBase {
     private void startTest() {
         ComponentTest test = getCurrentTest();
         if (test == null) {
-            logger.info("Test group {} is empty!", getCurrentTestGroup().getName());
+            logger.info("== Test group '{}' is empty! ==", getCurrentTestGroup().getName());
         } else {
-            logger.info("Testing {}", test.getName());
+            logger.info("== Testing '{}' ==", test.getName());
             test.start();
         }
     }
