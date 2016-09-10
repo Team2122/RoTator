@@ -11,14 +11,15 @@ OperatorInterface:
   driverJoystick: 0
 Turret:
   shooterWheelMotor: { channel: 2, inverted: false }
-  shooterWheelEncoder: { aChannel: 4, bChannel: 5 }
+  shooterWheelEncoder: { aChannel: 4, bChannel: 5, reverse: true }
   shortSolenoid: 2
   longSolenoid: 1
   hoodDeploySolenoid: 0
   kingRollerMotor: { channel: 3, inverted: true }
   pinchRollerMotor: { channel: 5, inverted: true }
   turretRotationMotor: { channel: 4, inverted: false }
-  turretRotationEncoder: { aChannel: 6, bChannel: 7 }
+  turretRotationEncoder: { aChannel: 6, bChannel: 7, reverse: true }
   leftLimit: { channel: 11, type: NPN }
   rightLimit: { channel: 10, type: NPN }
   centerLimit: { channel: 12, type: NPN }
+  ballSensor: { channel: 4, minDistance: 26.0, maxDistance: 300.0 }
