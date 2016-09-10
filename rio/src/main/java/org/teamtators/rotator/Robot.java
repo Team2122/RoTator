@@ -1,6 +1,5 @@
 package org.teamtators.rotator;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -9,9 +8,11 @@ import com.google.inject.Injector;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.teamtators.rotator.config.*;
+import org.teamtators.rotator.config.ConfigCommandStore;
+import org.teamtators.rotator.config.ConfigLoader;
+import org.teamtators.rotator.config.Configurables;
+import org.teamtators.rotator.config.TriggerBinder;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
-import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.Commands;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.scheduler.Scheduler;
@@ -41,6 +42,8 @@ public class Robot extends IterativeRobot {
     private Scheduler scheduler;
     @Inject
     private ManualTester manualTester;
+    @Inject
+    private TriggerBinder triggerBinder;
 
     @Override
     public void robotInit() {
@@ -86,14 +89,7 @@ public class Robot extends IterativeRobot {
         commandStore.createCommandsFromConfig(commandsConfig);
 
         logger.debug("Configuring triggers");
-        try {
-            TriggersConfig triggers = objectMapper.treeToValue(triggersConfig, TriggersConfig.class);
-            ButtonBinder binder = new ButtonBinder();
-            binder.bindButtonsToLogitechF310(triggers.getDriverButtons(), operatorInterface.driverJoystick());
-        } catch (JsonProcessingException e) {
-            logger.error("Parsing config triggers failed");
-            e.printStackTrace();
-        }
+        triggerBinder.bindButtonsToLogitechF310(triggersConfig, operatorInterface.driverJoystick());
         // add some commands for testing triggers
         commandStore.putCommand("buttonPressTest", Commands.log("Button A pressed"));
         commandStore.putCommand("buttonReleaseTest", Commands.log("Button A released"));
