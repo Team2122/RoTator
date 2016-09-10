@@ -1,8 +1,8 @@
 Drive:
   leftMotor: { channel: 0, inverted: false }
   rightMotor: { channel: 1, inverted: true }
-  leftEncoder: { aChannel: 2, bChannel: 3, reverse: true }
-  rightEncoder: { aChannel: 0, bChannel: 1 }
+  leftEncoder: { aChannel: 2, bChannel: 3, reverse: true, distancePerPulse: .06597 }
+  rightEncoder: { aChannel: 0, bChannel: 1, distancePerPulse: .06597 }
 Picker:
   pickMotor: { channel: 6, inverted: true }
   longCylinder: 4
@@ -11,14 +11,14 @@ OperatorInterface:
   driverJoystick: 0
 Turret:
   shooterWheelMotor: { channel: 2, inverted: false }
-  shooterWheelEncoder: { aChannel: 4, bChannel: 5, reverse: true }
-  shortSolenoid: 2
-  longSolenoid: 1
+  shooterWheelEncoder: { aChannel: 4, bChannel: 5, reverse: true, distancePerPulse: 0.0009765625 }
+  shortSolenoid: 1
+  longSolenoid: 2
   hoodDeploySolenoid: 0
   kingRollerMotor: { channel: 3, inverted: true }
   pinchRollerMotor: { channel: 5, inverted: true }
   turretRotationMotor: { channel: 4, inverted: false }
-  turretRotationEncoder: { aChannel: 6, bChannel: 7, reverse: true }
+  turretRotationEncoder: { aChannel: 6, bChannel: 7, reverse: true, distancePerPulse: 0.0009765625 }
   leftLimit: { channel: 11, type: NPN }
   rightLimit: { channel: 10, type: NPN }
   centerLimit: { channel: 12, type: NPN }
