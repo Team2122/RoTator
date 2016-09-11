@@ -11,3 +11,23 @@ PickerToCheval:
 PickerToPick:
   class: PickerSetPosition
   pickerPosition: PICK
+
+HoodDown:
+  class: HoodSetPosition
+  hoodPosition: DOWN
+
+HoodUp1:
+  class: HoodSetPosition
+  hoodPosition: UP1
+
+HoodUp2:
+  class: HoodSetPosition
+  hoodPosition: UP2
+
+HoodUp3:
+  class: HoodSetPosition
+  hoodPosition: UP3
+
+HoodUp4:
+  class: HoodSetPosition
+  hoodPosition: UP4
