@@ -7,22 +7,22 @@ Drive:
   driveMode: CONTROLLER
   maxSpeed: 156.0
 Picker:
-  pickMotor: { channel: 6, inverted: true }
+  pickMotor: { channel: 6, inverted: false }
   longCylinder: 4
   shortCylinder: 3
 OperatorInterface:
   driverJoystick: 0
   gunnerJoystick: 1
 Turret:
-  pinchRollerMotor: { channel: 5, inverted: true }
-  kingRollerMotor: { channel: 3, inverted: true }
+  pinchRollerMotor: { channel: 5, inverted: false }
+  kingRollerMotor: { channel: 3, inverted: false }
   ballSensor: { channel: 4, minDistance: 300.0, maxDistance: 26.0 }
   hoodDeploySolenoid: 0
   shortSolenoid: 1
   longSolenoid: 2
-  shooterWheelMotor: { channel: 2, inverted: false }
+  shooterWheelMotor: { channel: 2, inverted: true }
   shooterWheelEncoder: { aChannel: 4, bChannel: 5, reverse: true, distancePerPulse: 0.0009765625 }
-  turretRotationMotor: { channel: 4, inverted: false }
+  turretRotationMotor: { channel: 4, inverted: true }
   turretRotationEncoder: { aChannel: 6, bChannel: 7, reverse: true, distancePerPulse: 0.0009765625 }
   leftLimit: { channel: 11, type: NPN }
   rightLimit: { channel: 10, type: NPN }
