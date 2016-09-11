@@ -10,6 +10,7 @@ import org.teamtators.rotator.components.DistanceLaser;
 import org.teamtators.rotator.config.*;
 import org.teamtators.rotator.control.ControllerTest;
 import org.teamtators.rotator.scheduler.RobotState;
+import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.scheduler.StateListener;
 import org.teamtators.rotator.tester.ComponentTestGroup;
 import org.teamtators.rotator.tester.ITestable;
@@ -37,6 +38,10 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
 
     @Inject
     private ControllerFactory controllerFactory;
+    @Inject
+    private Scheduler scheduler;
+    @Inject
+    private ConfigCommandStore commandStore;
 
     @Override
     public void configure(Config config) {
@@ -73,11 +78,26 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
             case AUTONOMOUS:
             case TELEOP:
                 getShooterWheelController().enable();
+                if (isHomed()) {
+                    //TODO: Enable rotation controller here
+                } else {
+                    scheduler.startCommand(commandStore.getCommand("TurretHome"));
+                }
                 break;
             default:
                 getShooterWheelController().disable();
+                //TODO: Disable rotation controller here
                 break;
         }
+    }
+
+    @Override
+    public boolean homeTurret() {
+        if (super.homeTurret()) {
+            //TODO: Enable rotation controller here
+            return true;
+        }
+        return false;
     }
 
     @Override

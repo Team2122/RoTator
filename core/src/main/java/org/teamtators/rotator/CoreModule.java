@@ -11,6 +11,7 @@ import org.teamtators.rotator.commands.CoreCommands;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Stepper;
+import org.teamtators.rotator.scheduler.CommandStore;
 
 public class CoreModule extends AbstractModule {
     private String configDir = null;
@@ -23,6 +24,7 @@ public class CoreModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(String.class).annotatedWith(Names.named("configDir")).toInstance(configDir);
+        bind(CommandStore.class).to(ConfigCommandStore.class);
     }
 
     @Provides @Singleton
