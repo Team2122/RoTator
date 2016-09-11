@@ -18,6 +18,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     @Inject
     public PickerPick(AbstractPicker picker, AbstractTurret turret) {
         super("PickerPick");
+        requires(picker);
         this.picker = picker;
         this.turret = turret;
     }

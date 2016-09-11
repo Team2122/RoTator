@@ -1,11 +1,15 @@
 Driver:
-  A: start whenPressed PickerToHome
-  B: start whenReleased PickerToCheval
-  Y: start whenPressed PickerToPick
-  X: toggle whenPressed PickerPick
+  TRIGGER_LEFT: start whenPressed PickerToHome
+  BUMPER_LEFT: start whenReleased PickerToCheval
+  TRIGGER_RIGHT: start whenPressed PickerToPick
+  BUMPER_RIGHT: toggle whenPressed PickerPick
+  A: start whenPressed TurretStopWheel
+  B: start whenPressed TurretSpinUp
+  X: toggle whenPressed TurretShoot
   POV_UP: start whenPressed HoodUp4
   POV_RIGHT: start whenPressed HoodUp1
   POV_DOWN: start whenPressed HoodDown
+
 
 Gunner:
 
