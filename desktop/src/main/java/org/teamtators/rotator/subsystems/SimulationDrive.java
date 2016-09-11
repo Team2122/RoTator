@@ -1,9 +1,10 @@
 package org.teamtators.rotator.subsystems;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Singleton;
 import org.teamtators.rotator.components.Gyro;
 import org.teamtators.rotator.components.SimulationGyro;
-import org.teamtators.rotator.control.PController;
+import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.config.Configurable;
 
@@ -76,14 +77,7 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
     }
 
     @Inject
-    public void setLeftController(PController leftController) {
-        super.setLeftController(leftController);
-    }
-
-    @Inject
-    public void setRightController(PController rightController) {
-        super.setRightController(rightController);
-    }
+    private ControllerFactory controllerFactory;
 
     @Override
     public void configure(Config config) {
@@ -92,6 +86,9 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
         rightMotor.configure(config.motor);
         leftEncoder.configure(config.encoder);
         rightEncoder.configure(config.encoder);
+        setMaxSpeed(config.maxSpeed);
+        setLeftController(controllerFactory.create(config.controller));
+        setRightController(controllerFactory.create(config.controller));
         setDriveMode(config.driveMode);
     }
 
@@ -195,5 +192,7 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
         public SimulationMotor.Config motor;
         public SimulationEncoder.Config encoder;
         public DriveMode driveMode;
+        public JsonNode controller;
+        public double maxSpeed;
     }
 }

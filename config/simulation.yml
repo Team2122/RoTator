@@ -11,4 +11,6 @@ SimulationDrive:
     dampening: 4
   encoder:
     multiplier: 25.13 # 8 * pi
-  driveMode: DIRECT
+  controller: { P: .5, F: .00641 }
+  driveMode: CONTROLLER
+  maxSpeed: 156.0

@@ -1,9 +1,7 @@
 package org.teamtators.rotator.subsystems;
 
-import com.google.common.base.Preconditions;
 import org.teamtators.rotator.components.Gyro;
 import org.teamtators.rotator.control.AbstractController;
-import org.teamtators.rotator.control.PController;
 import org.teamtators.rotator.scheduler.Subsystem;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -15,6 +13,7 @@ public abstract class AbstractDrive extends Subsystem {
     private AbstractController leftController = null;
     private AbstractController rightController = null;
     private DriveMode driveMode = DriveMode.DIRECT;
+    private double maxSpeed;
 
     public AbstractDrive() {
         super("Drive");
@@ -37,7 +36,7 @@ public abstract class AbstractDrive extends Subsystem {
                 setLeftPower(leftSpeed);
                 break;
             case CONTROLLER:
-                leftController.setSetpoint(leftSpeed);
+                leftController.setSetpoint(leftSpeed * maxSpeed);
                 break;
         }
     }
@@ -48,7 +47,7 @@ public abstract class AbstractDrive extends Subsystem {
                 setRightPower(rightSpeed);
                 break;
             case CONTROLLER:
-                rightController.setSetpoint(rightSpeed);
+                rightController.setSetpoint(rightSpeed * maxSpeed);
                 break;
         }
     }
@@ -172,11 +171,20 @@ public abstract class AbstractDrive extends Subsystem {
         return getGyro().getRate();
     }
 
+    public double getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(double maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
     protected AbstractController getLeftController() {
         return leftController;
     }
 
     protected void setLeftController(AbstractController leftController) {
+        leftController.setName("leftDrive");
         leftController.setInputProvider(this::getLeftRate);
         leftController.setOutputConsumer(this::setLeftPower);
         this.leftController = leftController;
@@ -187,6 +195,7 @@ public abstract class AbstractDrive extends Subsystem {
     }
 
     protected void setRightController(AbstractController rightController) {
+        rightController.setName("rightDrive");
         rightController.setInputProvider(this::getRightRate);
         rightController.setOutputConsumer(this::setRightPower);
         this.rightController = rightController;

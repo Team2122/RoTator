@@ -1,9 +1,12 @@
 package org.teamtators.rotator.control;
 
+import org.teamtators.rotator.config.Configurable;
+
 /**
  * A PID Controller implementation
  */
-public class PIDController extends PController {
+public class PIDController extends AbstractController implements Configurable<PIDController.Config> {
+    private double kP = 0.0;
     private double kI = 0.0;
     private double kD = 0.0;
     private double kF = 0.0;
@@ -17,62 +20,86 @@ public class PIDController extends PController {
     }
 
     public PIDController(String name, double kP, double kI, double kD) {
-        super(name, kP);
-        setkI(kI);
-        setkD(kD);
+        super(name);
+        setP(kP);
+        setI(kI);
+        setD(kD);
     }
 
     public PIDController(String name, double kP, double kI, double kD, double kF, double maxError) {
         this(name, kP, kI, kD);
-        setkF(kF);
+        setF(kF);
         setMaxIError(maxError);
     }
 
-    public double getkI() {
+    public synchronized void setPIDF(double kP, double kI, double kD, double kF) {
+        this.kP = kP;
+        this.kI = kI;
+        this.kD = kD;
+        this.kF = kF;
+    }
+
+    public void setPID(double kP, double kI, double kD) {
+        setPIDF(kP, kI, kD, 0.0);
+    }
+
+    public synchronized double getP() {
+        return kP;
+    }
+
+    public synchronized void setP(double kP) {
+        this.kP = kP;
+    }
+
+    public synchronized double getI() {
         return kI;
     }
 
-    public void setkI(double kI) {
+    public synchronized void setI(double kI) {
         this.kI = kI;
     }
 
-    public double getkD() {
+    public synchronized double getD() {
         return kD;
     }
 
-    public void setkD(double kD) {
+    public synchronized void setD(double kD) {
         this.kD = kD;
     }
 
-    public double getMaxIError() {
+    public synchronized double getMaxIError() {
         return maxIError;
     }
 
-    public void setMaxIError(double maxIError) {
+    public synchronized void setMaxIError(double maxIError) {
         this.maxIError = maxIError;
     }
 
-    public double getkF() {
+    public synchronized double getF() {
         return kF;
     }
 
-    public void setkF(double kF) {
+    public synchronized void setF(double kF) {
         this.kF = kF;
     }
 
     @Override
     protected double computeOutput(double delta) {
-        double output = super.computeOutput(delta);
-        if (getError() < maxIError) {
+        double error = getError();
+        double output = error * kP;
+        if (Math.abs(error) < maxIError) {
             output += kI * totalError;
         }
-        if (lastInput != Double.NaN && delta != 0) {
+        if (!Double.isNaN(lastInput) && delta != 0) {
             output += kD * (getInput() - lastInput) / delta;
         }
         output += kF * getSetpoint();
 
         lastInput = getInput();
-        totalError += getError() * delta;
+        totalError += error * delta;
+
+        if (Double.isInfinite(output) || Double.isNaN(output))
+            return 0;
 
         return output;
     }
@@ -88,5 +115,16 @@ public class PIDController extends PController {
             lastInput = Double.NaN;
         }
         resetTotalError();
+    }
+
+    @Override
+    public void configure(Config config) {
+        if (config == null) return;
+        setPIDF(config.P, config.I, config.D, config.F);
+        setMaxIError(config.maxI);
+    }
+
+    public static class Config {
+        public double P = 0.0, I = 0.0, D = 0.0, F = 0.0, maxI = Double.POSITIVE_INFINITY;
     }
 }
