@@ -1,7 +1,6 @@
 package org.teamtators.rotator.tester.components;
 
-import org.teamtators.rotator.ADXRS453;
-import org.teamtators.rotator.IGyro;
+import org.teamtators.rotator.components.ADXRS453;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.tester.ComponentTest;
 

@@ -3,7 +3,7 @@ package org.teamtators.rotator.subsystems;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.VictorSP;
-import org.teamtators.rotator.ADXRS453;
+import org.teamtators.rotator.components.ADXRS453;
 import org.teamtators.rotator.IGyro;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.EncoderConfig;
