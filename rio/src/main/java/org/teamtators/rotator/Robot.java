@@ -12,6 +12,7 @@ import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
 import org.teamtators.rotator.config.TriggerBinder;
+import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.RobotState;
@@ -44,7 +45,7 @@ public class Robot extends IterativeRobot {
     private ManualTester manualTester;
     @Inject
     private TriggerBinder triggerBinder;
-    @Inject
+    @Inject @ForController
     private Stepper stepper;
 
     @Override

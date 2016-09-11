@@ -9,6 +9,8 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import org.teamtators.rotator.commands.CoreCommands;
 import org.teamtators.rotator.config.ConfigCommandStore;
+import org.teamtators.rotator.control.ForController;
+import org.teamtators.rotator.control.Stepper;
 
 public class CoreModule extends AbstractModule {
     private String configDir = null;
@@ -34,5 +36,10 @@ public class CoreModule extends AbstractModule {
         commandStore.setInjector(injector);
         CoreCommands.register(commandStore);
         return commandStore;
+    }
+
+    @Provides @ForController @Singleton
+    Stepper providesStepperForController() {
+        return new Stepper(1.0 / 120.0);
     }
 }

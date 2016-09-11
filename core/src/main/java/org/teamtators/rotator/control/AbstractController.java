@@ -114,7 +114,7 @@ public abstract class AbstractController implements Steppable {
         }
     }
 
-    @Inject
+    @Inject @ForController
     public void setStepper(Stepper stepper) {
         this.stepper = stepper;
     }
@@ -128,6 +128,6 @@ public abstract class AbstractController implements Steppable {
     }
 
     public boolean isEnabled() {
-        return stepper.isEnabled(this);
+        return stepper.contains(this);
     }
 }

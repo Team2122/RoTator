@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
+import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.Commands;
@@ -39,7 +40,7 @@ public class Main {
     private SimulationDrive drive;
     @Inject
     private WASDJoystick joystick;
-    @Inject
+    @Inject @ForController
     private Stepper stepper;
     @Inject
     private Stepper uiStepper;
@@ -77,7 +78,7 @@ public class Main {
                 .whenReleased();
 
         stepper.add(drive);
-        uiStepper.setPeriod(1000 / 50);
+        uiStepper.setPeriod(1.0 / 50.0);
         uiStepper.add(delta -> {
             scheduler.execute();
             simulationFrame.repaint();

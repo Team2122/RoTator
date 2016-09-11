@@ -4,13 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Stepper implements Runnable {
-    public static final int DEFAULT_PERIOD = 10;
-    private List<Steppable> toStep = new ArrayList<>();
-    private int period;
+    public static final double DEFAULT_PERIOD = 1.0 / 120.0;
+    private Set<Steppable> steppables = new HashSet<>();
+    private double period;
     private Logger logger = LoggerFactory.getLogger(getClass());
     private ITimeProvider timeProvider = new SystemNanoTimeTimeProvider();
     private boolean running = false;
@@ -20,7 +20,7 @@ public class Stepper implements Runnable {
         this(DEFAULT_PERIOD);
     }
 
-    public Stepper(int period) {
+    public Stepper(double period) {
         this.period = period;
     }
 
@@ -37,25 +37,27 @@ public class Stepper implements Runnable {
     }
 
     public void add(Steppable steppable) {
-        if(!isEnabled(steppable)) {
-            toStep.add(steppable);
-        }
+        steppables.add(steppable);
     }
 
     public void remove(Steppable steppable) {
-        toStep.remove(steppable);
+        steppables.remove(steppable);
+    }
+
+    public boolean contains(Steppable steppable) {
+        return steppables.contains(steppable);
     }
 
     @Override
     public void run() {
-        long lastStepped = timeProvider.currentTimeMillis();
+        double lastStepTime = timeProvider.getTimestamp();
         while (running) {
-            long nextStepped = timeProvider.currentTimeMillis();
-            long delta = nextStepped - lastStepped;
-            for (Steppable steppable : toStep) {
-                steppable.step(delta / 1000.0);
+            double stepTime = timeProvider.getTimestamp();
+            double delta = stepTime - lastStepTime;
+            for (Steppable steppable : steppables) {
+                steppable.step(delta);
             }
-            long delay = period - delta;
+            long delay = (long) ((period - delta) * 1000);
             if (delay < 0) {
                 logger.warn("Stepping took " + (-delay) + " milliseconds longer than configured period");
             } else {
@@ -65,15 +67,15 @@ public class Stepper implements Runnable {
                     return;
                 }
             }
-            lastStepped = nextStepped;
+            lastStepTime = stepTime;
         }
     }
 
-    public int getPeriod() {
+    public double getPeriod() {
         return period;
     }
 
-    public void setPeriod(int period) {
+    public void setPeriod(double period) {
         this.period = period;
     }
 
@@ -82,7 +84,4 @@ public class Stepper implements Runnable {
         this.timeProvider = timeProvider;
     }
 
-    public boolean isEnabled(Steppable steppable) {
-        return toStep.contains(steppable);
-    }
 }

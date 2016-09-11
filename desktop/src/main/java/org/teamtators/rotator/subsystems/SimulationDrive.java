@@ -1,6 +1,7 @@
 package org.teamtators.rotator.subsystems;
 
 import com.google.inject.Singleton;
+import org.teamtators.rotator.IGyro;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.config.Configurable;
 
@@ -117,6 +118,26 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
     @Override
     public void setDriveMode(DriveMode driveMode) {
 
+    }
+
+    @Override
+    public IGyro getGyro() {
+        return null;
+    }
+
+    @Override
+    public double getGyroAngle() {
+        return 0;
+    }
+
+    @Override
+    public void resetGyroAngle() {
+
+    }
+
+    @Override
+    public double getGyroRate() {
+        return 0;
     }
 
     @Override
