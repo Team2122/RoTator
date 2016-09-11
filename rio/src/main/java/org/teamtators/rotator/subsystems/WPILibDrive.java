@@ -87,8 +87,8 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
         switch (driveMode) {
             case DIRECT:
                 break;
-            case PID:
-                throw new IllegalStateException("PID mode is not implemented yet");
+            case CONTROLLER:
+                throw new IllegalStateException("CONTROLLER mode is not implemented yet");
         }
     }
 

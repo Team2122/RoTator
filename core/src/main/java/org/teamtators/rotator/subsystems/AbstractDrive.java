@@ -1,12 +1,21 @@
 package org.teamtators.rotator.subsystems;
 
+import com.google.common.base.Preconditions;
 import org.teamtators.rotator.components.Gyro;
+import org.teamtators.rotator.control.AbstractController;
+import org.teamtators.rotator.control.PController;
 import org.teamtators.rotator.scheduler.Subsystem;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Interface for the drive train which drives the robot
  */
 public abstract class AbstractDrive extends Subsystem {
+    private AbstractController leftController = null;
+    private AbstractController rightController = null;
+    private DriveMode driveMode = DriveMode.DIRECT;
+
     public AbstractDrive() {
         super("Drive");
     }
@@ -14,33 +23,55 @@ public abstract class AbstractDrive extends Subsystem {
     /**
      * It sets the power to the  drivetrain motors
      *
-     * @param leftPower  power for the left motor, between 0 and 1
-     * @param rightPower power for the right motor, btwn 0 and 1
+     * @param leftSpeed  power for the left motor, between 0 and 1
+     * @param rightSpeed power for the right motor, btwn 0 and 1
      */
-    public void setPowers(float leftPower, float rightPower) {
-        setLeftPower(leftPower);
-        setRightPower(rightPower);
+    public void setSpeeds(double leftSpeed, double rightSpeed) {
+        setLeftSpeed(leftSpeed);
+        setRightSpeed(rightSpeed);
+    }
+
+    public void setLeftSpeed(double leftSpeed) {
+        switch (driveMode) {
+            case DIRECT:
+                setLeftPower(leftSpeed);
+                break;
+            case CONTROLLER:
+                leftController.setSetpoint(leftSpeed);
+                break;
+        }
+    }
+
+    public void setRightSpeed(double rightSpeed) {
+        switch (driveMode) {
+            case DIRECT:
+                setRightPower(rightSpeed);
+                break;
+            case CONTROLLER:
+                rightController.setSetpoint(rightSpeed);
+                break;
+        }
     }
 
     /**
      * It sets the power to the left drivetrain motor
      *
-     * @param leftPower  power for the left motor, between 0 and 1
+     * @param leftPower power for the left motor, between 0 and 1
      */
-    public abstract void setLeftPower(float leftPower);
+    protected abstract void setLeftPower(double leftPower);
 
     /**
      * It sets the power to the right drivetrain motors
      *
      * @param rightPower power for the right drivetrain motor, between 0 and 1
      */
-    public abstract void setRightPower(float rightPower);
+    protected abstract void setRightPower(double rightPower);
 
     /**
      * resets the power for the motors to 0
      */
-    public void resetPowers() {
-        setPowers(0f, 0f);
+    public void resetSpeeds() {
+        setSpeeds(0f, 0f);
     }
 
     /**
@@ -82,24 +113,82 @@ public abstract class AbstractDrive extends Subsystem {
      */
     public abstract void resetEncoders();
 
+    public DriveMode getDriveMode() {
+        return driveMode;
+    }
+
     /**
      * Sets how the drive train motors are controlled
      *
      * @param driveMode the drive mode
      */
-    public abstract void setDriveMode(DriveMode driveMode);
+    public void setDriveMode(DriveMode driveMode) {
+        checkNotNull(driveMode);
+        this.driveMode = driveMode;
+        switch (driveMode) {
+            default:
+            case DIRECT:
+                leftController.disable();
+                rightController.disable();
+                break;
+            case CONTROLLER:
+                leftController.enable();
+                rightController.enable();
+                break;
+        }
+    }
 
+    /**
+     * Gets the gyroscope sensor object to measure angle and angle change of the yaw axis
+     * of the robot
+     *
+     * @return The gyro object
+     */
     public abstract Gyro getGyro();
 
+    /**
+     * Gets the current angle of the gyro, relative to the orientation of the robot
+     * when resetGyroAngle() was last called
+     *
+     * @return The angle, in degrees
+     */
     public double getGyroAngle() {
         return getGyro().getAngle();
     }
 
+    /**
+     * Resets the current gyro angle to 0
+     */
     public void resetGyroAngle() {
         getGyro().resetAngle();
     }
 
+    /**
+     * Gets the current rate of rotation of the gyro
+     *
+     * @return The rate, in degrees per second
+     */
     public double getGyroRate() {
         return getGyro().getRate();
+    }
+
+    protected AbstractController getLeftController() {
+        return leftController;
+    }
+
+    protected void setLeftController(AbstractController leftController) {
+        leftController.setInputProvider(this::getLeftRate);
+        leftController.setOutputConsumer(this::setLeftPower);
+        this.leftController = leftController;
+    }
+
+    protected AbstractController getRightController() {
+        return rightController;
+    }
+
+    protected void setRightController(AbstractController rightController) {
+        rightController.setInputProvider(this::getRightRate);
+        rightController.setOutputConsumer(this::setRightPower);
+        this.rightController = rightController;
     }
 }

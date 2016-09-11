@@ -24,7 +24,7 @@ public class DriveTank extends CommandBase {
 
     @Override
     protected void finish(boolean interrupted) {
-        drive.resetPowers();
+        drive.resetSpeeds();
         super.finish(interrupted);
     }
 
@@ -38,7 +38,7 @@ public class DriveTank extends CommandBase {
         double leftPower = driverJoystick.getAxisValue(LogitechF310.Axis.LEFT_STICK_Y);
         double rightPower = driverJoystick.getAxisValue(LogitechF310.Axis.RIGHT_STICK_Y);
 
-        drive.setPowers((float) leftPower, (float) rightPower);
+        drive.setSpeeds(leftPower, rightPower);
 
         return false;
     }

@@ -11,3 +11,4 @@ SimulationDrive:
     dampening: 4
   encoder:
     multiplier: 25.13 # 8 * pi
+  driveMode: DIRECT

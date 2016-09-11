@@ -3,8 +3,11 @@ package org.teamtators.rotator.subsystems;
 import com.google.inject.Singleton;
 import org.teamtators.rotator.components.Gyro;
 import org.teamtators.rotator.components.SimulationGyro;
+import org.teamtators.rotator.control.PController;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.config.Configurable;
+
+import javax.inject.Inject;
 
 @Singleton
 public class SimulationDrive extends AbstractDrive implements Configurable<SimulationDrive.Config>, Steppable {
@@ -72,6 +75,16 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
         rotation = 0;
     }
 
+    @Inject
+    public void setLeftController(PController leftController) {
+        super.setLeftController(leftController);
+    }
+
+    @Inject
+    public void setRightController(PController rightController) {
+        super.setRightController(rightController);
+    }
+
     @Override
     public void configure(Config config) {
         this.config = config;
@@ -79,15 +92,16 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
         rightMotor.configure(config.motor);
         leftEncoder.configure(config.encoder);
         rightEncoder.configure(config.encoder);
+        setDriveMode(config.driveMode);
     }
 
     @Override
-    public void setLeftPower(float leftPower) {
+    public void setLeftPower(double leftPower) {
         this.leftMotor.setPower(leftPower);
     }
 
     @Override
-    public void setRightPower(float rightPower) {
+    public void setRightPower(double rightPower) {
         this.rightMotor.setPower(rightPower);
     }
 
@@ -115,11 +129,6 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
     public void resetEncoders() {
         leftEncoder.resetRotations();
         rightEncoder.resetRotations();
-    }
-
-    @Override
-    public void setDriveMode(DriveMode driveMode) {
-
     }
 
     @Override
@@ -185,5 +194,6 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
         public int length;
         public SimulationMotor.Config motor;
         public SimulationEncoder.Config encoder;
+        public DriveMode driveMode;
     }
 }

@@ -4,10 +4,10 @@ package org.teamtators.rotator.control;
  * A controller that scales the error by a value
  */
 public class PController extends AbstractController {
-    private double kP;
+    private double kP = 0.0;
 
-    public PController(String name) {
-        super(name);
+    public PController() {
+        super();
     }
 
     public PController(String name, double kP) {
@@ -20,11 +20,11 @@ public class PController extends AbstractController {
         return getError() * kP;
     }
 
-    public void setkP(double kP) {
+    public synchronized void setkP(double kP) {
         this.kP = kP;
     }
 
-    public double getkP() {
+    public synchronized double getkP() {
         return kP;
     }
 }

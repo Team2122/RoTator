@@ -6,14 +6,16 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Stepper implements Runnable {
     public static final double DEFAULT_PERIOD = 1.0 / 120.0;
-    private Set<Steppable> steppables = new HashSet<>();
+    private Set<Steppable> steppables = ConcurrentHashMap.newKeySet();
     private double period;
     private Logger logger = LoggerFactory.getLogger(getClass());
     private ITimeProvider timeProvider = new SystemNanoTimeTimeProvider();
-    private boolean running = false;
+    private AtomicBoolean running = new AtomicBoolean(false);
     private Thread thread;
 
     public Stepper() {
@@ -25,14 +27,13 @@ public class Stepper implements Runnable {
     }
 
     public void start() {
-        if (running) return;
-        running = true;
+        if (!running.compareAndSet(false, true)) return;
         thread = new Thread(this);
         thread.start();
     }
 
     public void stop() {
-        running = false;
+        running.set(false);
         thread.interrupt();
     }
 
@@ -51,7 +52,7 @@ public class Stepper implements Runnable {
     @Override
     public void run() {
         double lastStepTime = timeProvider.getTimestamp();
-        while (running) {
+        while (running.get()) {
             double stepTime = timeProvider.getTimestamp();
             double delta = stepTime - lastStepTime;
             for (Steppable steppable : steppables) {

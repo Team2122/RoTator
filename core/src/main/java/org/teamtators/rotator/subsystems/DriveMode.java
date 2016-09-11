@@ -9,7 +9,7 @@ public enum DriveMode {
      */
     DIRECT,
     /**
-     * PID is when the motors are controlled with the PID loop
+     * CONTROLLER is when the motors are controlled with the CONTROLLER loop
      */
-    PID
+    CONTROLLER
 }

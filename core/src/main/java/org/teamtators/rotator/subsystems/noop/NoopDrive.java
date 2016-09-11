@@ -13,12 +13,12 @@ public class NoopDrive extends AbstractDrive {
     private SimulationGyro simulationGyro = new SimulationGyro();
 
     @Override
-    public void setLeftPower(float leftPower) {
+    public void setLeftPower(double leftPower) {
 
     }
 
     @Override
-    public void setRightPower(float rightPower) {
+    public void setRightPower(double rightPower) {
 
     }
 
