@@ -17,6 +17,7 @@ import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.scheduler.Scheduler;
+import org.teamtators.rotator.scheduler.StateListener;
 import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.ManualTester;

@@ -126,6 +126,7 @@ public abstract class AbstractDrive extends Subsystem {
         this.driveMode = driveMode;
         switch (driveMode) {
             default:
+            case DISABLED:
             case DIRECT:
                 leftController.disable();
                 rightController.disable();
