@@ -89,10 +89,9 @@ public class Robot extends IterativeRobot {
         commandStore.createCommandsFromConfig(commandsConfig);
 
         logger.debug("Configuring triggers");
-        triggerBinder.bindButtonsToJoysticks(triggersConfig);
-        // add some commands for testing triggers
-        commandStore.putCommand("buttonPressTest", Commands.log("Button A pressed"));
-        commandStore.putCommand("buttonReleaseTest", Commands.log("Button A released"));
+        triggerBinder.setCommandStore(commandStore);
+        triggerBinder.bindTriggers(triggersConfig);
+
         scheduler.registerDefaultCommand(commandStore.getCommand("DriveTank"));
         scheduler.registerDefaultCommand(manualTester);
 

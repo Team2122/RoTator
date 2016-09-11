@@ -1,1 +1,13 @@
 DriveTank:
+
+ButtonPressTest:
+  class: LogCommand
+  message: Button was pressed
+
+ButtonReleaseTest:
+  class: LogCommand
+  message: Button was released
+
+ButtonHeldTest:
+  class: LogCommand
+  message: Button is held

@@ -1,5 +1,6 @@
 Driver:
-  A: WhenPressed buttonPressTest
-  B: WhenReleased buttonReleaseTest
+  A: start whenPressed ButtonPressTest
+  B: start whenReleased ButtonReleaseTest
+  X: whilePressed ButtonHeldTest
 
 Gunner:

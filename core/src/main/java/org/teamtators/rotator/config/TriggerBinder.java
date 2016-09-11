@@ -3,25 +3,22 @@ package org.teamtators.rotator.config;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
-import org.teamtators.rotator.scheduler.Command;
-import org.teamtators.rotator.scheduler.CommandStore;
-import org.teamtators.rotator.scheduler.Scheduler;
-import org.teamtators.rotator.scheduler.TriggerAdder;
+import org.teamtators.rotator.scheduler.*;
 
-import java.util.Iterator;
 import java.util.Map;
 
 public class TriggerBinder {
+    private static final Logger logger = LoggerFactory.getLogger(TriggerBinder.class);
     private Scheduler scheduler;
     private CommandStore commandStore;
     private ObjectMapper objectMapper;
     private AbstractOperatorInterface operatorInterface;
-    private static final Logger logger = LoggerFactory.getLogger(TriggerBinder.class);
 
     @Inject
     public void setScheduler(Scheduler scheduler) {
@@ -29,13 +26,12 @@ public class TriggerBinder {
     }
 
     @Inject
-    public void setCommandStore(CommandStore commandStore) {
-        this.commandStore = commandStore;
-    }
-
-    @Inject
     public void setObjectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    public void setCommandStore(CommandStore commandStore) {
+        this.commandStore = commandStore;
     }
 
     @Inject
@@ -44,28 +40,28 @@ public class TriggerBinder {
     }
 
     /**
-     * Bind buttons to all joysticks using a TriggersConfig
+     * Binds triggers from the config
      *
      * @param triggersConfig Triggers configuration object
      */
-    public void bindButtonsToJoysticks(TriggersConfig triggersConfig) {
-        bindButtonsToLogitechF310(triggersConfig.getDriver(), operatorInterface.driverJoystick());
-        bindButtonsToLogitechF310(triggersConfig.getGunner(), operatorInterface.gunnerJoystick());
+    public void bindTriggers(TriggersConfig triggersConfig) {
+        bindButtonsToLogitechF310(triggersConfig.driver, operatorInterface.driverJoystick());
+        bindButtonsToLogitechF310(triggersConfig.gunner, operatorInterface.gunnerJoystick());
     }
 
     /**
-     * Bind buttons to all joysticks using a config node
+     * Binds triggers from the config
      *
      * @param config Root config node of triggers
      */
-    public void bindButtonsToJoysticks(JsonNode config) {
+    public void bindTriggers(JsonNode config) {
         TriggersConfig triggersConfig;
         try {
             triggersConfig = objectMapper.treeToValue(config, TriggersConfig.class);
         } catch (JsonProcessingException e) {
-            throw new ConfigException("Failed to process triggers");
+            throw new ConfigException("Failed to load triggers config", e);
         }
-        bindButtonsToJoysticks(triggersConfig);
+        bindTriggers(triggersConfig);
     }
 
     /**
@@ -74,41 +70,75 @@ public class TriggerBinder {
      * @param buttonsMap Map of buttons and their bindings
      * @param joystick   Joystick to bind buttons to
      */
-    public void bindButtonsToLogitechF310(Map<LogitechF310.Button, String> buttonsMap, LogitechF310 joystick) {
-        Iterator<Map.Entry<LogitechF310.Button, String>> it = buttonsMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry line = it.next();
-            TriggerAdder onTrigger = scheduler.onTrigger(joystick.getTriggerSource((LogitechF310.Button) line.getKey()));
-            String bindingSpecifier = (String) line.getValue();
-            String[] binding = bindingSpecifier.split(" ");
-            Command command;
-            try {
-                command = commandStore.getCommand(binding[1]);
-            } catch (IllegalArgumentException e) {
-                throw new ConfigException("Command with name \"" + binding[1] + "\" in config does not exist");
-            }
-            switch (binding[0]) {
-                case "WhenPressed":
-                    onTrigger.start(command).whenPressed();
-                    break;
-                case "WhenReleased":
-                    onTrigger.start(command).whenReleased();
-                    break;
-                case "ToggleWhenPressed":
-                    onTrigger.toggle(command).whenPressed();
-                    break;
-                case "ToggleWhenReleased":
-                    onTrigger.toggle(command).whenReleased();
-                    break;
-                case "WhilePressed":
-                    onTrigger.whilePressed(command);
-                    break;
-                case "WhileReleased":
-                    onTrigger.whileReleased(command);
-                    break;
-                default:
-                    throw new ConfigException("Specified binding type " + binding[0] + " is invalid.");
+    public void bindButtonsToLogitechF310(Map<LogitechF310.Button, JsonNode> buttonsMap, LogitechF310 joystick) {
+        if (buttonsMap == null) return;
+        for (Map.Entry<LogitechF310.Button, JsonNode> entry : buttonsMap.entrySet()) {
+            TriggerSource triggerSource = joystick.getTriggerSource(entry.getKey());
+            TriggerAdder triggerAdder = scheduler.onTrigger(triggerSource);
+            JsonNode specifier = entry.getValue();
+            if (specifier.isTextual()) {
+                bindTriggerWithSpecifier(triggerAdder, specifier.asText());
+            } else if (specifier.isArray()) {
+                for (JsonNode arrayElem : specifier) {
+                    if (!arrayElem.isTextual()) {
+                        throw new ConfigException("Trigger specifiers must be textual, not \"" + arrayElem + '"');
+                    }
+                    bindTriggerWithSpecifier(triggerAdder,arrayElem.asText());
+                }
+            } else {
+                throw new ConfigException("Trigger specifier must be textual or array, not \"" + specifier + '"');
             }
         }
+    }
+
+    private void bindTriggerWithSpecifier(TriggerAdder triggerAdder, String bindingSpecifier) {
+        String[] binding = bindingSpecifier.split(" ");
+        invalidBinding:
+        if (binding.length == 2) {
+            Command command = getCommandForBinding(binding[1]);
+            switch (binding[0]) {
+                case "whilePressed":
+                    triggerAdder.whilePressed(command);
+                    return;
+                case "whileReleased":
+                    triggerAdder.whileReleased(command);
+                    return;
+            }
+        } else if (binding.length == 3) {
+            Command command = getCommandForBinding(binding[2]);
+            TriggerAdder.TriggerBinder binder;
+            switch (binding[0]) {
+                case "start":
+                    binder = triggerAdder.start(command);
+                    break;
+                case "toggle":
+                    binder = triggerAdder.toggle(command);
+                    break;
+                case "cancel":
+                    binder = triggerAdder.cancel(command);
+                    break;
+                default:
+                    break invalidBinding;
+            }
+            switch (binding[1]) {
+                case "whenPressed":
+                    binder.whenPressed();
+                    return;
+                case "whenReleased":
+                    binder.whenReleased();
+                    return;
+            }
+        }
+        throw new ConfigException("Invalid binding specifier: " + bindingSpecifier);
+    }
+
+    private Command getCommandForBinding(String commandName) {
+        Command command;
+        try {
+            command = commandStore.getCommand(commandName);
+        } catch (IllegalArgumentException e) {
+            throw new ConfigException("Command " + commandName + " in binding does not exist");
+        }
+        return command;
     }
 }
