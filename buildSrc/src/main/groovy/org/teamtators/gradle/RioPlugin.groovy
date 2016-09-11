@@ -16,7 +16,8 @@ class RioPlugin implements Plugin<Project> {
     static final def remoteConfigPath = "/home/lvuser/"
     static final def remoteCleanFiles = "/home/lvuser/config /home/lvuser/FRCUserProgram.jar"
     static final def netConsoleCommand = "env LD_LIBRARY_PATH=/usr/local/frc/rpath-lib/ /usr/local/frc/bin/netconsole-host"
-    static final def debugFlags = "-XX:+UsePerfData -agentlib:jdwp=transport=dt_socket,address=8348,server=y,suspend=y"
+    static final def debugSuspendFlags = "-XX:+UsePerfData -agentlib:jdwp=transport=dt_socket,address=8348,server=y,suspend=y"
+    static final def debugFlags = "-XX:+UsePerfData -agentlib:jdwp=transport=dt_socket,address=8348,server=y,suspend=n"
     final def ssh = Ssh.newService()
 
     def Project project
@@ -183,5 +184,10 @@ class RioPlugin implements Plugin<Project> {
     void rioProfileDebug() {
         println('Setting rio profile to debug')
         setRobotCommand("${netConsoleCommand} ${remoteJavaPath} ${debugFlags} -jar ${remoteJarPath}")
+    }
+
+    void rioProfileDebugSuspend() {
+        println('Setting rio profile to debug w/ suspend')
+        setRobotCommand("${netConsoleCommand} ${remoteJavaPath} ${debugSuspendFlags} -jar ${remoteJarPath}")
     }
 }
