@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.IGyro;
 
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -434,7 +435,6 @@ public class ADXRS453 implements PIDSource, IGyro {
 
     private void write(int data) {
         lastDataSent = data;
-//        data = Integer.reverse(data); // fix endianness
         ByteBuffer send = ByteBuffer.allocateDirect(4);
         send.putInt(data);
         spi.write(send, send.capacity()); // send it
@@ -443,21 +443,16 @@ public class ADXRS453 implements PIDSource, IGyro {
     private int read() {
         ByteBuffer recv = ByteBuffer.allocateDirect(4);
         spi.read(false, recv, recv.capacity()); // read into the buffer
-        int ret = recv.getInt();
-//        ret = Integer.reverse(ret); // fix endianness
-        return ret;
+        return recv.getInt();
     }
 
     private int transfer(int data) {
         lastDataSent = data;
-//        data = Integer.reverse(data);
         ByteBuffer send = ByteBuffer.allocateDirect(4);
         ByteBuffer recv = ByteBuffer.allocateDirect(4);
         send.putInt(data);
         spi.transaction(send, recv, send.capacity());
-        int ret = recv.getInt();
-//        ret = Integer.reverse(ret); // fix endianness
-        return ret;
+        return recv.getInt();
     }
 
     private void startup() {
@@ -510,10 +505,9 @@ public class ADXRS453 implements PIDSource, IGyro {
             recv = transfer(send);
             if (!checkResponse(recv))
                 return;
-            int rawRate = (recv >>> 10) & 0xFFFF; // bits 10-25
+            short rawRate = (short) (recv >>> 10); // bits 10-25
             rate = rawRate / kDegreesPerSecondPerLSB;
             double elapsed = timer.get();
-//            logger.debug(String.format("recv: %#x, rawRate: %d, rate: %f", recv, rawRate, rate));
             timer.reset();
             if (elapsed > .5) // don't intergrate if more than half a second
                 elapsed = 0;
