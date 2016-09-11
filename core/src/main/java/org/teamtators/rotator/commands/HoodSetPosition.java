@@ -2,12 +2,13 @@ package org.teamtators.rotator.commands;
 
 import com.google.inject.Inject;
 import org.teamtators.rotator.CommandBase;
+import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.subsystems.AbstractPicker;
 import org.teamtators.rotator.subsystems.AbstractTurret;
 import org.teamtators.rotator.subsystems.HoodPosition;
 import org.teamtators.rotator.subsystems.PickerPosition;
 
-public class HoodSetPosition extends CommandBase {
+public class HoodSetPosition extends CommandBase implements Configurable<HoodSetPosition.Config> {
     private AbstractTurret turret;
     private AbstractPicker picker;
     private Config config;

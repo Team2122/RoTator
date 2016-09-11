@@ -1,6 +1,7 @@
 package org.teamtators.rotator.subsystems;
 
 
+import com.google.common.base.Preconditions;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 import org.teamtators.rotator.config.Configurable;
@@ -12,14 +13,10 @@ import org.teamtators.rotator.tester.components.VictorSPTest;
 
 import javax.inject.Singleton;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @Singleton
 public class WPILibPicker extends AbstractPicker implements Configurable<WPILibPicker.Config>, ITestable {
-
-    public static class Config {
-        public VictorSPConfig pickMotor;
-        public int shortCylinder;
-        public int longCylinder;
-    }
 
     private VictorSP pickMotor;
     private Solenoid shortCylinder;
@@ -34,11 +31,6 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
     }
 
     @Override
-    public void setPower(float power) {
-        pickMotor.set(power);
-    }
-
-    @Override
     public void resetPower() {
         super.resetPower();
     }
@@ -49,18 +41,8 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
     }
 
     @Override
-    public void setPosition(PickerPosition position) {
-        switch (position) {
-            case CHEVAL:
-                pickerPosition = PickerPosition.CHEVAL;
-                break;
-            case HOME:
-                pickerPosition = PickerPosition.HOME;
-                break;
-            case PICK:
-                pickerPosition = PickerPosition.PICK;
-                break;
-        }
+    public void setPower(float power) {
+        pickMotor.set(power);
     }
 
     @Override
@@ -69,10 +51,36 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
     }
 
     @Override
+    public void setPosition(PickerPosition position) {
+        checkNotNull(position, "Picker position can not be null");
+        this.pickerPosition = position;
+        switch (position) {
+            case HOME:
+                shortCylinder.set(false);
+                longCylinder.set(false);
+                break;
+            case CHEVAL:
+                shortCylinder.set(false);
+                longCylinder.set(true);
+                break;
+            case PICK:
+                shortCylinder.set(true);
+                longCylinder.set(true);
+                break;
+        }
+    }
+
+    @Override
     public ComponentTestGroup getTestGroup() {
         return new ComponentTestGroup("Picker",
                 new VictorSPTest("pickMotor", pickMotor),
                 new SolenoidTest("shortCylinder", shortCylinder),
                 new SolenoidTest("longCylinder", longCylinder));
+    }
+
+    public static class Config {
+        public VictorSPConfig pickMotor;
+        public int shortCylinder;
+        public int longCylinder;
     }
 }
