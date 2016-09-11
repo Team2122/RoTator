@@ -91,24 +91,24 @@ public abstract class AbstractDrive extends Subsystem {
     }
 
     /**
-     * @return distance the left side of the drivetrain traveled in inches
+     * @return ballDistance the left side of the drivetrain traveled in inches
      */
     public abstract double getLeftDistance();
 
     /**
-     * @return distance the right side of the drivetrain traveled in inches
+     * @return ballDistance the right side of the drivetrain traveled in inches
      */
     public abstract double getRightDistance();
 
     /**
-     * @return the average distance traveled on either side. Also the distance traveled by the center of the drive train
+     * @return the average ballDistance traveled on either side. Also the ballDistance traveled by the center of the drive train
      */
     public double getAverageDistance() {
         return (getLeftDistance() + getRightDistance()) / 2;
     }
 
     /**
-     * resets the distance and speed on the encoders
+     * resets the ballDistance and speed on the encoders
      */
     public abstract void resetEncoders();
 

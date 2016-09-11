@@ -36,5 +36,7 @@ TurretHome:
   speed: .15
 
 PickerPick:
-  pickRollerPower: 1
-  pinchRollerPower: 1
+  pickRoller: 1.0
+  pinchRoller: 1.0
+  kingRoller: 0.5
+  ballDistance: 50
