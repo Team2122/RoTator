@@ -15,6 +15,8 @@ class RioPlugin implements Plugin<Project> {
     static final def remoteJarPath = "/home/lvuser/FRCUserProgram.jar"
     static final def remoteConfigPath = "/home/lvuser/"
     static final def remoteCleanFiles = "/home/lvuser/config /home/lvuser/FRCUserProgram.jar"
+    static final def netConsoleCommand = "env LD_LIBRARY_PATH=/usr/local/frc/rpath-lib/ /usr/local/frc/bin/netconsole-host"
+    static final def debugFlags = "-XX:+UsePerfData -agentlib:jdwp=transport=dt_socket,address=8348,server=y,suspend=y"
     final def ssh = Ssh.newService()
 
     def Project project
@@ -55,8 +57,21 @@ class RioPlugin implements Plugin<Project> {
             rioRestart()
         }
 
-        project.task('deploy', group: 'rio', dependsOn: ['deployConfig', 'deployJar', 'rioRestart', 'rioJavaCheck'],
+        project.task('rioProfileRun', group: 'rio',
+                description: 'Sets the rio for running the robot code normally') << {
+            rioProfileRun()
+        }
+
+        project.task('rioProfileDebug', group: 'rio',
+                description: 'Sets the rio for debugging the robot code') << {
+            rioProfileDebug()
+        }
+
+        project.task('deploy', group: 'rio', dependsOn: ['deployConfig', 'deployJar', 'rioProfileRun', 'rioRestart'],
                 description: 'Deploys configs, robot code and restarts the robot code on the roboRIO')
+
+        project.task('rioDebug', group: 'rio', dependsOn: ['deployConfig', 'deployJar', 'rioProfileDebug', 'rioRestart'],
+                description: 'Sets up the roboRIO for remote debugging the robot code')
     }
 
     private int getTeamNumber() {
@@ -149,7 +164,24 @@ class RioPlugin implements Plugin<Project> {
         inSession {
             println("Restarting code on roboRIO")
             execute "killall -q netconsole-host || :"
+            execute ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t -r"
             println("Robot code is restarting")
         }
+    }
+
+    void setRobotCommand(String robotCommand) {
+        inSession {
+            execute "echo \"${robotCommand}\" > /home/lvuser/robotCommand"
+        }
+    }
+
+    void rioProfileRun() {
+        println('Setting rio profile to run')
+        setRobotCommand("${netConsoleCommand} ${remoteJavaPath} -jar ${remoteJarPath}")
+    }
+
+    void rioProfileDebug() {
+        println('Setting rio profile to debug')
+        setRobotCommand("${netConsoleCommand} ${remoteJavaPath} ${debugFlags} -jar ${remoteJarPath}")
     }
 }
