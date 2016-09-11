@@ -5,20 +5,6 @@ package org.teamtators.rotator;
  */
 public interface IGyro {
     /**
-     * Set how often to get updates from the gyro
-     *
-     * @param updatePeriod Desired time between updates from gyro
-     */
-    void setUpdatePeriod(double updatePeriod);
-
-    /**
-     * Get how often updates are gotten from the gyro
-     *
-     * @return Time between updates from gyro
-     */
-    double getUpdatePeriod();
-
-    /**
      * Set the amount of time the gyro will spend calibrating
      *
      * @param calibrationPeriod Desired length of gyro calibration period
@@ -47,14 +33,14 @@ public interface IGyro {
     /**
      * Finishes calibration. Stops calibrating and sets the calibration value.
      */
-    void calibrate();
+    void finishCalibration();
 
     /**
      * Gets the zero point for rate measurement
      *
      * @return The offset found by calibration
      */
-    float getCalibrationOffset();
+    double getCalibrationOffset();
 
     /**
      * Checks if the gyro is currently calibrating.
@@ -76,10 +62,10 @@ public interface IGyro {
      *
      * @return The yaw of the gyro in degrees
      */
-    float getAngle();
+    double getAngle();
 
     /**
      * Resets the current angle of the gyro to zero
      */
-    void reset();
+    void resetAngle();
 }

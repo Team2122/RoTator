@@ -1,13 +1,17 @@
 package org.teamtators.rotator.subsystems;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.VictorSP;
+import org.teamtators.rotator.ADXRS453;
+import org.teamtators.rotator.IGyro;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.EncoderConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
 import org.teamtators.rotator.tester.ComponentTestGroup;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.components.EncoderTest;
+import org.teamtators.rotator.tester.components.ADXRS453Test;
 import org.teamtators.rotator.tester.components.VictorSPTest;
 
 import javax.inject.Singleton;
@@ -25,6 +29,7 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
     private VictorSP rightMotor;
     private Encoder leftEncoder;
     private Encoder rightEncoder;
+    private ADXRS453 gyro;
 
     public WPILibDrive() {
     }
@@ -35,6 +40,10 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
         this.rightMotor = config.rightMotor.create();
         this.leftEncoder = config.leftEncoder.create();
         this.rightEncoder = config.rightEncoder.create();
+        this.gyro = new ADXRS453(SPI.Port.kOnboardCS0);
+
+        gyro.start();
+        gyro.startCalibration();
     }
 
     @Override
@@ -84,11 +93,32 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
     }
 
     @Override
+    public IGyro getGyro() {
+        return gyro;
+    }
+
+    @Override
+    public double getGyroAngle() {
+        return gyro.getAngle();
+    }
+
+    @Override
+    public void resetGyroAngle() {
+        gyro.resetAngle();
+    }
+
+    @Override
+    public double getGyroRate() {
+        return gyro.getRate();
+    }
+
+    @Override
     public ComponentTestGroup getTestGroup() {
         return new ComponentTestGroup("Drive",
                 new VictorSPTest("leftMotor", leftMotor),
                 new VictorSPTest("rightMotor", rightMotor),
                 new EncoderTest("leftEncoder", leftEncoder),
-                new EncoderTest("rightEncoder", rightEncoder));
+                new EncoderTest("rightEncoder", rightEncoder),
+                new ADXRS453Test("gyro", gyro));
     }
 }

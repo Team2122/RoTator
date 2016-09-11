@@ -1,5 +1,6 @@
 package org.teamtators.rotator.subsystems;
 
+import org.teamtators.rotator.IGyro;
 import org.teamtators.rotator.scheduler.Subsystem;
 
 /**
@@ -87,4 +88,12 @@ public abstract class AbstractDrive extends Subsystem {
      * @param driveMode the drive mode
      */
     public abstract void setDriveMode(DriveMode driveMode);
+
+    public abstract IGyro getGyro();
+
+    public abstract double getGyroAngle();
+
+    public abstract void resetGyroAngle();
+
+    public abstract double getGyroRate();
 }

@@ -16,14 +16,14 @@ public class EncoderTest extends ComponentTest {
     @Override
     public void start() {
         logger.info("Press 'A' to display the current values");
-        logger.info("Press 'B' to reset the encoder values");
+        logger.info("Press 'B' to resetAngle the encoder values");
     }
 
     @Override
     public void onButtonDown(LogitechF310.Button button) {
         if (button == LogitechF310.Button.B) {
             encoder.reset();
-            logger.info("Encoder reset");
+            logger.info("Encoder resetAngle");
         } else if (button == LogitechF310.Button.A) {
             logger.info("Distance: {} (ticks: {}), Rate: {}", encoder.getDistance(), encoder.get(), encoder.getRate());
         }
