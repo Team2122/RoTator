@@ -10,6 +10,7 @@ import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.config.EncoderConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
+import org.teamtators.rotator.control.ControllerTest;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.scheduler.StateListener;
 import org.teamtators.rotator.tester.ComponentTestGroup;
@@ -101,6 +102,8 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
                 new VictorSPTest("rightMotor", rightMotor),
                 new EncoderTest("leftEncoder", leftEncoder),
                 new EncoderTest("rightEncoder", rightEncoder),
+                new ControllerTest(getLeftController(), getMaxSpeed()),
+                new ControllerTest(getRightController(), getMaxSpeed()),
                 new ADXRS453Test("gyro", gyro));
     }
 
