@@ -1,7 +1,8 @@
 package org.teamtators.rotator.subsystems;
 
 import com.google.inject.Singleton;
-import org.teamtators.rotator.IGyro;
+import org.teamtators.rotator.components.Gyro;
+import org.teamtators.rotator.components.SimulationGyro;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.config.Configurable;
 
@@ -17,6 +18,7 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
     private double x;
     private double y;
     private double rotation;
+    private SimulationGyro gyro = new SimulationGyro();
 
     public SimulationDrive() {
         reset();
@@ -121,23 +123,8 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
     }
 
     @Override
-    public IGyro getGyro() {
-        return null;
-    }
-
-    @Override
-    public double getGyroAngle() {
-        return 0;
-    }
-
-    @Override
-    public void resetGyroAngle() {
-
-    }
-
-    @Override
-    public double getGyroRate() {
-        return 0;
+    public Gyro getGyro() {
+        return gyro;
     }
 
     @Override
@@ -163,6 +150,10 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
         double dRot = (dLDist - dRDist) / (config.wheelWidth);
 
         rotation += dRot;
+
+        gyro.setRate(Math.toDegrees(dRot) / delta);
+        gyro.setAngle(Math.toDegrees(rotation));
+
         double dist = (dLDist + dRDist) / 2;
         x += Math.cos(rotation) * dist;
         y += Math.sin(rotation) * dist;

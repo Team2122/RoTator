@@ -4,9 +4,7 @@ import com.google.common.collect.EvictingQueue;
 import edu.wpi.first.wpilibj.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.teamtators.rotator.IGyro;
 
-import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -16,7 +14,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * A sensor class for using an ADXRS453 gyroscope.
  * Measures angle change on the yaw axis.
  */
-public class ADXRS453 implements PIDSource, IGyro {
+public class ADXRS453 implements PIDSource, Gyro {
     public static final int REG_RATE = 0x00;
     public static final int REG_TEM = 0x02;
     public static final int REG_LO_CST = 0x04;

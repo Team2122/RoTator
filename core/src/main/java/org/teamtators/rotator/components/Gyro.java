@@ -1,9 +1,9 @@
-package org.teamtators.rotator;
+package org.teamtators.rotator.components;
 
 /**
  * Sensor interface for gyroscopes. Contains methods for calibration and getting angle (yaw) information.
  */
-public interface IGyro {
+public interface Gyro {
     /**
      * Set the amount of time the gyro will spend calibrating
      *

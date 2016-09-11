@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.VictorSP;
 import org.teamtators.rotator.components.ADXRS453;
-import org.teamtators.rotator.IGyro;
+import org.teamtators.rotator.components.Gyro;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.EncoderConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
@@ -93,23 +93,8 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
     }
 
     @Override
-    public IGyro getGyro() {
+    public Gyro getGyro() {
         return gyro;
-    }
-
-    @Override
-    public double getGyroAngle() {
-        return gyro.getAngle();
-    }
-
-    @Override
-    public void resetGyroAngle() {
-        gyro.resetAngle();
-    }
-
-    @Override
-    public double getGyroRate() {
-        return gyro.getRate();
     }
 
     @Override
