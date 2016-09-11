@@ -35,8 +35,8 @@ public class DriveTank extends CommandBase {
 
     @Override
     protected boolean step() {
-        double leftPower = driverJoystick.getAxisValue(LogitechF310.Axis.LEFT_STICK_Y);
-        double rightPower = driverJoystick.getAxisValue(LogitechF310.Axis.RIGHT_STICK_Y);
+        double leftPower = -driverJoystick.getAxisValue(LogitechF310.Axis.LEFT_STICK_Y);
+        double rightPower = -driverJoystick.getAxisValue(LogitechF310.Axis.RIGHT_STICK_Y);
 
         drive.setSpeeds(leftPower, rightPower);
 

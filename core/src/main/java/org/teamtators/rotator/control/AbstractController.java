@@ -125,6 +125,8 @@ public abstract class AbstractController implements Steppable {
     }
 
     public void disable() {
+        if (outputConsumer != null)
+            outputConsumer.setControllerOutput(0.0);
         if (stepper != null)
             stepper.remove(this);
     }
