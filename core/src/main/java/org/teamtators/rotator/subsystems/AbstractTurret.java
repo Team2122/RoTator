@@ -9,6 +9,7 @@ import org.teamtators.rotator.scheduler.Subsystem;
  */
 public abstract class AbstractTurret extends Subsystem {
     private AbstractController shooterWheelController = null;
+    private boolean homed = false;
 
 
     public AbstractTurret() {
@@ -31,6 +32,10 @@ public abstract class AbstractTurret extends Subsystem {
 
     public abstract double getWheelSpeed();
 
+    public void setWheelSpeed(double rps) {
+        shooterWheelController.setSetpoint(rps);
+    }
+
     protected AbstractController getShooterWheelController() {
         return shooterWheelController;
     }
@@ -42,13 +47,14 @@ public abstract class AbstractTurret extends Subsystem {
         this.shooterWheelController = shooterWheelController;
     }
 
-    public void setWheelSpeed(double rps) {
-        shooterWheelController.setSetpoint(rps);
-    }
-
     public void resetWheelSpeed() {
         setWheelSpeed(0.0);
     }
+
+    /**
+     * @return the hood's position
+     */
+    public abstract HoodPosition getHoodPosition();
 
     /**
      * Sets the hood position
@@ -56,11 +62,6 @@ public abstract class AbstractTurret extends Subsystem {
      * @param hoodPosition the hood's position
      */
     public abstract void setHoodPosition(HoodPosition hoodPosition);
-
-    /**
-     * @return the hood's position
-     */
-    public abstract HoodPosition getHoodPosition();
 
     /**
      * Sets the pinch roller's power
@@ -133,4 +134,22 @@ public abstract class AbstractTurret extends Subsystem {
      * @return how far the ball is from the ballSensor
      */
     public abstract float getBallDistance();
+
+    public boolean isHomed() {
+        return homed;
+    }
+
+    protected void setHomed(boolean homed) {
+        this.homed = homed;
+    }
+
+    public boolean homeTurret() {
+        if (isAtCenterLimit()) {
+            resetTurretPosition();
+            homed = true;
+            logger.info("Turret at center limit, successfully homed");
+            return true;
+        }
+        return false;
+    }
 }

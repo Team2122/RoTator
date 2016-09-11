@@ -8,5 +8,6 @@ public class CoreCommands {
         commandStore.registerClass(LogCommand.class);
         commandStore.registerClass(PickerSetPosition.class);
         commandStore.registerClass(HoodSetPosition.class);
+        commandStore.registerClass(TurretHome.class);
     }
 }

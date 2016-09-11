@@ -31,3 +31,6 @@ HoodUp3:
 HoodUp4:
   class: HoodSetPosition
   hoodPosition: UP4
+
+TurretHome:
+  speed: .15
