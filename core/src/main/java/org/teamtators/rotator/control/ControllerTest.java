@@ -44,4 +44,9 @@ public class ControllerTest extends ComponentTest {
             controller.setSetpoint(value * maxSetpoint);
         }
     }
+
+    @Override
+    public void stop() {
+        controller.disable();
+    }
 }

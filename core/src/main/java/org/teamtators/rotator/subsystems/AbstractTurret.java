@@ -1,5 +1,6 @@
 package org.teamtators.rotator.subsystems;
 
+import org.teamtators.rotator.control.AbstractController;
 import org.teamtators.rotator.scheduler.Subsystem;
 
 /**
@@ -7,6 +8,8 @@ import org.teamtators.rotator.scheduler.Subsystem;
  * Shoots the ball
  */
 public abstract class AbstractTurret extends Subsystem {
+    private AbstractController shooterWheelController = null;
+
 
     public AbstractTurret() {
         super("Turret");
@@ -17,16 +20,35 @@ public abstract class AbstractTurret extends Subsystem {
      *
      * @param power The power of the roller that shoots
      */
-    public abstract void setWheelPower(float power);
+    protected abstract void setWheelPower(double power);
 
     /**
      * Resets the power for the roller that shoots
      */
-    public void resetPower() {
+    protected void resetPower() {
         setWheelPower(0);
     }
 
     public abstract double getWheelSpeed();
+
+    protected AbstractController getShooterWheelController() {
+        return shooterWheelController;
+    }
+
+    protected void setShooterWheelController(AbstractController shooterWheelController) {
+        shooterWheelController.setName("shooterWheelController");
+        shooterWheelController.setInputProvider(this::getWheelSpeed);
+        shooterWheelController.setOutputConsumer(this::setWheelPower);
+        this.shooterWheelController = shooterWheelController;
+    }
+
+    public void setWheelSpeed(double rps) {
+        shooterWheelController.setSetpoint(rps);
+    }
+
+    public void resetWheelSpeed() {
+        setWheelSpeed(0.0);
+    }
 
     /**
      * Sets the hood position

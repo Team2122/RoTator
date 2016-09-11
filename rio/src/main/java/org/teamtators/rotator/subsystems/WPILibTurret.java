@@ -1,5 +1,6 @@
 package org.teamtators.rotator.subsystems;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Singleton;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -7,28 +8,17 @@ import edu.wpi.first.wpilibj.VictorSP;
 import org.teamtators.rotator.components.DigitalSensor;
 import org.teamtators.rotator.components.DistanceLaser;
 import org.teamtators.rotator.config.*;
+import org.teamtators.rotator.control.ControllerTest;
+import org.teamtators.rotator.scheduler.RobotState;
+import org.teamtators.rotator.scheduler.StateListener;
 import org.teamtators.rotator.tester.ComponentTestGroup;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.components.*;
 
-@Singleton
-public class WPILibTurret extends AbstractTurret implements Configurable<WPILibTurret.Config>, ITestable {
+import javax.inject.Inject;
 
-    public static class Config {
-        public VictorSPConfig pinchRollerMotor;
-        public VictorSPConfig kingRollerMotor;
-        public DistanceLaserConfig ballSensor;
-        public int hoodDeploySolenoid;
-        public int shortSolenoid;
-        public int longSolenoid;
-        public VictorSPConfig shooterWheelMotor;
-        public EncoderConfig shooterWheelEncoder;
-        public VictorSPConfig turretRotationMotor;
-        public EncoderConfig turretRotationEncoder;
-        public DigitalSensorConfig leftLimit;
-        public DigitalSensorConfig rightLimit;
-        public DigitalSensorConfig centerLimit;
-    }
+@Singleton
+public class WPILibTurret extends AbstractTurret implements Configurable<WPILibTurret.Config>, ITestable, StateListener {
 
     private VictorSP pinchRollerMotor;
     private VictorSP kingRollerMotor;
@@ -45,6 +35,9 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     private DigitalSensor rightLimit;
     private DigitalSensor centerLimit;
 
+    @Inject
+    private ControllerFactory controllerFactory;
+
     @Override
     public void configure(Config config) {
         this.pinchRollerMotor = config.pinchRollerMotor.create();
@@ -60,21 +53,36 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         this.leftLimit = config.leftLimit.create();
         this.rightLimit = config.rightLimit.create();
         this.centerLimit = config.centerLimit.create();
+
+        setShooterWheelController(controllerFactory.create(config.shooterWheelController));
     }
 
     @Override
-    public void setWheelPower(float power) {
+    public void setWheelPower(double power) {
         shooterWheelMotor.set((double) power);
-    }
-
-    @Override
-    public void resetPower() {
-        super.resetPower();
     }
 
     @Override
     public double getWheelSpeed() {
         return shooterWheelEncoder.getRate();
+    }
+
+    @Override
+    public void onEnterState(RobotState newState) {
+        switch (newState) {
+            case AUTONOMOUS:
+            case TELEOP:
+                getShooterWheelController().enable();
+                break;
+            default:
+                getShooterWheelController().disable();
+                break;
+        }
+    }
+
+    @Override
+    public HoodPosition getHoodPosition() {
+        return hoodPosition;
     }
 
     @Override
@@ -107,11 +115,6 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
                 break;
         }
         this.hoodPosition = hoodPosition;
-    }
-
-    @Override
-    public HoodPosition getHoodPosition() {
-        return hoodPosition;
     }
 
     @Override
@@ -169,10 +172,28 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
                 new SolenoidTest("longSolenoid", longSolenoid),
                 new VictorSPTest("shooterWheelMotor", shooterWheelMotor),
                 new EncoderTest("shooterWheelEncoder", shooterWheelEncoder),
+                new ControllerTest(getShooterWheelController(), 120),
                 new VictorSPTest("turretRotationMotor", turretRotationMotor),
                 new EncoderTest("turretRotationEncoder", turretRotationEncoder),
                 new DigitalSensorTest("leftLimit", leftLimit),
                 new DigitalSensorTest("rightLimit", rightLimit),
                 new DigitalSensorTest("centerLimit", centerLimit));
+    }
+
+    public static class Config {
+        public VictorSPConfig pinchRollerMotor;
+        public VictorSPConfig kingRollerMotor;
+        public DistanceLaserConfig ballSensor;
+        public int hoodDeploySolenoid;
+        public int shortSolenoid;
+        public int longSolenoid;
+        public VictorSPConfig shooterWheelMotor;
+        public EncoderConfig shooterWheelEncoder;
+        public JsonNode shooterWheelController;
+        public VictorSPConfig turretRotationMotor;
+        public EncoderConfig turretRotationEncoder;
+        public DigitalSensorConfig leftLimit;
+        public DigitalSensorConfig rightLimit;
+        public DigitalSensorConfig centerLimit;
     }
 }
