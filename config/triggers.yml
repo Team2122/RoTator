@@ -1,6 +1,6 @@
 Driver:
-  A: start whenPressed ButtonPressTest
-  B: start whenReleased ButtonReleaseTest
-  X: whilePressed ButtonHeldTest
+  A: start whenPressed PickerToHome
+  B: start whenReleased PickerToCheval
+  Y: start whenPressed PickerToPick
 
 Gunner:
