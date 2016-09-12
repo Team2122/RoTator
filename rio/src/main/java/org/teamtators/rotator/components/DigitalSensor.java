@@ -1,7 +1,6 @@
 package org.teamtators.rotator.components;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import org.teamtators.rotator.components.SensorType;
 
 public class DigitalSensor {
 

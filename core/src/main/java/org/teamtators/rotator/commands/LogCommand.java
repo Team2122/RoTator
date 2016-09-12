@@ -4,10 +4,6 @@ import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.scheduler.Command;
 
 public class LogCommand extends Command implements Configurable<LogCommand.Config> {
-    static class Config {
-        public String message;
-    }
-
     private Config config;
 
     public LogCommand() {
@@ -32,5 +28,9 @@ public class LogCommand extends Command implements Configurable<LogCommand.Confi
     @Override
     public void configure(Config config) {
         this.config = config;
+    }
+
+    static class Config {
+        public String message;
     }
 }

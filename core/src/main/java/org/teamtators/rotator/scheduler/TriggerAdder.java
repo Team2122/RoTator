@@ -1,8 +1,8 @@
 package org.teamtators.rotator.scheduler;
 
 public class TriggerAdder {
-    private Scheduler scheduler;
     TriggerSource triggerSource;
+    private Scheduler scheduler;
 
     TriggerAdder(Scheduler scheduler, TriggerSource triggerSource) {
         this.scheduler = scheduler;

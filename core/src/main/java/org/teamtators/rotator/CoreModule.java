@@ -37,12 +37,14 @@ public class CoreModule extends AbstractModule {
         bind(CommandStore.class).to(ConfigCommandStore.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     ObjectMapper providesObjectMapper() {
         return new YAMLMapper();
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     ConfigCommandStore provideConfigCommandStore(Injector injector) {
         ConfigCommandStore commandStore = new ConfigCommandStore();
         commandStore.setInjector(injector);
@@ -50,12 +52,15 @@ public class CoreModule extends AbstractModule {
         return commandStore;
     }
 
-    @Provides @ForController @Singleton
+    @Provides
+    @ForController
+    @Singleton
     Stepper providesStepperForController() {
         return new Stepper(1.0 / 120.0);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     ManualTester providesManualTester(AbstractOperatorInterface operatorInterface, Scheduler scheduler) {
         ManualTester manualTester = new ManualTester();
         manualTester.setJoystick(operatorInterface.driverJoystick());

@@ -1,10 +1,8 @@
 package org.teamtators.rotator.tester;
 
-import com.google.inject.Inject;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.RobotState;
-import org.teamtators.rotator.scheduler.Scheduler;
 
 import java.util.ArrayList;
 import java.util.EnumMap;

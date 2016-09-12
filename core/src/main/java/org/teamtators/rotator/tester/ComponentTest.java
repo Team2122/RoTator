@@ -8,8 +8,8 @@ import org.teamtators.rotator.operatorInterface.LogitechF310;
  * Class to represent a component test
  */
 public abstract class ComponentTest {
-    private String name;
     protected Logger logger;
+    private String name;
 
     /**
      * Construct a new ComponentTest with given name

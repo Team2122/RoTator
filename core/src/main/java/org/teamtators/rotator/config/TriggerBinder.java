@@ -3,7 +3,6 @@ package org.teamtators.rotator.config;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +92,7 @@ public class TriggerBinder {
                     if (!arrayElem.isTextual()) {
                         throw new ConfigException("Trigger specifiers must be textual, not \"" + arrayElem + '"');
                     }
-                    bindTriggerWithSpecifier(triggerAdder,arrayElem.asText());
+                    bindTriggerWithSpecifier(triggerAdder, arrayElem.asText());
                 }
             } else {
                 throw new ConfigException("Trigger specifier must be textual or array, not \"" + specifier + '"');

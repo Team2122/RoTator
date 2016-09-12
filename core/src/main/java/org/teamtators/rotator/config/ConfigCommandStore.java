@@ -4,16 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.google.inject.ConfigurationException;
 import com.google.inject.Injector;
-import com.google.inject.ProvisionException;
 import org.teamtators.rotator.scheduler.Command;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.security.ProviderException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,11 +19,6 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
     private Map<String, Provider<Command>> commandProviders = new HashMap<>();
     private Map<String, JsonNode> defaultConfigs = new HashMap<>();
 
-    @Inject
-    public void setInjector(Injector injector) {
-        this.injector = injector;
-    }
-
     public static ObjectNode applyDefaults(ObjectNode object, ObjectNode defaults) {
         ObjectNode result = defaults.deepCopy();
         Iterator<Map.Entry<String, JsonNode>> it = object.fields();
@@ -37,6 +27,11 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
             result.set(field.getKey(), field.getValue());
         }
         return result;
+    }
+
+    @Inject
+    public void setInjector(Injector injector) {
+        this.injector = injector;
     }
 
     public void registerCommandProviders(Map<String, Provider<Command>> commandProviders) {

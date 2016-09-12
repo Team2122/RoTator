@@ -1,6 +1,5 @@
 package org.teamtators.rotator.control;
 
-import org.teamtators.rotator.control.AbstractController;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.tester.ComponentTest;
 

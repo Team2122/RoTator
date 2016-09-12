@@ -16,20 +16,20 @@ public class DistanceLaserConfig {
         this.channel = channel;
     }
 
-    public void setMinDistance(double minDistance) {
-        this.minDistance = minDistance;
-    }
-
-    public void setMaxDistance(double maxDistance) {
-        this.maxDistance = maxDistance;
-    }
-
     double getMinDistance() {
         return minDistance;
     }
 
+    public void setMinDistance(double minDistance) {
+        this.minDistance = minDistance;
+    }
+
     double getMaxDistance() {
         return maxDistance;
+    }
+
+    public void setMaxDistance(double maxDistance) {
+        this.maxDistance = maxDistance;
     }
 
     public DistanceLaser create() {

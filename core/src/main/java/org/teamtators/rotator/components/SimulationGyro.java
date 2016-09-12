@@ -7,13 +7,13 @@ public class SimulationGyro implements Gyro {
     private boolean calibrating;
 
     @Override
-    public void setCalibrationPeriod(double calibrationPeriod) {
-        this.calibrationPeriod = calibrationPeriod;
+    public double getCalibrationPeriod() {
+        return calibrationPeriod;
     }
 
     @Override
-    public double getCalibrationPeriod() {
-        return calibrationPeriod;
+    public void setCalibrationPeriod(double calibrationPeriod) {
+        this.calibrationPeriod = calibrationPeriod;
     }
 
     @Override
@@ -46,21 +46,21 @@ public class SimulationGyro implements Gyro {
         return rate;
     }
 
-    @Override
-    public double getAngle() {
-        return angle;
+    public void setRate(double rate) {
+        this.rate = rate;
     }
 
     @Override
-    public void resetAngle() {
-        setAngle(0);
+    public double getAngle() {
+        return angle;
     }
 
     public void setAngle(double angle) {
         this.angle = angle;
     }
 
-    public void setRate(double rate) {
-        this.rate = rate;
+    @Override
+    public void resetAngle() {
+        setAngle(0);
     }
 }

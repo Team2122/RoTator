@@ -5,18 +5,18 @@ package org.teamtators.rotator.components;
  */
 public interface Gyro {
     /**
-     * Set the amount of time the gyro will spend calibrating
-     *
-     * @param calibrationPeriod Desired length of gyro calibration period
-     */
-    void setCalibrationPeriod(double calibrationPeriod);
-
-    /**
      * Get the amount of time the gyro spends calibrating
      *
      * @return Length of gyro calibration period
      */
     double getCalibrationPeriod();
+
+    /**
+     * Set the amount of time the gyro will spend calibrating
+     *
+     * @param calibrationPeriod Desired length of gyro calibration period
+     */
+    void setCalibrationPeriod(double calibrationPeriod);
 
     /**
      * Reset calibration and angle monitoring

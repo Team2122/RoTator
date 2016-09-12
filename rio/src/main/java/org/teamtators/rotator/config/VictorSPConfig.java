@@ -2,9 +2,7 @@ package org.teamtators.rotator.config;
 
 import edu.wpi.first.wpilibj.VictorSP;
 
-import java.io.IOException;
-
-public class VictorSPConfig  {
+public class VictorSPConfig {
     private int channel;
     private boolean inverted = false;
 

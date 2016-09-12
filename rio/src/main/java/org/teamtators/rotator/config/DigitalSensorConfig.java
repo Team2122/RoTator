@@ -12,16 +12,16 @@ public class DigitalSensorConfig {
         return channel;
     }
 
+    public void setChannel(int channel) {
+        this.channel = channel;
+    }
+
     public SensorType getType() {
         return type;
     }
 
     public void setType(SensorType type) {
         this.type = type;
-    }
-
-    public void setChannel(int channel) {
-        this.channel = channel;
     }
 
     public DigitalSensor create() {

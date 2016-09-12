@@ -28,18 +28,18 @@ public abstract class AbstractPicker extends Subsystem {
     }
 
     /**
+     * @return the picker's position
+     */
+    public PickerPosition getPosition() {
+        return position;
+    }
+
+    /**
      * sets the picker's position
      *
      * @param position the picker's position
      */
     public void setPosition(PickerPosition position) {
         this.position = position;
-    }
-
-    /**
-     * @return the picker's position
-     */
-    public PickerPosition getPosition() {
-        return position;
     }
 }

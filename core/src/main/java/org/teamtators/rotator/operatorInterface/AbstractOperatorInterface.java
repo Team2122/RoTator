@@ -8,5 +8,6 @@ public abstract class AbstractOperatorInterface extends Subsystem {
     }
 
     public abstract LogitechF310 driverJoystick();
+
     public abstract LogitechF310 gunnerJoystick();
 }

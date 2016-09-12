@@ -8,22 +8,17 @@ import org.teamtators.rotator.subsystems.PickerPosition;
 import javax.inject.Inject;
 
 public class PickerSetPosition extends CommandBase implements Configurable<PickerSetPosition.Config> {
-    private AbstractPicker picker;
-
-    public static class Config {
-        public PickerPosition pickerPosition;
-    }
-
     public PickerPosition pickerPosition;
-
-    public void configure(Config config) {
-        this.pickerPosition = config.pickerPosition;
-    }
+    private AbstractPicker picker;
 
     @Inject
     public PickerSetPosition(AbstractPicker picker) {
         super("PickerSetPosition");
         this.picker = picker;
+    }
+
+    public void configure(Config config) {
+        this.pickerPosition = config.pickerPosition;
     }
 
     @Override
@@ -34,5 +29,9 @@ public class PickerSetPosition extends CommandBase implements Configurable<Picke
     protected boolean step() {
         picker.setPosition(pickerPosition);
         return true;
+    }
+
+    public static class Config {
+        public PickerPosition pickerPosition;
     }
 }

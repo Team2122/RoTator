@@ -46,7 +46,8 @@ public class Robot extends IterativeRobot {
     private ManualTester manualTester;
     @Inject
     private TriggerBinder triggerBinder;
-    @Inject @ForController
+    @Inject
+    @ForController
     private Stepper stepper;
 
     @Override

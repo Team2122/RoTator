@@ -29,24 +29,6 @@ public interface LogitechF310 {
     }
 
     /**
-     * A class representing a button on a WPILibLogitechF310 gamepad, used for binding commands to buttons
-     */
-    class LogitechTrigger implements TriggerSource {
-        private LogitechF310 joystick;
-        private Button button;
-
-        public LogitechTrigger(LogitechF310 joystick, Button button) {
-            this.joystick = joystick;
-            this.button = button;
-        }
-
-        @Override
-        public boolean getActive() {
-            return joystick.getButtonValue(button);
-        }
-    }
-
-    /**
      * Enum containing the location of all the buttons on a Logitech F310 gamepad
      */
     enum Button {
@@ -113,6 +95,24 @@ public interface LogitechF310 {
 
         public int getAxisNumber() {
             return axisNumber;
+        }
+    }
+
+    /**
+     * A class representing a button on a WPILibLogitechF310 gamepad, used for binding commands to buttons
+     */
+    class LogitechTrigger implements TriggerSource {
+        private LogitechF310 joystick;
+        private Button button;
+
+        public LogitechTrigger(LogitechF310 joystick, Button button) {
+            this.joystick = joystick;
+            this.button = button;
+        }
+
+        @Override
+        public boolean getActive() {
+            return joystick.getButtonValue(button);
         }
     }
 }

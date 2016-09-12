@@ -1,7 +1,6 @@
 package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
-import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.RobotState;

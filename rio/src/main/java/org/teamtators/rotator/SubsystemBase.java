@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 /**
  * Shared code for subsystems IT'S A CLASS
  */
-public class SubsystemBase extends Subsystem{
+public class SubsystemBase extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {

@@ -6,6 +6,7 @@ package org.teamtators.rotator.scheduler;
 public interface StateListener {
     /**
      * Callback for robot state change
+     *
      * @param newState New robot state
      */
     void onEnterState(RobotState newState);
