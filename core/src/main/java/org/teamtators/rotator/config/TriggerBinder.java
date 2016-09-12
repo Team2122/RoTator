@@ -30,6 +30,7 @@ public class TriggerBinder {
         this.objectMapper = objectMapper;
     }
 
+    @Inject
     public void setCommandStore(CommandStore commandStore) {
         this.commandStore = commandStore;
     }

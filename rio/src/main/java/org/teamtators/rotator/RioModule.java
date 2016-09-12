@@ -19,19 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RioModule extends AbstractModule {
-    private ObjectNode commandsConfig;
-    private ObjectNode subsystemsConfig;
-
-    public RioModule withCommandsConfig(ObjectNode commandsConfig) {
-        this.commandsConfig = commandsConfig;
-        return this;
-    }
-
-    public RioModule withSubsystemsConfig(ObjectNode subsystemsConfig) {
-        this.subsystemsConfig = subsystemsConfig;
-        return this;
-    }
-
     @Override
     protected void configure() {
         // Subsystem bindings
@@ -40,17 +27,5 @@ public class RioModule extends AbstractModule {
         bind(AbstractTurret.class).to(WPILibTurret.class);
         bind(AbstractOperatorInterface.class).to(WPILibOperatorInterface.class);
         bind(ITimeProvider.class).to(WPILibTimeProvider.class);
-
-        if (commandsConfig != null)
-            bind(ObjectNode.class).annotatedWith(Names.named("commands")).toInstance(commandsConfig);
-        if (subsystemsConfig != null)
-            bind(ObjectNode.class).annotatedWith(Names.named("subsystems")).toInstance(subsystemsConfig);
-    }
-
-    @Provides
-    @Singleton
-    public List<Subsystem> providesSubsystems(AbstractDrive drive, AbstractPicker picker, AbstractTurret turret,
-                                              AbstractOperatorInterface operatorInterface) {
-        return Arrays.asList(drive, picker, turret, operatorInterface);
     }
 }

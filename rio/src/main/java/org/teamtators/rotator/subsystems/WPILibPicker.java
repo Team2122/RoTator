@@ -36,24 +36,13 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
     }
 
     @Override
-    public double getPower() {
-        return pickMotor.get();
-    }
-
-    @Override
-    public void setPower(float power) {
+    public void setPower(double power) {
         pickMotor.set(power);
-    }
-
-    @Override
-    public PickerPosition getPosition() {
-        return pickerPosition;
     }
 
     @Override
     public void setPosition(PickerPosition position) {
         checkNotNull(position, "Picker position can not be null");
-        this.pickerPosition = position;
         switch (position) {
             case HOME:
                 shortCylinder.set(false);

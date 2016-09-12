@@ -89,13 +89,11 @@ public class Robot extends IterativeRobot {
                 manualTester.registerTestGroup(((ITestable) subsystem).getTestGroup());
             }
         }
-        manualTester.setJoystick(operatorInterface.driverJoystick());
 
         logger.debug("Creating commands");
         commandStore.createCommandsFromConfig(commandsConfig);
 
         logger.debug("Configuring triggers");
-        triggerBinder.setCommandStore(commandStore);
         triggerBinder.bindTriggers(triggersConfig);
 
         scheduler.registerDefaultCommand(commandStore.getCommand("DriveTank"));

@@ -11,7 +11,16 @@ import org.teamtators.rotator.commands.CoreCommands;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Stepper;
+import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.CommandStore;
+import org.teamtators.rotator.scheduler.Subsystem;
+import org.teamtators.rotator.subsystems.AbstractDrive;
+import org.teamtators.rotator.subsystems.AbstractPicker;
+import org.teamtators.rotator.subsystems.AbstractTurret;
+import org.teamtators.rotator.tester.ManualTester;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class CoreModule extends AbstractModule {
     private String configDir = null;
@@ -43,5 +52,19 @@ public class CoreModule extends AbstractModule {
     @Provides @ForController @Singleton
     Stepper providesStepperForController() {
         return new Stepper(1.0 / 120.0);
+    }
+
+    @Provides @Singleton
+    ManualTester providesManualTester(AbstractOperatorInterface operatorInterface) {
+        ManualTester manualTester = new ManualTester();
+        manualTester.setJoystick(operatorInterface.driverJoystick());
+        return manualTester;
+    }
+
+    @Provides
+    @Singleton
+    public List<Subsystem> providesSubsystems(AbstractDrive drive, AbstractPicker picker, AbstractTurret turret,
+                                              AbstractOperatorInterface operatorInterface) {
+        return Arrays.asList(drive, picker, turret, operatorInterface);
     }
 }

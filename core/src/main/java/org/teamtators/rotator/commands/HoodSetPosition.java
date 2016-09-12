@@ -41,6 +41,10 @@ public class HoodSetPosition extends CommandBase implements Configurable<HoodSet
         return true;
     }
 
+    @Override
+    protected void finish(boolean interrupted) {
+    }
+
     public static class Config {
         public HoodPosition hoodPosition;
     }

@@ -13,6 +13,7 @@ import java.util.EnumMap;
 @Singleton
 public class WASDJoystick implements LogitechF310, KeyListener {
     private static final Logger logger = LoggerFactory.getLogger(WASDJoystick.class);
+    public static final int MAX_SPEED = 1;
     private boolean up;
     private boolean left;
     private boolean down;
@@ -42,16 +43,16 @@ public class WASDJoystick implements LogitechF310, KeyListener {
             case LEFT_STICK_Y:
                 if (left)
                     if (up || down) return 0;
-                    else return -1;
-                else if (down) return -1;
-                else if (right || up) return 1;
+                    else return MAX_SPEED;
+                else if (down) return MAX_SPEED;
+                else if (right || up) return -MAX_SPEED;
                 else return 0;
             case RIGHT_STICK_Y:
                 if (right)
                     if (up || down) return 0;
-                    else return -1;
-                else if (down) return -1;
-                else if (left || up) return 1;
+                    else return MAX_SPEED;
+                else if (down) return MAX_SPEED;
+                else if (left || up) return -MAX_SPEED;
                 else return 0;
             case LEFT_TRIGGER:
                 return leftTrigger;

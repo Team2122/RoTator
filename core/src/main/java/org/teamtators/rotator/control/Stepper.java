@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,7 +33,8 @@ public class Stepper implements Runnable {
 
     public void stop() {
         running.set(false);
-        thread.interrupt();
+        if (thread != null)
+            thread.interrupt();
     }
 
     public void add(Steppable steppable) {
@@ -53,12 +53,15 @@ public class Stepper implements Runnable {
     public void run() {
         double lastStepTime = timeProvider.getTimestamp();
         while (running.get()) {
-            double stepTime = timeProvider.getTimestamp();
-            double delta = stepTime - lastStepTime;
+            double startTime = timeProvider.getTimestamp();
+            double delta = startTime - lastStepTime;
+            lastStepTime = startTime;
             for (Steppable steppable : steppables) {
                 steppable.step(delta);
             }
-            long delay = (long) ((period - delta) * 1000);
+            double endTime = timeProvider.getTimestamp();
+            double elapsed = endTime - startTime;
+            long delay = (long) ((period - elapsed) * 1000);
             if (delay < 0) {
                 logger.warn("Stepping took " + (-delay) + " milliseconds longer than configured period");
             } else {
@@ -68,7 +71,6 @@ public class Stepper implements Runnable {
                     return;
                 }
             }
-            lastStepTime = stepTime;
         }
     }
 

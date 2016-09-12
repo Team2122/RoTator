@@ -7,6 +7,8 @@ import org.teamtators.rotator.scheduler.Subsystem;
  * Picks up the ball with rollers
  */
 public abstract class AbstractPicker extends Subsystem {
+    private PickerPosition position = PickerPosition.HOME;
+
     public AbstractPicker() {
         super("Picker");
     }
@@ -16,7 +18,7 @@ public abstract class AbstractPicker extends Subsystem {
      *
      * @param power Power for the motor
      */
-    public abstract void setPower(float power);
+    public abstract void setPower(double power);
 
     /**
      * Resets the power for the roller on the picker
@@ -26,19 +28,18 @@ public abstract class AbstractPicker extends Subsystem {
     }
 
     /**
-     * @return the power the motor is set to
-     */
-    public abstract double getPower();
-
-    /**
      * sets the picker's position
      *
      * @param position the picker's position
      */
-    public abstract void setPosition(PickerPosition position);
+    public void setPosition(PickerPosition position) {
+        this.position = position;
+    }
 
     /**
      * @return the picker's position
      */
-    public abstract PickerPosition getPosition();
+    public PickerPosition getPosition() {
+        return position;
+    }
 }

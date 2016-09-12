@@ -3,6 +3,7 @@ package org.teamtators.rotator.ui;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.subsystems.SimulationDrive;
+import org.teamtators.rotator.subsystems.SimulationPicker;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -17,10 +18,12 @@ import java.io.InputStream;
 public class SimulationDisplay extends JPanel {
     private static final Logger logger = LoggerFactory.getLogger(SimulationDisplay.class);
     public static final Color ROBOT_COLOR = new Color(183, 183, 183);
+    public static final Color PICKER_COLOR = new Color(215, 219, 38);
     private Config config = new Config();
     private Image fieldImage;
 
     private SimulationDrive drive;
+    private SimulationPicker picker;
 
     public SimulationDisplay() throws HeadlessException {
         setFocusable(true);
@@ -51,6 +54,11 @@ public class SimulationDisplay extends JPanel {
         this.drive.setMaxY(config.fieldWidth);
         this.drive.setX(config.fieldLength / 2);
         this.drive.setY(config.fieldWidth / 2);
+    }
+
+    @Inject
+    public void setPicker(SimulationPicker picker) {
+        this.picker = picker;
     }
 
     @Inject
@@ -93,12 +101,29 @@ public class SimulationDisplay extends JPanel {
         robotTransform.rotate(rot);
         g2d.setTransform(robotTransform);
 
-        Rectangle rect = new Rectangle((int) -width / 2, (int) -height / 2, (int) width, (int) height);
+        Rectangle robotRect = new Rectangle((int) -width / 2, (int) -height / 2, (int) width, (int) height);
         g2d.setColor(ROBOT_COLOR);
-        g2d.fill(rect);
+        g2d.fill(robotRect);
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(2));
-        g2d.draw(rect);
+        g2d.draw(robotRect);
+
+        Rectangle pickerRect;
+        switch (picker.getPosition()) {
+            default:
+            case HOME:
+                pickerRect = new Rectangle((int) -width / 2, -20, 20, 40);
+                break;
+            case CHEVAL:
+                pickerRect = new Rectangle((int) -width / 2 - 10, -20, 20, 40);
+                break;
+            case PICK:
+                pickerRect = new Rectangle((int) -width / 2 - 20, -20, 20, 40);
+                break;
+        }
+        g2d.setColor(PICKER_COLOR);
+        g2d.setStroke(new BasicStroke(2));
+        g2d.draw(pickerRect);
 
         g2d.dispose();
     }

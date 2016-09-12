@@ -25,6 +25,8 @@ public class Configurables {
         Class<?> clazz = toConfigure.getClass();
         Type[] interfaces = clazz.getGenericInterfaces();
         for (Type i : interfaces) {
+            if (!(i instanceof ParameterizedType))
+                continue;
             ParameterizedType type = (ParameterizedType) i;
             if (type.getRawType() == Configurable.class) {
                 Class configClass = (Class) type.getActualTypeArguments()[0];

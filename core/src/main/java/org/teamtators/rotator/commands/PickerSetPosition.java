@@ -27,6 +27,10 @@ public class PickerSetPosition extends CommandBase implements Configurable<Picke
     }
 
     @Override
+    protected void finish(boolean interrupted) {
+    }
+
+    @Override
     protected boolean step() {
         picker.setPosition(pickerPosition);
         return true;
