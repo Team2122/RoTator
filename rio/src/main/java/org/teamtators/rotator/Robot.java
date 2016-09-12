@@ -96,9 +96,6 @@ public class Robot extends IterativeRobot {
         logger.debug("Configuring triggers");
         triggerBinder.bindTriggers(triggersConfig);
 
-        scheduler.registerDefaultCommand(commandStore.getCommand("DriveTank"));
-        scheduler.registerDefaultCommand(manualTester);
-
         logger.debug("Starting stepper");
         stepper.start();
 

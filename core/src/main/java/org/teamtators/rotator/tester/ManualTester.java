@@ -2,10 +2,9 @@ package org.teamtators.rotator.tester;
 
 import com.google.inject.Inject;
 import org.teamtators.rotator.CommandBase;
-import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
-import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.scheduler.RobotState;
+import org.teamtators.rotator.scheduler.Scheduler;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -23,6 +22,7 @@ public class ManualTester extends CommandBase {
     private LogitechF310 joystick;
 
     private Map<LogitechF310.Button, Boolean> lastStates = new EnumMap<LogitechF310.Button, Boolean>(LogitechF310.Button.class);
+    private List<ComponentTestGroup> testGroups = new ArrayList<>();
 
     public ManualTester() {
         super("ManualTester");
@@ -164,8 +164,6 @@ public class ManualTester extends CommandBase {
             test.start();
         }
     }
-
-    private List<ComponentTestGroup> testGroups = new ArrayList<>();
 
     /**
      * Register a new test group

@@ -7,3 +7,5 @@ Driver:
   POV_DOWN: start whenPressed HoodDown
 
 Gunner:
+
+defaults: [ DriveTank ]

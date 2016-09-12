@@ -13,6 +13,7 @@ import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.CommandStore;
+import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.subsystems.AbstractDrive;
 import org.teamtators.rotator.subsystems.AbstractPicker;
@@ -55,9 +56,10 @@ public class CoreModule extends AbstractModule {
     }
 
     @Provides @Singleton
-    ManualTester providesManualTester(AbstractOperatorInterface operatorInterface) {
+    ManualTester providesManualTester(AbstractOperatorInterface operatorInterface, Scheduler scheduler) {
         ManualTester manualTester = new ManualTester();
         manualTester.setJoystick(operatorInterface.driverJoystick());
+        scheduler.registerDefaultCommand(manualTester);
         return manualTester;
     }
 

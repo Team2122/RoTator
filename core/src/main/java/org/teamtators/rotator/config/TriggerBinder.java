@@ -12,6 +12,7 @@ import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.*;
 
 import java.util.Map;
+import java.util.Set;
 
 public class TriggerBinder {
     private static final Logger logger = LoggerFactory.getLogger(TriggerBinder.class);
@@ -48,6 +49,14 @@ public class TriggerBinder {
     public void bindTriggers(TriggersConfig triggersConfig) {
         bindButtonsToLogitechF310(triggersConfig.driver, operatorInterface.driverJoystick());
         bindButtonsToLogitechF310(triggersConfig.gunner, operatorInterface.gunnerJoystick());
+        registerDefaults(triggersConfig.defaults);
+    }
+
+    private void registerDefaults(Set<String> defaults) {
+        for (String defaultCommand : defaults) {
+            Command command = getCommandForBinding(defaultCommand);
+            scheduler.registerDefaultCommand(command);
+        }
     }
 
     /**

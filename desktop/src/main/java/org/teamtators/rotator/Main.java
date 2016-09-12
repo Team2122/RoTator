@@ -15,14 +15,13 @@ import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
-import org.teamtators.rotator.operatorInterface.LogitechF310;
-import org.teamtators.rotator.scheduler.*;
-import org.teamtators.rotator.subsystems.SimulationDrive;
+import org.teamtators.rotator.scheduler.RobotState;
+import org.teamtators.rotator.scheduler.Scheduler;
+import org.teamtators.rotator.scheduler.StateListener;
+import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.ManualTester;
-import org.teamtators.rotator.ui.SimulationDisplay;
 import org.teamtators.rotator.ui.SimulationFrame;
-import org.teamtators.rotator.ui.WASDJoystick;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -47,7 +46,8 @@ public class Main {
     private List<Subsystem> subsystems;
     @Inject
     private TriggerBinder triggerBinder;
-    @Inject @ForController
+    @Inject
+    @ForController
     private Stepper stepper;
     @Inject
     private Stepper uiStepper;
@@ -93,7 +93,6 @@ public class Main {
 
         logger.debug("Configuring triggers");
         triggerBinder.bindTriggers(triggersConfig);
-        scheduler.registerDefaultCommand(commandStore.getCommand("DriveTank"));
 
         uiStepper.setPeriod(1.0 / 50.0);
         uiStepper.add(delta -> {
