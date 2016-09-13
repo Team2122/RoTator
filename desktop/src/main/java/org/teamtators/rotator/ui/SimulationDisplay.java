@@ -12,13 +12,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class SimulationDisplay extends JPanel {
-    private static final Logger logger = LoggerFactory.getLogger(SimulationDisplay.class);
     public static final Color ROBOT_COLOR = new Color(183, 183, 183);
     public static final Color PICKER_COLOR = new Color(215, 219, 38);
+    private static final Logger logger = LoggerFactory.getLogger(SimulationDisplay.class);
     private Config config = new Config();
     private Image fieldImage;
 
@@ -108,19 +109,21 @@ public class SimulationDisplay extends JPanel {
         g2d.setStroke(new BasicStroke(2));
         g2d.draw(robotRect);
 
-        Rectangle pickerRect;
+        int pickerX;
+        int pickerY = -20;
         switch (picker.getPosition()) {
             default:
             case HOME:
-                pickerRect = new Rectangle((int) -width / 2, -20, 20, 40);
+                pickerX = (int) -width / 2;
                 break;
             case CHEVAL:
-                pickerRect = new Rectangle((int) -width / 2 - 10, -20, 20, 40);
+                pickerX = (int) -width / 2 - 10;
                 break;
             case PICK:
-                pickerRect = new Rectangle((int) -width / 2 - 20, -20, 20, 40);
+                pickerX = (int) -width / 2 - 20;
                 break;
         }
+        Rectangle pickerRect = new Rectangle(pickerX, pickerY, 20, 40);
         g2d.setColor(PICKER_COLOR);
         g2d.setStroke(new BasicStroke(2));
         g2d.draw(pickerRect);

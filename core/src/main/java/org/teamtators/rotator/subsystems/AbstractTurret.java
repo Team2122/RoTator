@@ -10,6 +10,7 @@ import org.teamtators.rotator.scheduler.Subsystem;
 public abstract class AbstractTurret extends Subsystem {
     private AbstractController shooterWheelController = null;
     private boolean homed = false;
+    private HoodPosition hoodPosition = HoodPosition.DOWN;
 
 
     public AbstractTurret() {
@@ -54,14 +55,18 @@ public abstract class AbstractTurret extends Subsystem {
     /**
      * @return the hood's position
      */
-    public abstract HoodPosition getHoodPosition();
+    public HoodPosition getHoodPosition() {
+        return hoodPosition;
+    }
 
     /**
      * Sets the hood position
      *
      * @param hoodPosition the hood's position
      */
-    public abstract void setHoodPosition(HoodPosition hoodPosition);
+    public void setHoodPosition(HoodPosition hoodPosition) {
+        this.hoodPosition = hoodPosition;
+    }
 
     /**
      * Sets the pinch roller's power
@@ -133,7 +138,7 @@ public abstract class AbstractTurret extends Subsystem {
     /**
      * @return how far the ball is from the ballSensor
      */
-    public abstract float getBallDistance();
+    public abstract double getBallDistance();
 
     public boolean isHomed() {
         return homed;

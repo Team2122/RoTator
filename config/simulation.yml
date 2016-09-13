@@ -22,4 +22,6 @@ Picker:
     gearRatio: 70.0
     momentum: 50
     dampening: 4
+  encoder:
+    multiplier: 1
 Turret:

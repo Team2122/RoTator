@@ -39,7 +39,7 @@ public class SimulationEncoder implements Steppable, Configurable<SimulationEnco
         this.rate = rate;
     }
 
-    public double getRotations() {
+    public double getDistance() {
         return rotations;
     }
 

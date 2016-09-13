@@ -114,12 +114,12 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
 
     @Override
     public double getLeftDistance() {
-        return this.leftEncoder.getRotations();
+        return this.leftEncoder.getDistance();
     }
 
     @Override
     public double getRightDistance() {
-        return this.rightEncoder.getRotations();
+        return this.rightEncoder.getDistance();
     }
 
     @Override

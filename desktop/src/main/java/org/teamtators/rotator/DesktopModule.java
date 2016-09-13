@@ -23,7 +23,7 @@ public class DesktopModule extends AbstractModule {
                 .withConfigDir("./config"));
         bind(AbstractDrive.class).to(SimulationDrive.class);
         bind(AbstractPicker.class).to(SimulationPicker.class);
-        bind(AbstractTurret.class).to(NoopTurret.class);
+        bind(AbstractTurret.class).to(SimulationTurret.class);
         bind(LogitechF310.class).to(WASDJoystick.class);
         bind(ITimeProvider.class).to(SystemNanoTimeTimeProvider.class);
     }
