@@ -63,17 +63,14 @@ public class Robot extends IterativeRobot {
     private void initialize() {
         logger.info("Robot is initializing");
 
-        Injector coreInjector = Guice.createInjector(new CoreModule()
-                .withConfigDir("/home/lvuser/config"));
-        configLoader = coreInjector.getInstance(ConfigLoader.class);
+
+        Injector injector = Guice.createInjector(new RioModule());
+        injector.injectMembers(this);
 
         logger.debug("Created injector. Loading configs");
         ObjectNode commandsConfig = (ObjectNode) configLoader.load("commands.yml");
         ObjectNode subsystemsConfig = (ObjectNode) configLoader.load("subsystems.yml");
         ObjectNode triggersConfig = (ObjectNode) configLoader.load("triggers.yml");
-
-        Injector injector = coreInjector.createChildInjector(new RioModule());
-        injector.injectMembers(this);
 
         commandStore.setInjector(injector);
 

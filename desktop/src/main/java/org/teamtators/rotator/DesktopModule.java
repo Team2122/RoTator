@@ -8,9 +8,13 @@ import org.teamtators.rotator.control.SystemNanoTimeTimeProvider;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.operatorInterface.SimulationOperatorInterface;
+import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.subsystems.*;
 import org.teamtators.rotator.subsystems.noop.NoopTurret;
 import org.teamtators.rotator.ui.WASDJoystick;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class DesktopModule extends AbstractModule {
     @Override
