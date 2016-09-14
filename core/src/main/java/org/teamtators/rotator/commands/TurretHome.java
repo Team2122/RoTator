@@ -55,14 +55,14 @@ public class TurretHome extends CommandBase implements Configurable<TurretHome.C
                 currentSpeed = config.speed;
             }
         }
-        turret.setTurretRotation(currentSpeed);
+        turret.setRotationPower(currentSpeed);
         return false;
     }
 
     @Override
     protected void finish(boolean interrupted) {
         super.finish(interrupted);
-        turret.resetTurretRotation();
+        turret.resetRotationPower();
     }
 
     public static class Config {

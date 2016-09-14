@@ -148,17 +148,17 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     }
 
     @Override
-    public void setTurretRotation(double power) {
+    public void setRotationPower(double power) {
         turretRotationMotor.set(power);
     }
 
     @Override
-    public double getTurretPosition() {
+    public double getAngle() {
         return turretRotationEncoder.getDistance();
     }
 
     @Override
-    public void resetTurretPosition() {
+    public void resetAngleEncoder() {
         turretRotationEncoder.reset();
     }
 

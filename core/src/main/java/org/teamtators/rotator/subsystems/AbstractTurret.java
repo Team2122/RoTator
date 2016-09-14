@@ -169,7 +169,7 @@ public abstract class AbstractTurret extends Subsystem {
 
     public boolean homeTurret() {
         if (isAtCenterLimit()) {
-            resetTurretPosition();
+            resetAngleEncoder();
             homed = true;
             logger.info("Turret at center limit, successfully homed");
             return true;

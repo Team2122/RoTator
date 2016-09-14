@@ -35,17 +35,17 @@ public class NoopTurret extends AbstractTurret {
     }
 
     @Override
-    public void setTurretRotation(double power) {
+    public void setRotationPower(double power) {
 
     }
 
     @Override
-    public double getTurretPosition() {
+    public double getAngle() {
         return 0;
     }
 
     @Override
-    public void resetTurretPosition() {
+    public void resetAngleEncoder() {
 
     }
 

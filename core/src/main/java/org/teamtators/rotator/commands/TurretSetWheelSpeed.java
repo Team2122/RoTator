@@ -23,7 +23,7 @@ public class TurretSetWheelSpeed extends CommandBase implements Configurable<Tur
 
     @Override
     protected boolean step() {
-        turret.setWheelSpeed(config.speed);
+        turret.setTargetWheelSpeed(config.speed);
         return true;
     }
 

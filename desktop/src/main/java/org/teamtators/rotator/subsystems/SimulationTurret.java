@@ -54,33 +54,33 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
     }
 
     @Override
-    public void setTurretRotation(double power) {
+    public void setRotationPower(double power) {
         rotationMotor.setPower(power);
     }
 
     @Override
-    public double getTurretPosition() {
+    public double getAngle() {
         return rotationEncoder.getDistance();
     }
 
     @Override
-    public void resetTurretPosition() {
+    public void resetAngleEncoder() {
         rotationEncoder.reset();
     }
 
     @Override
     public boolean isAtLeftLimit() {
-        return getTurretPosition() <= -100;
+        return getAngle() <= -100;
     }
 
     @Override
     public boolean isAtRightLimit() {
-        return getTurretPosition() >= 100;
+        return getAngle() >= 100;
     }
 
     @Override
     public boolean isAtCenterLimit() {
-        return Math.abs(getTurretPosition()) < 2.5;
+        return Math.abs(getAngle()) < 2.5;
     }
 
     @Override
