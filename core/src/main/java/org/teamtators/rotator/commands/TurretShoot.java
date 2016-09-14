@@ -4,6 +4,7 @@ import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.subsystems.AbstractTurret;
+import org.teamtators.rotator.subsystems.HoodPosition;
 
 import javax.inject.Inject;
 
@@ -36,6 +37,14 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
 
     @Override
     protected boolean step() {
+        if (!turret.isAtTargetWheelSpeed()) {
+            logger.warn("Turret wheel speed is only {} (target {}), not firing.",
+                    turret.getWheelSpeed(), turret.getTargetWheelSpeed());
+            return true;
+        } else if (turret.getHoodPosition() == HoodPosition.DOWN) {
+            logger.warn("Hood currently in down position, not firing.");
+            return true;
+        }
         turret.setKingRollerPower(config.kingRollerPower);
         return timer.getTimestamp() - startingTime > config.timeout;
     }

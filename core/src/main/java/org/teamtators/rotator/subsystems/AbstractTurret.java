@@ -37,6 +37,20 @@ public abstract class AbstractTurret extends Subsystem {
         shooterWheelController.setSetpoint(rps);
     }
 
+    /**
+     * @return The wheel speed setpoint
+     */
+    public double getTargetWheelSpeed() {
+        return getShooterWheelController().getSetpoint();
+    }
+
+    /**
+     * @return whether or not the turret is at the desired speed
+     */
+    public boolean isAtTargetWheelSpeed() {
+        return getShooterWheelController().isOnTarget();
+    }
+
     protected AbstractController getShooterWheelController() {
         return shooterWheelController;
     }
