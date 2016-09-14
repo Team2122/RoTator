@@ -13,6 +13,8 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Double.NaN;
+
 @Singleton
 public class WPILibVision extends AbstractVision implements Configurable<WPILibVision.Config>, ITestable {
 
@@ -34,7 +36,11 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
 
     @Override
     public void setLEDPower(double power) {
-        if (power < 0.0f) power *= -1.0f;    //prevents reverse polarity without raising an exception
+        if (power < 0.0f) {
+            logger.warn("Power setting invalid: {} Resetting power to 0.0", power);
+            power = 0.0f;
+        }
+
         ledPower.set(power);
     }
 
@@ -47,8 +53,7 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
 
     @Override
     public double getAngle() {
-        double angle = table.getNumber("angle", lastAngle);
-        lastAngle = angle;
+        double angle = table.getNumber("angle", NaN);
         return angle;
     }
 
