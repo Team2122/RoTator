@@ -33,7 +33,12 @@ public abstract class AbstractTurret extends Subsystem {
 
     public abstract double getWheelSpeed();
 
-    public void setWheelSpeed(double rps) {
+    /**
+     * Set the wheel speed setpoint
+     *
+     * @param rps New wheel speed setpoint
+     */
+    public void setTargetWheelSpeed(double rps) {
         shooterWheelController.setSetpoint(rps);
     }
 
@@ -63,7 +68,7 @@ public abstract class AbstractTurret extends Subsystem {
     }
 
     public void resetWheelSpeed() {
-        setWheelSpeed(0.0);
+        setTargetWheelSpeed(0.0);
     }
 
     /**
