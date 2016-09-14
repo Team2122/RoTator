@@ -3,8 +3,8 @@ package org.teamtators.rotator.commands;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.control.AbstractController;
-import org.teamtators.rotator.control.PIDController;
 import org.teamtators.rotator.subsystems.AbstractTurret;
+import org.teamtators.rotator.subsystems.AbstractVision;
 import org.teamtators.rotator.subsystems.HoodPosition;
 
 import javax.inject.Inject;
@@ -13,7 +13,6 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
     private Config config;
     private AbstractTurret turret;
     private AbstractVision vision;
-    private AbstractController controller;
 
     @Inject
     public TurretTarget(AbstractTurret turret, AbstractVision vision, AbstractController controller) {
