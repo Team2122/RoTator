@@ -9,6 +9,7 @@ import org.teamtators.rotator.scheduler.Subsystem;
  */
 public abstract class AbstractTurret extends Subsystem {
     private AbstractController shooterWheelController = null;
+    private AbstractController angleController = null;
     private boolean homed = false;
     private HoodPosition hoodPosition = HoodPosition.DOWN;
 
@@ -116,28 +117,55 @@ public abstract class AbstractTurret extends Subsystem {
     }
 
     /**
-     * Rotates the turret
+     * Sets the power to the turret rotation motor
      *
-     * @param power power for the turret's rotation
+     * @param power power for the turret's rotation motor from -1 to 1
      */
-    public abstract void setTurretRotation(double power);
+    public abstract void setRotationPower(double power);
 
     /**
-     * Resets the turret's rotation
+     * Resets the turret's rotation motor power
      */
-    public void resetTurretRotation() {
-        setTurretRotation(0);
+    public void resetRotationPower() {
+        setRotationPower(0);
     }
 
     /**
-     * @return the turret's position
+     * @return The rotation angle of the turret in degrees. 0 is wherever the turret
+     * was when it was last reset
      */
-    public abstract double getTurretPosition();
+    public abstract double getAngle();
 
     /**
-     * Resets the turret's position
+     * Resets the turret's position encoder. Sets the new 0 point for getAngle
      */
-    public abstract void resetTurretPosition();
+    public abstract void resetAngleEncoder();
+
+    protected AbstractController getAngleController() {
+        return angleController;
+    }
+
+    protected void setAngleController(AbstractController angleController) {
+        angleController.setName("angleController");
+        angleController.setInputProvider(this::getAngle);
+        angleController.setOutputConsumer(this::setRotationPower);
+        angleController.setLimitPredicate((delta, controller) -> isAtLeftLimit() || isAtRightLimit());
+        angleController.setMinSetpoint(-100);
+        angleController.setMaxOutput(100);
+        this.angleController = angleController;
+    }
+
+    public void setTargetAngle(double targetAngle) {
+        getAngleController().setSetpoint(targetAngle);
+    }
+
+    public double getTargetAngle() {
+        return getAngleController().getSetpoint();
+    }
+
+    public boolean isAngleOnTarget() {
+        return getAngleController().isOnTarget();
+    }
 
     /**
      * @return whether or not the turret is all the way to the left

@@ -94,8 +94,24 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
 
     @Override
     public void configure(Config config) {
+        shooterWheelMotor.configure(config.shooterWheelMotor);
+        shooterWheelEncoder.configure(config.shooterWheelEncoder);
+        rotationMotor.configure(config.rotationMotor);
+        rotationEncoder.configure(config.rotationEncoder);
+        kingRollerMotor.configure(config.kingRollerMotor);
+        kingRollerEncoder.configure(config.kingRollerEncoder);
+        pinchRollerMotor.configure(config.pinchRollerMotor);
+        pinchRollerEncoder.configure(config.pinchRollerEncoder);
     }
 
     public static class Config {
+        public SimulationMotor.Config shooterWheelMotor;
+        public SimulationEncoder.Config shooterWheelEncoder;
+        public SimulationMotor.Config rotationMotor;
+        public SimulationEncoder.Config rotationEncoder;
+        public SimulationMotor.Config kingRollerMotor;
+        public SimulationEncoder.Config kingRollerEncoder;
+        public SimulationMotor.Config pinchRollerMotor;
+        public SimulationEncoder.Config pinchRollerEncoder;
     }
 }
