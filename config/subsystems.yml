@@ -3,7 +3,7 @@ Drive:
   rightMotor: { channel: 1, inverted: false }
   leftEncoder: { aChannel: 2, bChannel: 3, reverse: true, distancePerPulse: .06597 }
   rightEncoder: { aChannel: 0, bChannel: 1, distancePerPulse: .06597 }
-  controller: { P: .005, F: .00641 }
+  controller: { type: PID, P: .005, F: .00641 }
   driveMode: CONTROLLER
   maxSpeed: 156.0
 Picker:
@@ -22,7 +22,7 @@ Turret:
   longSolenoid: 2
   shooterWheelMotor: { channel: 2, inverted: true }
   shooterWheelEncoder: { aChannel: 4, bChannel: 5, reverse: true, distancePerPulse: 0.0009765625 }
-  shooterWheelController: { P: 0.01, F: 0.01 }
+  shooterWheelController: { type: PID, P: 0.01, F: 0.01 }
   turretRotationMotor: { channel: 4, inverted: true }
   turretRotationEncoder: { aChannel: 6, bChannel: 7, reverse: true, distancePerPulse: 0.0009765625 }
   leftLimit: { channel: 11, type: NPN }
