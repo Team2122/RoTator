@@ -1,5 +1,6 @@
 package org.teamtators.rotator.control;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.teamtators.rotator.config.Configurable;
 
 public class StepController extends AbstractController implements Configurable<StepController.Config> {
@@ -15,6 +16,14 @@ public class StepController extends AbstractController implements Configurable<S
         setTargetChecker(((delta, controller) -> ((StepController) controller).lowThreshold > controller.getError()));
     }
 
+    public StepController(String name, double highSpeed, double lowSpeed, double lowThreshold, double highThreshold) {
+        super(name);
+        this.highSpeed = highSpeed;
+        this.lowSpeed = lowSpeed;
+        this.lowThreshold = lowThreshold;
+        this.highThreshold = highThreshold;
+    }
+
     @Override
     protected double computeOutput(double delta) {
         double absError = Math.abs(getError());
@@ -28,23 +37,17 @@ public class StepController extends AbstractController implements Configurable<S
         }
     }
 
-    public StepController(String name, double highSpeed, double lowSpeed, double lowThreshold, double highThreshold) {
-        super(name);
-        this.highSpeed = highSpeed;
-        this.lowSpeed = lowSpeed;
-        this.lowThreshold = lowThreshold;
-        this.highThreshold = highThreshold;
-    }
-
     @Override
     public void configure(Config config) {
         highSpeed = config.highSpeed;
         lowSpeed = config.lowSpeed;
         lowThreshold = config.lowThreshold;
         highThreshold = config.highThreshold;
+        configureTarget(config.target);
     }
 
     public static class Config {
         public double highSpeed, lowSpeed, lowThreshold, highThreshold;
+        public JsonNode target;
     }
 }

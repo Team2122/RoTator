@@ -1,7 +1,9 @@
 package org.teamtators.rotator.control;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.teamtators.rotator.config.ConfigException;
 
 import javax.inject.Inject;
 
@@ -141,5 +143,21 @@ public abstract class AbstractController implements Steppable {
 
     public synchronized void setOnTargetHandler(OnTargetHandler onTargetHandler) {
         this.onTargetHandler = onTargetHandler;
+    }
+
+    public void configureTarget(JsonNode config) {
+        if (config == null) return;
+        if (!config.isObject()) {
+            throw new ConfigException("Controller target config must be an object");
+        }
+        OnTargetChecker targetChecker = OnTargetCheckers.neverOnTarget();
+        if (config.has("within")) {
+            targetChecker = OnTargetCheckers.withinError(config.get("within").asDouble());
+        }
+        if (config.has("time")) {
+            double time = config.get("time").asDouble();
+            targetChecker = new OnTargetCheckers.SampleTime(time, targetChecker);
+        }
+        setTargetChecker(targetChecker);
     }
 }

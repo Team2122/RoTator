@@ -1,5 +1,6 @@
 package org.teamtators.rotator.control;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.teamtators.rotator.config.Configurable;
 
 /**
@@ -122,9 +123,11 @@ public class PIDController extends AbstractController implements Configurable<PI
         if (config == null) return;
         setPIDF(config.P, config.I, config.D, config.F);
         setMaxIError(config.maxI);
+        configureTarget(config.target);
     }
 
     public static class Config {
         public double P = 0.0, I = 0.0, D = 0.0, F = 0.0, maxI = Double.POSITIVE_INFINITY;
+        public JsonNode target;
     }
 }
