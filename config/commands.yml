@@ -59,3 +59,7 @@ TurretStopWheel:
 TurretSpinUp:
   class: TurretSetWheelSpeed
   speed: 66.0
+
+TurretTarget:
+  LEDPower: 1.0
+  wheelSpeed: 66.6
