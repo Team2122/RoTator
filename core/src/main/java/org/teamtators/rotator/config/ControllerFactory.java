@@ -8,8 +8,6 @@ import org.teamtators.rotator.control.PIDController;
 import org.teamtators.rotator.control.StepController;
 
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -24,11 +22,12 @@ public class ControllerFactory {
 
     public AbstractController create(JsonNode config) {
         checkNotNull(config, "Controller config can not be null");
-        if (!config.has("type") || config.get("type") != null) {
+        if (!config.has("type") || config.get("type").isTextual()) {
             throw new ConfigException("Controller config missing type");
         }
         AbstractController controller;
-        switch(config.get("type").asText()) {
+        String type = config.get("type").asText();
+        switch (type) {
             case "PID":
                 controller = providerPIDController.get();
                 break;
@@ -36,7 +35,7 @@ public class ControllerFactory {
                 controller = providerStepController.get();
                 break;
             default:
-                throw new ConfigException("Invalid controller type in config");
+                throw new ConfigException("Invalid controller type \"" + type + "\" in config");
         }
         Configurables.configureObject(controller, config, objectMapper);
         return controller;
