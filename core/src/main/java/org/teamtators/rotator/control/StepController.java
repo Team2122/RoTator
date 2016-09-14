@@ -11,9 +11,9 @@ public class StepController extends AbstractController implements Configurable<S
     private double lowThreshold;
     private double highThreshold;
 
-    public StepController(String name) {
-        super(name);
-        setTargetChecker(((delta, controller) -> ((StepController) controller).lowThreshold > controller.getError()));
+    public StepController() {
+        super();
+        setTargetPredicate(getLowThresholdPredicate());
     }
 
     public StepController(String name, double highSpeed, double lowSpeed, double lowThreshold, double highThreshold) {
@@ -22,6 +22,17 @@ public class StepController extends AbstractController implements Configurable<S
         this.lowSpeed = lowSpeed;
         this.lowThreshold = lowThreshold;
         this.highThreshold = highThreshold;
+    }
+
+    private class LowThresholdPredicate implements ControllerPredicate {
+        @Override
+        public boolean compute(double delta, AbstractController controller) {
+            return Math.abs(controller.getError()) < lowThreshold;
+        }
+    }
+
+    public ControllerPredicate getLowThresholdPredicate() {
+        return new LowThresholdPredicate();
     }
 
     @Override

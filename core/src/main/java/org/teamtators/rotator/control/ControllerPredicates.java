@@ -1,36 +1,34 @@
 package org.teamtators.rotator.control;
 
-import com.google.common.base.Preconditions;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class OnTargetCheckers {
-    public static OnTargetChecker staticValue(boolean value) {
+public class ControllerPredicates {
+    public static ControllerPredicate staticValue(boolean value) {
         return (delta, controller) -> value;
     }
 
-    public static OnTargetChecker alwaysOnTarget() {
+    public static ControllerPredicate alwaysTrue() {
         return staticValue(true);
     }
 
-    public static OnTargetChecker neverOnTarget() {
+    public static ControllerPredicate alwaysFalse() {
         return staticValue(false);
     }
 
-    public static OnTargetChecker withinError(double threshold) {
+    public static ControllerPredicate withinError(double threshold) {
         return (delta, controller) -> controller.getError() < threshold;
     }
 
-    public static OnTargetChecker sampleWithinError(double time, double threshold) {
+    public static ControllerPredicate sampleWithinError(double time, double threshold) {
         return new SampleTime(time, withinError(threshold));
     }
 
-    public static class SampleTime implements OnTargetChecker {
+    public static class SampleTime implements ControllerPredicate {
         private double currentTime;
         private double time;
-        private OnTargetChecker baseChecker;
+        private ControllerPredicate baseChecker;
 
-        public SampleTime(double time, OnTargetChecker baseChecker) {
+        public SampleTime(double time, ControllerPredicate baseChecker) {
             this.time = time;
             this.baseChecker = checkNotNull(baseChecker);
         }

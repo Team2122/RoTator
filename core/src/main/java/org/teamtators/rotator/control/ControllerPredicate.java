@@ -1,5 +1,5 @@
 package org.teamtators.rotator.control;
 
-public interface OnTargetChecker {
+public interface ControllerPredicate {
     boolean compute(double delta, AbstractController controller);
 }

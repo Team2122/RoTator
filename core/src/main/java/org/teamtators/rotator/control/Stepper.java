@@ -57,7 +57,11 @@ public class Stepper implements Runnable {
             double delta = startTime - lastStepTime;
             lastStepTime = startTime;
             for (Steppable steppable : steppables) {
-                steppable.step(delta);
+                try {
+                    steppable.step(delta);
+                } catch (Throwable t) {
+                    logger.error("Exception in steppable step method", t);
+                }
             }
             double endTime = timeProvider.getTimestamp();
             double elapsed = endTime - startTime;
