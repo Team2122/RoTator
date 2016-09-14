@@ -1,5 +1,9 @@
 package org.teamtators.rotator.control;
 
+import com.google.common.base.Preconditions;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class OnTargetCheckers {
     public static OnTargetChecker staticValue(boolean value) {
         return (delta, controller) -> value;
@@ -17,27 +21,29 @@ public class OnTargetCheckers {
         return (delta, controller) -> controller.getError() < threshold;
     }
 
-    public static class SampleTime implements OnTargetChecker {
+    public static OnTargetChecker sampleWithinError(double time, double threshold) {
+        return new SampleTime(time, withinError(threshold));
+    }
 
+    public static class SampleTime implements OnTargetChecker {
         private double currentTime;
-        private double setTime;
+        private double time;
         private OnTargetChecker baseChecker;
 
-        public SampleTime(double setTime, OnTargetChecker baseChecker) {
-            this.setTime = setTime;
-            this.baseChecker = baseChecker;
+        public SampleTime(double time, OnTargetChecker baseChecker) {
+            this.time = time;
+            this.baseChecker = checkNotNull(baseChecker);
         }
 
         @Override
         public boolean compute(double delta, AbstractController controller) {
-            if(baseChecker.compute(delta, controller)) {
+            if (baseChecker.compute(delta, controller)) {
                 currentTime += delta;
-                if(currentTime > setTime) {
+                if (currentTime > time) {
                     return true;
                 }
-            }
-            else {
-                currentTime = 0;
+            } else {
+                currentTime = 0.0;
             }
             return false;
         }
