@@ -3,7 +3,9 @@ Driver:
   BUMPER_LEFT: start whenReleased PickerToCheval
   TRIGGER_RIGHT: start whenPressed PickerToPick
   BUMPER_RIGHT: toggle whenPressed PickerPick
-  X: start whenPressed TurretShoot
+  A: start whenPressed TurretStopWheel
+  B: start whenPressed TurretSpinUp
+  X: toggle whenPressed TurretShoot
   POV_UP: start whenPressed HoodUp4
   POV_RIGHT: start whenPressed HoodUp1
   POV_DOWN: start whenPressed HoodDown
