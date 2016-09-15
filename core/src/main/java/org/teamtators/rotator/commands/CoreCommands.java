@@ -6,7 +6,6 @@ public class CoreCommands {
     public static void register(ConfigCommandStore commandStore) {
         commandStore.registerClass(DriveTank.class);
 
-        commandStore.registerClass(HoodSetPosition.class);
 
         commandStore.registerClass(LogCommand.class);
 
@@ -14,6 +13,7 @@ public class CoreCommands {
         commandStore.registerClass(PickerSetPosition.class);
 
         commandStore.registerClass(TurretHome.class);
+        commandStore.registerClass(TurretSetHoodPosition.class);
         commandStore.registerClass(TurretSetWheelSpeed.class);
         commandStore.registerClass(TurretShoot.class);
         commandStore.registerClass(TurretTarget.class);

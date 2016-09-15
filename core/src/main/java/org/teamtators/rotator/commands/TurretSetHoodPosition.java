@@ -8,13 +8,13 @@ import org.teamtators.rotator.subsystems.AbstractTurret;
 import org.teamtators.rotator.subsystems.HoodPosition;
 import org.teamtators.rotator.subsystems.PickerPosition;
 
-public class HoodSetPosition extends CommandBase implements Configurable<HoodSetPosition.Config> {
+public class TurretSetHoodPosition extends CommandBase implements Configurable<TurretSetHoodPosition.Config> {
     private AbstractTurret turret;
     private AbstractPicker picker;
     private Config config;
 
-    public HoodSetPosition(CoreRobot robot) {
-        super("HoodSetPosition");
+    public TurretSetHoodPosition(CoreRobot robot) {
+        super("TurretSetHoodPosition");
         this.turret = robot.turret();
         this.picker = robot.picker();
     }

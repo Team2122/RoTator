@@ -13,23 +13,23 @@ PickerToPick:
   pickerPosition: PICK
 
 HoodDown:
-  class: HoodSetPosition
+  class: TurretSetHoodPosition
   hoodPosition: DOWN
 
 HoodUp1:
-  class: HoodSetPosition
+  class: TurretSetHoodPosition
   hoodPosition: UP1
 
 HoodUp2:
-  class: HoodSetPosition
+  class: TurretSetHoodPosition
   hoodPosition: UP2
 
 HoodUp3:
-  class: HoodSetPosition
+  class: TurretSetHoodPosition
   hoodPosition: UP3
 
 HoodUp4:
-  class: HoodSetPosition
+  class: TurretSetHoodPosition
   hoodPosition: UP4
 
 TurretHome:
