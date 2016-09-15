@@ -35,10 +35,6 @@ HoodUp4:
 TurretHome:
   speed: .15
 
-TurretShoot:
-  kingRollerPower: 0.7
-  timeout: 4
-
 PickerPick:
   pickRoller: 1.0
   pinchRoller: 1.0
@@ -46,11 +42,8 @@ PickerPick:
   ballDistance: 50
 
 TurretShoot:
-  class: PickerPick
-  pickRoller: 0.0
-  pinchRoller: 0.0
-  kingRoller: 0.5
-  ballDistance: 25
+  kingRollerPower: 1.0
+  timeout: 2.0
 
 TurretStopWheel:
   class: TurretSetWheelSpeed
@@ -61,5 +54,5 @@ TurretSpinUp:
   speed: 66.0
 
 TurretTarget:
-  LEDPower: 1.0
-  wheelSpeed: 66.6
+  ledPower: 1.0
+  wheelSpeed: 91

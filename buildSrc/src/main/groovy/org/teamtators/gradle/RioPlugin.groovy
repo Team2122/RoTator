@@ -1,6 +1,5 @@
 package org.teamtators.gradle
 
-import groovy.util.logging.Slf4j
 import org.apache.log4j.LogManager
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -15,8 +14,10 @@ class RioPlugin implements Plugin<Project> {
     static final def remoteJarPath = "/home/lvuser/FRCUserProgram.jar"
     static final def remoteConfigPath = "/home/lvuser/"
     static final def remoteCleanFiles = "/home/lvuser/config /home/lvuser/FRCUserProgram.jar"
-    static final def netConsoleCommand = "env LD_LIBRARY_PATH=/usr/local/frc/rpath-lib/ /usr/local/frc/bin/netconsole-host"
-    static final def debugSuspendFlags = "-XX:+UsePerfData -agentlib:jdwp=transport=dt_socket,address=8348,server=y,suspend=y"
+    static final
+    def netConsoleCommand = "env LD_LIBRARY_PATH=/usr/local/frc/rpath-lib/ /usr/local/frc/bin/netconsole-host"
+    static final
+    def debugSuspendFlags = "-XX:+UsePerfData -agentlib:jdwp=transport=dt_socket,address=8348,server=y,suspend=y"
     static final def debugFlags = "-XX:+UsePerfData -agentlib:jdwp=transport=dt_socket,address=8348,server=y,suspend=n"
     final def ssh = Ssh.newService()
 
@@ -58,21 +59,29 @@ class RioPlugin implements Plugin<Project> {
             rioRestart()
         }
 
-        project.task('rioProfileRun', group: 'rio',
-                description: 'Sets the rio for running the robot code normally') << {
+        project.task('deploy', group: 'rio', dependsOn: ['deployConfig', 'deployJar'],
+                description: 'Deploys configs, robot code and restarts the robot code on the roboRIO') << {
             rioProfileRun()
+            rioRestart()
         }
 
-        project.task('rioProfileDebug', group: 'rio',
-                description: 'Sets the rio for debugging the robot code') << {
+        project.task('rioDebug', group: 'rio', dependsOn: ['deployConfig', 'deployJar'],
+                description: 'Sets up the roboRIO for remote debugging the robot code') << {
             rioProfileDebug()
+            rioRestart()
         }
 
-        project.task('deploy', group: 'rio', dependsOn: ['deployConfig', 'deployJar', 'rioProfileRun', 'rioRestart'],
-                description: 'Deploys configs, robot code and restarts the robot code on the roboRIO')
+        project.task('rioDebugSuspend', group: 'rio', dependsOn: ['deployConfig', 'deployJar'],
+                description: 'Sets up the roboRIO for remote debugging the robot code and suspending') << {
+            rioProfileDebugSuspend()
+            rioRestart()
+        }
 
-        project.task('rioDebug', group: 'rio', dependsOn: ['deployConfig', 'deployJar', 'rioProfileDebug', 'rioRestart'],
-                description: 'Sets up the roboRIO for remote debugging the robot code')
+        project.task('rioRun', group: 'rio', dependsOn: ['deployConfig', 'deployJar'],
+                description: 'Deploys configs, robot code and restarts the robot code on the roboRIO') << {
+            rioProfileRun()
+            rioRun()
+        }
     }
 
     private int getTeamNumber() {
@@ -189,5 +198,14 @@ class RioPlugin implements Plugin<Project> {
     void rioProfileDebugSuspend() {
         println('Setting rio profile to debug w/ suspend')
         setRobotCommand("${netConsoleCommand} ${remoteJavaPath} ${debugSuspendFlags} -jar ${remoteJarPath}")
+    }
+
+    void rioRun() {
+        inSession {
+            execute ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t"
+            execute "killall -q netconsole-host || :"
+            execute "killall -q java || :"
+            execute "sh robotCommand", logging: "stdout"
+        }
     }
 }

@@ -31,20 +31,21 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
 
     @Override
     protected void initialize() {
-        super.initialize();
         startingTime = timer.getTimestamp();
+        if (false && !turret.isAtTargetWheelSpeed()) {
+            logger.warn("Turret wheel speed not at target (speed: {}, target {}), not firing.",
+                    turret.getWheelSpeed(), turret.getTargetWheelSpeed());
+            cancel();
+        } else if (turret.getHoodPosition() == HoodPosition.DOWN) {
+            logger.warn("Hood currently in down position, not firing.");
+            cancel();
+        } else {
+            logger.info("Shooting at {} RPS", turret.getWheelSpeed());
+        }
     }
 
     @Override
     protected boolean step() {
-        if (!turret.isAtTargetWheelSpeed()) {
-            logger.warn("Turret wheel speed is only {} (target {}), not firing.",
-                    turret.getWheelSpeed(), turret.getTargetWheelSpeed());
-            return true;
-        } else if (turret.getHoodPosition() == HoodPosition.DOWN) {
-            logger.warn("Hood currently in down position, not firing.");
-            return true;
-        }
         turret.setKingRollerPower(config.kingRollerPower);
         return timer.getTimestamp() - startingTime > config.timeout;
     }

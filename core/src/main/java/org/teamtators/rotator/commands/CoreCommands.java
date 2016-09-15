@@ -13,5 +13,6 @@ public class CoreCommands {
         commandStore.registerClass(TurretTarget.class);
         commandStore.registerClass(PickerPick.class);
         commandStore.registerClass(TurretSetWheelSpeed.class);
+        commandStore.registerClass(TurretShoot.class);
     }
 }

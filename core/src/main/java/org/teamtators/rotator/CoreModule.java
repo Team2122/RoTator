@@ -18,6 +18,7 @@ import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.subsystems.AbstractDrive;
 import org.teamtators.rotator.subsystems.AbstractPicker;
 import org.teamtators.rotator.subsystems.AbstractTurret;
+import org.teamtators.rotator.subsystems.AbstractVision;
 import org.teamtators.rotator.tester.ManualTester;
 
 import java.util.Arrays;
@@ -71,7 +72,7 @@ public class CoreModule extends AbstractModule {
     @Provides
     @Singleton
     public List<Subsystem> providesSubsystems(AbstractDrive drive, AbstractPicker picker, AbstractTurret turret,
-                                              AbstractOperatorInterface operatorInterface) {
-        return Arrays.asList(drive, picker, turret, operatorInterface);
+                                              AbstractOperatorInterface operatorInterface, AbstractVision vision) {
+        return Arrays.asList(drive, picker, turret, operatorInterface, vision);
     }
 }

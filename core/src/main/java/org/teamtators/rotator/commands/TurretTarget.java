@@ -2,10 +2,7 @@ package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.control.AbstractController;
-import org.teamtators.rotator.subsystems.AbstractTurret;
-import org.teamtators.rotator.subsystems.AbstractVision;
-import org.teamtators.rotator.subsystems.HoodPosition;
+import org.teamtators.rotator.subsystems.*;
 
 import javax.inject.Inject;
 
@@ -13,14 +10,16 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
     private Config config;
     private AbstractTurret turret;
     private AbstractVision vision;
+    private AbstractPicker picker;
 
     @Inject
-    public TurretTarget(AbstractTurret turret, AbstractVision vision, AbstractController controller) {
+    public TurretTarget(AbstractTurret turret, AbstractVision vision, AbstractPicker picker) {
         super("TurretTarget");
         requires(turret);
         requires(vision);
         this.turret = turret;
         this.vision = vision;
+        this.picker = picker;
     }
 
     @Override
@@ -31,8 +30,13 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
     @Override
     protected void initialize() {
         super.initialize();
-        vision.setLEDPower(config.LEDPower);
+        if (picker.getPosition() == PickerPosition.HOME) {
+            logger.warn("Picker is not out, not targeting");
+            cancel();
+            return;
+        }
         turret.setHoodPosition(HoodPosition.UP1);
+        vision.setLEDPower(config.ledPower);
         turret.setTargetWheelSpeed(config.wheelSpeed);
     }
 
@@ -53,8 +57,8 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
         turret.setHoodPosition(HoodPosition.DOWN);
     }
 
-    static class Config{
-        double LEDPower;
-        double wheelSpeed;
+    public static class Config{
+        public double ledPower;
+        public double wheelSpeed;
     }
 }

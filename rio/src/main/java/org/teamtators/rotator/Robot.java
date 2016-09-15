@@ -51,16 +51,20 @@ public class Robot extends IterativeRobot {
     private Stepper stepper;
 
     @Override
+    public void startCompetition() {
+        try {
+            super.startCompetition();
+        } catch (Throwable t) {
+            logger.error("Exception during robot runtime", t);
+        }
+    }
+
+    @Override
     public void robotInit() {
         try {
             initialize();
         } catch (Throwable t) {
             logger.error("Exception during robot initialization", t);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) {
-            }
-            System.exit(1);
         }
     }
 
@@ -91,6 +95,7 @@ public class Robot extends IterativeRobot {
                 manualTester.registerTestGroup(((ITestable) subsystem).getTestGroup());
             }
         }
+        manualTester.setJoystick(operatorInterface.driverJoystick());
 
         logger.debug("Creating commands");
         commandStore.createCommandsFromConfig(commandsConfig);

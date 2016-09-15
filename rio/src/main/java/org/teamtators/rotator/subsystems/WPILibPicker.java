@@ -41,6 +41,7 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
 
     @Override
     public void setPosition(PickerPosition position) {
+        super.setPosition(position);
         checkNotNull(position, "Picker position can not be null");
         switch (position) {
             case HOME:
