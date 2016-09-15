@@ -1,10 +1,11 @@
 package org.teamtators.rotator.scheduler;
 
 import com.google.common.base.Preconditions;
-import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,6 +22,10 @@ public final class Scheduler implements CommandRunContext {
     private Set<StateListener> stateListeners = new HashSet<>();
 
     private RobotState robotState = RobotState.DISABLED;
+
+    @Inject
+    public Scheduler() {
+    }
 
     public void registerDefaultCommand(Command defaultCommand) {
         defaultCommands.add(defaultCommand);

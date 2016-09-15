@@ -2,11 +2,8 @@ package org.teamtators.rotator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.google.inject.AbstractModule;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
+import dagger.Module;
+import dagger.Provides;
 import org.teamtators.rotator.commands.CoreCommands;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.control.ForController;
@@ -21,34 +18,29 @@ import org.teamtators.rotator.subsystems.AbstractTurret;
 import org.teamtators.rotator.subsystems.AbstractVision;
 import org.teamtators.rotator.tester.ManualTester;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.Arrays;
 import java.util.List;
 
-public class CoreModule extends AbstractModule {
-    private String configDir = null;
+@Module
+public class CoreModule {
 
-    public CoreModule withConfigDir(String configDir) {
-        this.configDir = configDir;
-        return this;
-    }
-
-    @Override
-    protected void configure() {
-        bind(String.class).annotatedWith(Names.named("configDir")).toInstance(configDir);
-        bind(CommandStore.class).to(ConfigCommandStore.class);
+    @Provides
+    static CommandStore providesCommandStore(ConfigCommandStore configCommandStore) {
+        return configCommandStore;
     }
 
     @Provides
     @Singleton
-    ObjectMapper providesObjectMapper() {
+    static ObjectMapper providesObjectMapper() {
         return new YAMLMapper();
     }
 
     @Provides
     @Singleton
-    ConfigCommandStore provideConfigCommandStore(Injector injector) {
+    ConfigCommandStore provideConfigCommandStore() {
         ConfigCommandStore commandStore = new ConfigCommandStore();
-        commandStore.setInjector(injector);
         CoreCommands.register(commandStore);
         return commandStore;
     }

@@ -1,11 +1,12 @@
 package org.teamtators.rotator.ui;
 
-import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.TriggerSource;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.EnumMap;
@@ -23,6 +24,7 @@ public class WASDJoystick implements LogitechF310, KeyListener {
 
     private EnumMap<Button, Boolean> buttonValues = new EnumMap<Button, Boolean>(Button.class);
 
+    @Inject
     public WASDJoystick() {
         reset();
     }

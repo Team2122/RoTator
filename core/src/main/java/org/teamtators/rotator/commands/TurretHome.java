@@ -1,10 +1,9 @@
 package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
+import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.subsystems.AbstractTurret;
-
-import javax.inject.Inject;
 
 public class TurretHome extends CommandBase implements Configurable<TurretHome.Config> {
     private AbstractTurret turret;
@@ -12,11 +11,10 @@ public class TurretHome extends CommandBase implements Configurable<TurretHome.C
     private double currentSpeed = 0.0;
     private Config config;
 
-    @Inject
-    public TurretHome(AbstractTurret turret) {
+    public TurretHome(CoreRobot robot) {
         super("TurretHome");
+        this.turret = robot.turret();
         requires(turret);
-        this.turret = turret;
     }
 
     @Override

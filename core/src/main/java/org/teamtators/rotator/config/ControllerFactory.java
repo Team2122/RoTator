@@ -3,23 +3,27 @@ package org.teamtators.rotator.config;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.inject.Provider;
 import org.teamtators.rotator.control.AbstractController;
 import org.teamtators.rotator.control.PIDController;
 import org.teamtators.rotator.control.StepController;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ControllerFactory {
     @Inject
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
 
     @Inject
-    private Provider<PIDController> providerPIDController;
+    Provider<PIDController> providerPIDController;
     @Inject
-    private Provider<StepController> providerStepController;
+    Provider<StepController> providerStepController;
+
+    @Inject
+    public ControllerFactory() {
+    }
 
     public AbstractController create(JsonNode config) {
         checkNotNull(config, "Controller config can not be null");

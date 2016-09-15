@@ -3,6 +3,8 @@ package org.teamtators.rotator.subsystems;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.control.Steppable;
 
+import javax.inject.Inject;
+
 public class SimulationTurret extends AbstractTurret implements Steppable, Configurable<SimulationTurret.Config> {
     private SimulationMotor shooterWheelMotor = new SimulationMotor();
     private SimulationEncoder shooterWheelEncoder = new SimulationEncoder();
@@ -14,6 +16,7 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
     private SimulationEncoder pinchRollerEncoder = new SimulationEncoder();
     private double ballDistance;
 
+    @Inject
     public SimulationTurret() {
         shooterWheelEncoder.setMotor(shooterWheelMotor);
         rotationEncoder.setMotor(rotationMotor);

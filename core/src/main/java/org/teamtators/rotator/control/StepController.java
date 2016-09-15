@@ -3,6 +3,8 @@ package org.teamtators.rotator.control;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.teamtators.rotator.config.Configurable;
 
+import javax.inject.Inject;
+
 public class StepController extends AbstractController implements Configurable<StepController.Config> {
 
     private double highSpeed;
@@ -11,6 +13,7 @@ public class StepController extends AbstractController implements Configurable<S
     private double lowThreshold;
     private double highThreshold;
 
+    @Inject
     public StepController() {
         super();
         setTargetPredicate(getLowThresholdPredicate());

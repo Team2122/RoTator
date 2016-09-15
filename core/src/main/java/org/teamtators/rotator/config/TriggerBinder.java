@@ -3,13 +3,13 @@ package org.teamtators.rotator.config;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.*;
 
+import javax.inject.Inject;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,6 +19,10 @@ public class TriggerBinder {
     private CommandStore commandStore;
     private ObjectMapper objectMapper;
     private AbstractOperatorInterface operatorInterface;
+
+    @Inject
+    public TriggerBinder() {
+    }
 
     @Inject
     public void setScheduler(Scheduler scheduler) {

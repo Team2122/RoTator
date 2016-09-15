@@ -1,7 +1,7 @@
 package org.teamtators.rotator.commands;
 
-import com.google.inject.Inject;
 import org.teamtators.rotator.CommandBase;
+import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.subsystems.AbstractPicker;
 import org.teamtators.rotator.subsystems.AbstractTurret;
@@ -13,11 +13,10 @@ public class HoodSetPosition extends CommandBase implements Configurable<HoodSet
     private AbstractPicker picker;
     private Config config;
 
-    @Inject
-    public HoodSetPosition(AbstractTurret turret, AbstractPicker picker) {
+    public HoodSetPosition(CoreRobot robot) {
         super("HoodSetPosition");
-        this.turret = turret;
-        this.picker = picker;
+        this.turret = robot.turret();
+        this.picker = robot.picker();
     }
 
     public void configure(Config config) {

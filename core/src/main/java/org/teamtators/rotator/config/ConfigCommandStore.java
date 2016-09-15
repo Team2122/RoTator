@@ -4,18 +4,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.google.inject.Injector;
+import com.google.common.base.Preconditions;
+import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.scheduler.Command;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkState;
+
 public class ConfigCommandStore extends org.teamtators.rotator.scheduler.CommandStore {
     protected ObjectMapper objectMapper = new YAMLMapper();
-    private Injector injector;
+    private CoreRobot robot;
     private Map<String, Provider<Command>> commandProviders = new HashMap<>();
     private Map<String, JsonNode> defaultConfigs = new HashMap<>();
 
@@ -29,9 +34,26 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
         return result;
     }
 
+    private static <T extends Command> Constructor<T> getConstructor(Class<T> commandClass) {
+        try {
+            return commandClass.getConstructor();
+        } catch (NoSuchMethodException ignored) {
+            try {
+                return commandClass.getConstructor(CoreRobot.class);
+            } catch (NoSuchMethodException e) {
+                throw new IllegalArgumentException(commandClass.toString() +
+                        " does not have a no argument constructor or a constructor which takes a CoreRobot", e);
+            }
+        }
+    }
+
+    public CoreRobot getRobot() {
+        return robot;
+    }
+
     @Inject
-    public void setInjector(Injector injector) {
-        this.injector = injector;
+    public void setRobot(CoreRobot robot) {
+        this.robot = robot;
     }
 
     public void registerCommandProviders(Map<String, Provider<Command>> commandProviders) {
@@ -55,7 +77,19 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
     }
 
     public <T extends Command> void registerClass(Class<T> commandClass, String name) {
-        Provider<Command> commandProvider = () -> injector.getInstance(commandClass);
+        final Constructor<T> constructor = getConstructor(commandClass);
+        boolean takesRobot = constructor.getParameterCount() == 1;
+        Provider<Command> commandProvider = () -> {
+            try {
+                if (takesRobot) {
+                    return constructor.newInstance(robot);
+                } else {
+                    return constructor.newInstance();
+                }
+            } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                throw new ConfigException("Error constructing command", e);
+            }
+        };
         registerCommand(name, commandProvider);
     }
 
@@ -108,6 +142,7 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
     }
 
     public Command constructCommandClass(String commandName, String className) throws ConfigException {
+        checkState(robot != null, "robot on ConfigCommandStore must be set before constructing command");
         Provider<Command> constructor = getCommandProvider(className);
         Command command;
         try {

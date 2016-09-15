@@ -17,6 +17,7 @@ public class Stepper implements Runnable {
     private AtomicBoolean running = new AtomicBoolean(false);
     private Thread thread;
 
+    @Inject
     public Stepper() {
         this(DEFAULT_PERIOD);
     }

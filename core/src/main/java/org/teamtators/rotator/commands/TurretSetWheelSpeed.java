@@ -1,19 +1,17 @@
 package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
+import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.subsystems.AbstractTurret;
-
-import javax.inject.Inject;
 
 public class TurretSetWheelSpeed extends CommandBase implements Configurable<TurretSetWheelSpeed.Config> {
     private AbstractTurret turret;
     private Config config;
 
-    @Inject
-    public TurretSetWheelSpeed(AbstractTurret turret) {
+    public TurretSetWheelSpeed(CoreRobot robot) {
         super("TurretSetWheelSpeed");
-        this.turret = turret;
+        this.turret = robot.turret();
     }
 
     @Override

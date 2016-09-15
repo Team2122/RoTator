@@ -1,12 +1,11 @@
 package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
+import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.subsystems.AbstractPicker;
 import org.teamtators.rotator.subsystems.AbstractTurret;
 import org.teamtators.rotator.subsystems.PickerPosition;
-
-import javax.inject.Inject;
 
 /**
  * Picks up a ball
@@ -15,12 +14,12 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     private Config config;
     private AbstractPicker picker;
     private AbstractTurret turret;
-    @Inject
-    public PickerPick(AbstractPicker picker, AbstractTurret turret) {
+
+    public PickerPick(CoreRobot robot) {
         super("PickerPick");
+        this.picker = robot.picker();
+        this.turret = robot.turret();
         requires(picker);
-        this.picker = picker;
-        this.turret = turret;
     }
 
     @Override

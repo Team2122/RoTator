@@ -1,14 +1,17 @@
 package org.teamtators.rotator.subsystems;
 
-import com.google.inject.Singleton;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.control.Steppable;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class SimulationPicker extends AbstractPicker implements Steppable, Configurable<SimulationPicker.Config> {
     private SimulationMotor pickerMotor = new SimulationMotor();
     private SimulationEncoder pickerEncoder = new SimulationEncoder();
 
+    @Inject
     public SimulationPicker() {
         pickerEncoder.setMotor(pickerMotor);
     }

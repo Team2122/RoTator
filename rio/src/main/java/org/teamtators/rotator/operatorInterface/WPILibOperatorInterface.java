@@ -1,7 +1,9 @@
 package org.teamtators.rotator.operatorInterface;
 
-import com.google.inject.Singleton;
 import org.teamtators.rotator.config.Configurable;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class WPILibOperatorInterface
@@ -9,6 +11,10 @@ public class WPILibOperatorInterface
         implements Configurable<WPILibOperatorInterface.Config> {
     private WPILibLogitechF310 driverJoystick;
     private WPILibLogitechF310 gunnerJoystick;
+
+    @Inject
+    public WPILibOperatorInterface() {
+    }
 
     @Override
     public void configure(Config config) {

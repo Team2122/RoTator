@@ -10,6 +10,7 @@ import org.teamtators.rotator.tester.ComponentTestGroup;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.components.VictorSPTest;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,10 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
 
     private VictorSP ledPower;
     private NetworkTable table;
+
+    @Inject
+    public WPILibVision() {
+    }
 
     @Override
     public void configure(WPILibVision.Config config) {

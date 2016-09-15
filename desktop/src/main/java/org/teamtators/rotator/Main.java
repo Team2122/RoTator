@@ -3,8 +3,6 @@ package org.teamtators.rotator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.config.ConfigCommandStore;
@@ -28,43 +26,32 @@ import java.util.List;
 
 public class Main {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
-    @Inject
-    private ObjectMapper objectMapper;
-    @Inject
-    private SimulationFrame simulationFrame;
-    @Inject
-    private AbstractOperatorInterface operatorInterface;
-    @Inject
-    private Scheduler scheduler;
-    @Inject
-    private ManualTester manualTester;
-    @Inject
-    private ConfigLoader configLoader;
-    @Inject
-    private ConfigCommandStore commandStore;
-    @Inject
-    private List<Subsystem> subsystems;
-    @Inject
-    private TriggerBinder triggerBinder;
-    @Inject
-    @ForController
     private Stepper stepper;
-    @Inject
     private Stepper uiStepper;
+    private DesktopRobot robot;
 
     public static void main(String[] args) {
         try {
             new Main().start();
         } catch (Exception e) {
             logger.error("Unhandled exception", e);
+            System.exit(1);
         }
     }
 
     public void start() {
         logger.info("Starting simulation robot");
 
-        Injector injector = Guice.createInjector(new DesktopModule());
-        injector.injectMembers(this);
+        robot = DaggerDesktopRobot.create();
+        stepper = robot.stepper();
+        uiStepper = robot.uiStepper();
+        ConfigLoader configLoader = robot.configLoader();
+        Scheduler scheduler = robot.scheduler();
+        ManualTester manualTester = robot.manualTester();
+        ConfigCommandStore commandStore = robot.commandStore();
+        SimulationFrame simulationFrame = robot.simulationFrame();
+
+        commandStore.setRobot(robot);
 
         logger.debug("Loading configs");
         ObjectNode commandsConfig = (ObjectNode) configLoader.load("commands.yml");
@@ -72,10 +59,10 @@ public class Main {
         ObjectNode triggersConfig = (ObjectNode) configLoader.load("triggers.yml");
 
         logger.debug("Configuring subsystems");
-        for (Subsystem subsystem : subsystems) {
+        for (Subsystem subsystem : robot.subsystems()) {
             String name = subsystem.getName();
             JsonNode config = simulationConfig.get(name);
-            Configurables.configureObject(subsystem, config, objectMapper);
+            Configurables.configureObject(subsystem, config, robot.objectMapper());
             if (subsystem instanceof StateListener) {
                 scheduler.registerStateListener((StateListener) subsystem);
             }
@@ -92,7 +79,7 @@ public class Main {
         commandStore.createCommandsFromConfig(commandsConfig);
 
         logger.debug("Configuring triggers");
-        triggerBinder.bindTriggers(triggersConfig);
+        robot.triggerBinder().bindTriggers(triggersConfig);
 
         uiStepper.setPeriod(1.0 / 50.0);
         uiStepper.add(delta -> {

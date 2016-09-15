@@ -1,8 +1,20 @@
 import org.teamtators.gradle.RioPlugin
 
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.8"
+    }
+}
+
 allprojects {
-    apply plugin: 'java'
-    apply plugin: 'idea'
+    apply plugin: "net.ltgt.apt"
+    apply plugin: "java"
+    apply plugin: "idea"
 
     repositories {
         mavenCentral()
@@ -17,8 +29,9 @@ allprojects {
         compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.7.5'
         compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.5'
         compile group: 'com.google.guava', name: 'guava', version: '19.0'
-        compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
-        compile group: 'com.google.inject.extensions', name: 'guice-multibindings', version: '4.1.0'
+
+        compile group: 'com.google.dagger', name: 'dagger', version: '2.6'
+        apt group: 'com.google.dagger', name: 'dagger-compiler', version: '2.6'
     }
 }
 

@@ -1,7 +1,6 @@
 package org.teamtators.rotator.subsystems;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.inject.Singleton;
 import org.teamtators.rotator.components.Gyro;
 import org.teamtators.rotator.components.SimulationGyro;
 import org.teamtators.rotator.config.ControllerFactory;
@@ -9,6 +8,7 @@ import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.config.Configurable;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class SimulationDrive extends AbstractDrive implements Configurable<SimulationDrive.Config>, Steppable {
@@ -24,6 +24,7 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
     private double rotation;
     private SimulationGyro gyro = new SimulationGyro();
 
+    @Inject
     public SimulationDrive() {
         reset();
     }
@@ -77,7 +78,7 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
     }
 
     @Inject
-    private ControllerFactory controllerFactory;
+    ControllerFactory controllerFactory;
 
     @Override
     public void configure(Config config) {

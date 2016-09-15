@@ -32,8 +32,9 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
     private DriveMode defaultDriveMode;
 
     @Inject
-    private ControllerFactory controllerFactory;
+    ControllerFactory controllerFactory;
 
+    @Inject
     public WPILibDrive() {
     }
 

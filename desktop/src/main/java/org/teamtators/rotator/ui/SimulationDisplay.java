@@ -26,6 +26,7 @@ public class SimulationDisplay extends JPanel {
     private SimulationDrive drive;
     private SimulationPicker picker;
 
+    @Inject
     public SimulationDisplay() throws HeadlessException {
         setFocusable(true);
         addMouseListener(new MouseAdapter() {

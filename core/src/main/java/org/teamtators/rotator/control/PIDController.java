@@ -3,6 +3,8 @@ package org.teamtators.rotator.control;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.teamtators.rotator.config.Configurable;
 
+import javax.inject.Inject;
+
 /**
  * A PID Controller implementation
  */
@@ -16,6 +18,7 @@ public class PIDController extends AbstractController implements Configurable<PI
     private double lastInput;
     private double totalError;
 
+    @Inject
     public PIDController() {
         super();
     }

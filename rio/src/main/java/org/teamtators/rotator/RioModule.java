@@ -1,24 +1,51 @@
 package org.teamtators.rotator;
 
-import com.google.inject.AbstractModule;
+import dagger.Module;
+import dagger.Provides;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.WPILibTimeProvider;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.WPILibOperatorInterface;
 import org.teamtators.rotator.subsystems.*;
 
-public class RioModule extends AbstractModule {
-    @Override
-    protected void configure() {
-        install(new CoreModule()
-                .withConfigDir("/home/lvuser/config"));
+import javax.inject.Named;
 
-        // Subsystem bindings
-        bind(AbstractDrive.class).to(WPILibDrive.class);
-        bind(AbstractPicker.class).to(WPILibPicker.class);
-        bind(AbstractTurret.class).to(WPILibTurret.class);
-        bind(AbstractVision.class).to(WPILibVision.class);
-        bind(AbstractOperatorInterface.class).to(WPILibOperatorInterface.class);
-        bind(ITimeProvider.class).to(WPILibTimeProvider.class);
+@Module(includes = CoreModule.class)
+public class RioModule {
+    // Subsystem providers
+    @Provides
+    static AbstractDrive providesDrive(WPILibDrive drive) {
+        return drive;
+    }
+
+    @Provides
+    static AbstractPicker providesPicker(WPILibPicker picker) {
+        return picker;
+    }
+
+    @Provides
+    static AbstractTurret providesTurret(WPILibTurret turret) {
+        return turret;
+    }
+
+    @Provides
+    static AbstractVision providesVision(WPILibVision vision) {
+        return vision;
+    }
+
+    @Provides
+    static AbstractOperatorInterface providesOperatorInterface(WPILibOperatorInterface oi) {
+        return oi;
+    }
+
+    @Provides
+    static ITimeProvider providesTimeProvider(WPILibTimeProvider timeProvider) {
+        return timeProvider;
+    }
+
+    @Provides
+    @Named("configDir")
+    static String providesConfigDir() {
+        return "/home/lvuser/config";
     }
 }

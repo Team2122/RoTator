@@ -3,8 +3,6 @@ package org.teamtators.rotator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +10,6 @@ import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
 import org.teamtators.rotator.config.TriggerBinder;
-import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.RobotState;
@@ -22,7 +19,6 @@ import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.ManualTester;
 
-import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -30,25 +26,7 @@ import java.util.List;
  */
 public class Robot extends IterativeRobot {
     private static final Logger logger = LoggerFactory.getLogger(Robot.class);
-    @Inject
-    private ConfigLoader configLoader;
-    @Inject
-    private ConfigCommandStore commandStore;
-    @Inject
-    private AbstractOperatorInterface operatorInterface;
-    @Inject
-    private List<Subsystem> subsystems;
-    @Inject
-    private ObjectMapper objectMapper;
-    @Inject
     private Scheduler scheduler;
-    @Inject
-    private ManualTester manualTester;
-    @Inject
-    private TriggerBinder triggerBinder;
-    @Inject
-    @ForController
-    private Stepper stepper;
 
     @Override
     public void startCompetition() {
@@ -71,16 +49,26 @@ public class Robot extends IterativeRobot {
     private void initialize() {
         logger.info("Robot is initializing");
 
+        RioRobot robot = DaggerRioRobot.create();
 
-        Injector injector = Guice.createInjector(new RioModule());
-        injector.injectMembers(this);
+        ConfigLoader configLoader = robot.configLoader();
+        scheduler = robot.scheduler();
+
+        ConfigCommandStore commandStore = robot.commandStore();
+        AbstractOperatorInterface operatorInterface = robot.operatorInterface();
+        List<Subsystem> subsystems = robot.subsystems();
+        ObjectMapper objectMapper = robot.objectMapper();
+        ManualTester manualTester = robot.manualTester();
+        TriggerBinder triggerBinder = robot.triggerBinder();
+        Stepper stepper = robot.stepper();
+
+        commandStore.setRobot(robot);
 
         logger.debug("Created injector. Loading configs");
         ObjectNode commandsConfig = (ObjectNode) configLoader.load("commands.yml");
         ObjectNode subsystemsConfig = (ObjectNode) configLoader.load("subsystems.yml");
         ObjectNode triggersConfig = (ObjectNode) configLoader.load("triggers.yml");
 
-        commandStore.setInjector(injector);
 
         logger.debug("Configuring subsystems");
         for (Subsystem subsystem : subsystems) {

@@ -1,10 +1,9 @@
 package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
+import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.subsystems.*;
-
-import javax.inject.Inject;
 
 public class TurretTarget extends CommandBase implements Configurable<TurretTarget.Config> {
     private Config config;
@@ -12,14 +11,13 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
     private AbstractVision vision;
     private AbstractPicker picker;
 
-    @Inject
-    public TurretTarget(AbstractTurret turret, AbstractVision vision, AbstractPicker picker) {
+    public TurretTarget(CoreRobot robot) {
         super("TurretTarget");
+        this.turret = robot.turret();
+        this.vision = robot.vision();
+        this.picker = robot.picker();
         requires(turret);
         requires(vision);
-        this.turret = turret;
-        this.vision = vision;
-        this.picker = picker;
     }
 
     @Override
@@ -42,7 +40,7 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
 
     @Override
     protected boolean step() {
-        if(!(turret.isAtLeftLimit() || turret.isAtRightLimit())) {  //Unsure if there is another safety check elsewhere
+        if (!(turret.isAtLeftLimit() || turret.isAtRightLimit())) {  //Unsure if there is another safety check elsewhere
             //TODO position turret
             vision.getAngle();
         }
@@ -57,7 +55,7 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
         turret.setHoodPosition(HoodPosition.DOWN);
     }
 
-    public static class Config{
+    public static class Config {
         public double ledPower;
         public double wheelSpeed;
     }

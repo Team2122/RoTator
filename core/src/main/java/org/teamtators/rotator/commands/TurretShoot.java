@@ -1,12 +1,11 @@
 package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
+import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.subsystems.AbstractTurret;
 import org.teamtators.rotator.subsystems.HoodPosition;
-
-import javax.inject.Inject;
 
 /**
  * Fires a ball from the turret
@@ -17,11 +16,10 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
     private ITimeProvider timer;
     private double startingTime;
 
-    @Inject
-    public TurretShoot(AbstractTurret turret, ITimeProvider timer) {
+    public TurretShoot(CoreRobot robot) {
         super("PickerPick");
-        this.turret = turret;
-        this.timer = timer;
+        this.turret = robot.turret();
+        this.timer = robot.timeProvider();
     }
 
     @Override

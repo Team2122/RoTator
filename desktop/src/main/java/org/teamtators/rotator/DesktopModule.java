@@ -1,38 +1,63 @@
 package org.teamtators.rotator;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import dagger.Module;
+import dagger.Provides;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.SystemNanoTimeTimeProvider;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.operatorInterface.SimulationOperatorInterface;
-import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.subsystems.*;
-import org.teamtators.rotator.subsystems.noop.NoopTurret;
+
 import org.teamtators.rotator.subsystems.noop.NoopVision;
 import org.teamtators.rotator.ui.WASDJoystick;
 
-import java.util.Arrays;
-import java.util.List;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
-public class DesktopModule extends AbstractModule {
-    @Override
-    protected void configure() {
-        install(new CoreModule()
-                .withConfigDir("./config"));
-        bind(AbstractDrive.class).to(SimulationDrive.class);
-        bind(AbstractPicker.class).to(SimulationPicker.class);
-        bind(AbstractTurret.class).to(SimulationTurret.class);
-        bind(AbstractVision.class).to(NoopVision.class);
-        bind(LogitechF310.class).to(WASDJoystick.class);
-        bind(ITimeProvider.class).to(SystemNanoTimeTimeProvider.class);
+@Module(includes = CoreModule.class)
+public class DesktopModule {
+    // Subsystem providers
+    @Provides
+    static AbstractDrive providesDrive(SimulationDrive drive) {
+        return drive;
+    }
+
+    @Provides
+    static AbstractPicker providesPicker(SimulationPicker picker) {
+        return picker;
+    }
+
+    @Provides
+    static AbstractTurret providesTurret(SimulationTurret turret) {
+        return turret;
+    }
+
+    @Provides
+    static AbstractVision providesVision(/*SimulationVision vision*/) {
+//        return vision;
+        return new NoopVision();
+    }
+
+    @Provides
+    static LogitechF310 providesLogitechF310(WASDJoystick joystick) {
+        return joystick;
+    }
+
+    @Provides
+    static ITimeProvider providesTimeProvider(SystemNanoTimeTimeProvider timeProvider) {
+        return timeProvider;
+    }
+
+    @Provides
+    @Named("configDir")
+    static String providesConfigDir() {
+        return "./config";
     }
 
     @Provides
     @Singleton
-    public AbstractOperatorInterface providesOperatorInterface(LogitechF310 driverJoystick, LogitechF310 gunnerJoystick) {
+    static AbstractOperatorInterface providesOperatorInterface(LogitechF310 driverJoystick, LogitechF310 gunnerJoystick) {
         return new SimulationOperatorInterface(driverJoystick, gunnerJoystick);
     }
 }

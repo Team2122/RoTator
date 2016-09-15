@@ -10,6 +10,7 @@ import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.components.SolenoidTest;
 import org.teamtators.rotator.tester.components.VictorSPTest;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -21,6 +22,10 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
     private Solenoid shortCylinder;
     private Solenoid longCylinder;
     private PickerPosition pickerPosition;
+
+    @Inject
+    public WPILibPicker() {
+    }
 
     @Override
     public void configure(Config config) {

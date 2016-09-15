@@ -1,7 +1,6 @@
 package org.teamtators.rotator.subsystems;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.inject.Singleton;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
@@ -17,6 +16,7 @@ import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.components.*;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class WPILibTurret extends AbstractTurret implements Configurable<WPILibTurret.Config>, ITestable, StateListener {
@@ -37,11 +37,15 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     private DigitalSensor centerLimit;
 
     @Inject
-    private ControllerFactory controllerFactory;
+    ControllerFactory controllerFactory;
     @Inject
-    private Scheduler scheduler;
+    Scheduler scheduler;
     @Inject
-    private ConfigCommandStore commandStore;
+    ConfigCommandStore commandStore;
+
+    @Inject
+    public WPILibTurret() {
+    }
 
     @Override
     public void configure(Config config) {

@@ -1,24 +1,21 @@
 package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
-import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
+import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.subsystems.AbstractDrive;
-
-import javax.inject.Inject;
 
 public class DriveTank extends CommandBase {
     private AbstractDrive drive;
     private LogitechF310 driverJoystick;
 
-    @Inject
-    public DriveTank(AbstractDrive drive, AbstractOperatorInterface operatorInterface) {
+    public DriveTank(CoreRobot robot) {
         super("DriveTank");
-        this.drive = drive;
+        this.drive = robot.drive();
+        driverJoystick = robot.operatorInterface().driverJoystick();
         requires(drive);
         validIn(RobotState.TELEOP);
-        driverJoystick = operatorInterface.driverJoystick();
     }
 
     @Override
