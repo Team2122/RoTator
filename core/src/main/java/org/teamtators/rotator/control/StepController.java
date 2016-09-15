@@ -16,8 +16,8 @@ public class StepController extends AbstractController implements Configurable<S
         setTargetPredicate(getLowThresholdPredicate());
     }
 
-    public StepController(String name, double highSpeed, double lowSpeed, double lowThreshold, double highThreshold) {
-        super(name);
+    public StepController(double highSpeed, double lowSpeed, double lowThreshold, double highThreshold) {
+        this();
         this.highSpeed = highSpeed;
         this.lowSpeed = lowSpeed;
         this.lowThreshold = lowThreshold;

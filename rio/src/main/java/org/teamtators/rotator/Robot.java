@@ -56,7 +56,11 @@ public class Robot extends IterativeRobot {
             initialize();
         } catch (Throwable t) {
             logger.error("Exception during robot initialization", t);
-//            System.exit(1);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
+            }
+            System.exit(1);
         }
     }
 
