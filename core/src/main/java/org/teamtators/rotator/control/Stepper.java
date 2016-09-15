@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Stepper implements Runnable {
     public static final double DEFAULT_PERIOD = 1.0 / 120.0;
+    private static int stepperIndex = 0;
     private Set<Steppable> steppables = ConcurrentHashMap.newKeySet();
     private double period;
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -26,9 +27,13 @@ public class Stepper implements Runnable {
         this.period = period;
     }
 
+    private static int nextStepperIndex() {
+        return stepperIndex++;
+    }
+
     public void start() {
         if (!running.compareAndSet(false, true)) return;
-        thread = new Thread(this);
+        thread = new Thread(this, "Stepper-" + nextStepperIndex());
         thread.start();
     }
 
