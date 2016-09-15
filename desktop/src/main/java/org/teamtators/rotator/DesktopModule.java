@@ -11,6 +11,7 @@ import org.teamtators.rotator.operatorInterface.SimulationOperatorInterface;
 import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.subsystems.*;
 import org.teamtators.rotator.subsystems.noop.NoopTurret;
+import org.teamtators.rotator.subsystems.noop.NoopVision;
 import org.teamtators.rotator.ui.WASDJoystick;
 
 import java.util.Arrays;
@@ -24,6 +25,7 @@ public class DesktopModule extends AbstractModule {
         bind(AbstractDrive.class).to(SimulationDrive.class);
         bind(AbstractPicker.class).to(SimulationPicker.class);
         bind(AbstractTurret.class).to(SimulationTurret.class);
+        bind(AbstractVision.class).to(NoopVision.class);
         bind(LogitechF310.class).to(WASDJoystick.class);
         bind(ITimeProvider.class).to(SystemNanoTimeTimeProvider.class);
     }

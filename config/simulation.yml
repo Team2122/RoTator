@@ -51,3 +51,4 @@ Turret:
     momentum: 50
     dampening: 4
   pinchRollerEncoder: { multiplier: 1 }
+Vision:
