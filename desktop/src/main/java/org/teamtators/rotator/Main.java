@@ -1,5 +1,7 @@
 package org.teamtators.rotator;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -8,11 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
-import org.teamtators.rotator.config.TriggerBinder;
-import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.control.Stepper;
-import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
+import org.teamtators.rotator.control.SystemNanoTimeTimeProvider;
+import org.teamtators.rotator.datastream.DataServer;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.scheduler.StateListener;
@@ -21,14 +22,16 @@ import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.ManualTester;
 import org.teamtators.rotator.ui.SimulationFrame;
 
-import javax.inject.Inject;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class Main {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
     private Stepper stepper;
     private Stepper uiStepper;
     private DesktopRobot robot;
+    private DataServer dataServer;
 
     public static void main(String[] args) {
         try {
@@ -45,6 +48,8 @@ public class Main {
         robot = DaggerDesktopRobot.create();
         stepper = robot.stepper();
         uiStepper = robot.uiStepper();
+        dataServer = new DataServer();
+        dataServer.setTimeProvider(new SystemNanoTimeTimeProvider());
         ConfigLoader configLoader = robot.configLoader();
         Scheduler scheduler = robot.scheduler();
         ManualTester manualTester = robot.manualTester();
@@ -85,6 +90,20 @@ public class Main {
         uiStepper.add(delta -> {
             scheduler.execute();
             simulationFrame.repaint();
+        });
+
+        stepper.add(delta -> {
+            Map<String,Object> map = new HashMap<>();
+            map.put("timestamp", String.valueOf(System.currentTimeMillis()));
+            map.put("graphvalue", (System.currentTimeMillis()/1000)%10);
+            ObjectMapper mapper = new ObjectMapper(new JsonFactory());
+            String data = null;
+            try {
+                data = mapper.writeValueAsString(map);
+                dataServer.setData(data);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         });
 
         logger.info("Opening window");

@@ -2,6 +2,7 @@ package org.teamtators.rotator;
 
 import dagger.Component;
 import org.teamtators.rotator.control.Stepper;
+import org.teamtators.rotator.datastream.DataServer;
 import org.teamtators.rotator.ui.SimulationFrame;
 
 import javax.inject.Singleton;
