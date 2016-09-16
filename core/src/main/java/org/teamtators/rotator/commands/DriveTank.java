@@ -2,11 +2,13 @@ package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
+import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.subsystems.AbstractDrive;
 
-public class DriveTank extends CommandBase {
+public class DriveTank extends CommandBase implements Configurable<DriveTank.Config> {
+    private Config config;
     private AbstractDrive drive;
     private LogitechF310 driverJoystick;
 
@@ -16,6 +18,11 @@ public class DriveTank extends CommandBase {
         driverJoystick = robot.operatorInterface().driverJoystick();
         requires(drive);
         validIn(RobotState.TELEOP);
+    }
+
+    @Override
+    public void configure(Config config) {
+        this.config = config;
     }
 
     @Override
@@ -33,9 +40,19 @@ public class DriveTank extends CommandBase {
     protected boolean step() {
         double leftPower = -driverJoystick.getAxisValue(LogitechF310.Axis.LEFT_STICK_Y);
         double rightPower = -driverJoystick.getAxisValue(LogitechF310.Axis.RIGHT_STICK_Y);
+        double modifiedLeftPower = DriveUtils.applyDriveModifiers(leftPower,
+                config.deadzone, config.multiplier, config.exponent);
+        double modifiedRightPower = DriveUtils.applyDriveModifiers(rightPower,
+                config.deadzone, config.multiplier, config.exponent);
 
-        drive.setSpeeds(leftPower, rightPower);
+        drive.setSpeeds(modifiedLeftPower, modifiedRightPower);
 
         return false;
+    }
+
+    static class Config {
+        public double deadzone;
+        public double multiplier;
+        public double exponent;
     }
 }

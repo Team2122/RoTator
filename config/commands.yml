@@ -1,4 +1,7 @@
 DriveTank:
+  deadzone: 0
+  multiplier: 0
+  exponent: 0
 
 PickerToHome:
   class: PickerSetPosition
