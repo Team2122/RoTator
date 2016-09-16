@@ -14,9 +14,19 @@ public class DriveUtils {
      * @return Modified input
      */
     public static double applyDriveModifiers(double input, double deadzone, double multiplier, double exponent) {
-        if (input == 0 || multiplier == 0 || Math.abs(input) - deadzone < 0) {
+        input = applyDeadzone(input * multiplier, deadzone);
+        return applyExponent(input, exponent);
+    }
+
+    public static double applyExponent(double input, double exponent) {
+        double absolute = Math.abs(input);
+        double sign = Math.signum(input);
+        return sign * Math.pow(absolute, exponent);
+    }
+
+    public static double applyDeadzone(double input, double deadzone) {
+        if (Math.abs(input) <= deadzone)
             return 0;
-        }
-        return Math.pow(input * multiplier, exponent);
+        return input;
     }
 }

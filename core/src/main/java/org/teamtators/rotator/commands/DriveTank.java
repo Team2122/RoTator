@@ -40,12 +40,12 @@ public class DriveTank extends CommandBase implements Configurable<DriveTank.Con
     protected boolean step() {
         double leftPower = -driverJoystick.getAxisValue(LogitechF310.Axis.LEFT_STICK_Y);
         double rightPower = -driverJoystick.getAxisValue(LogitechF310.Axis.RIGHT_STICK_Y);
-        double modifiedLeftPower = DriveUtils.applyDriveModifiers(leftPower,
+        leftPower = DriveUtils.applyDriveModifiers(leftPower,
                 config.deadzone, config.multiplier, config.exponent);
-        double modifiedRightPower = DriveUtils.applyDriveModifiers(rightPower,
+        rightPower = DriveUtils.applyDriveModifiers(rightPower,
                 config.deadzone, config.multiplier, config.exponent);
 
-        drive.setSpeeds(modifiedLeftPower, modifiedRightPower);
+        drive.setSpeeds(leftPower, rightPower);
 
         return false;
     }
