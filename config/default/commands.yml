@@ -1,0 +1,8 @@
+# example custom commands config file
+TurretShoot:
+  kingRollerPower: 1.0
+  timeout: 2.1
+
+NewTree:
+  key1: value1
+  key2: value2

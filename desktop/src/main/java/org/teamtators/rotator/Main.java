@@ -45,10 +45,12 @@ public class Main implements StateListener {
 
         commandStore.setRobot(robot);
 
-        logger.debug("Loading configs");
-        ObjectNode commandsConfig = (ObjectNode) configLoader.load("commands.yml");
-        ObjectNode simulationConfig = (ObjectNode) configLoader.load("simulation.yml");
-        ObjectNode triggersConfig = (ObjectNode) configLoader.load("triggers.yml");
+        String profileName = configLoader.load("profile.yml").textValue();
+        logger.debug("Loading configs with profile {}");
+        ObjectNode commandsConfig = (ObjectNode) configLoader.getProfileConfig("commands.yml", profileName);
+        ObjectNode simulationConfig = (ObjectNode) configLoader.getProfileConfig("subsystems.yml", profileName);
+        ObjectNode triggersConfig = (ObjectNode) configLoader.getProfileConfig("triggers.yml", profileName);
+        logger.debug("Finished loading configs");
 
         logger.debug("Configuring subsystems");
         for (Subsystem subsystem : robot.subsystems()) {
