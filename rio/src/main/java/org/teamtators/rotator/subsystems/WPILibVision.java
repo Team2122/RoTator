@@ -19,10 +19,11 @@ import java.util.List;
 public class WPILibVision extends AbstractVision implements Configurable<WPILibVision.Config>, ITestable {
 
     public static class Config {
-        public VictorSPConfig ledPower;
         public String tableName;
+        public boolean target;
     }
 
+    private boolean target;
     private VictorSP ledPower;
     private NetworkTable table;
 
@@ -32,18 +33,18 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
 
     @Override
     public void configure(WPILibVision.Config config) {
-        this.ledPower = config.ledPower.create();
         this.table = NetworkTable.getTable(config.tableName);
+        this.target = config.target;
     }
 
     @Override
-    public void setLEDPower(double power) {
-        if (power < 0.0f) {
-            logger.warn("Power setting invalid: {} Resetting power to 0.0", power);
-            power = 0.0f;
-        }
+    public void turnLEDOn() {
+        ledPower.set(1);
+    }
 
-        ledPower.set(power);
+    @Override
+    public void turnLEDOff(){
+        ledPower.set(0);
     }
 
     @Override

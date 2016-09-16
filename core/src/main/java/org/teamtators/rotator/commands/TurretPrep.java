@@ -5,13 +5,13 @@ import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.subsystems.*;
 
-public class TurretTarget extends CommandBase implements Configurable<TurretTarget.Config> {
+public class TurretPrep extends CommandBase implements Configurable<TurretPrep.Config> {
     private Config config;
     private AbstractTurret turret;
     private AbstractVision vision;
     private AbstractPicker picker;
 
-    public TurretTarget(CoreRobot robot) {
+    public TurretPrep(CoreRobot robot) {
         super("TurretTarget");
         this.turret = robot.turret();
         this.vision = robot.vision();
@@ -34,7 +34,7 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
             return;
         }
         turret.setHoodPosition(HoodPosition.UP1);
-        vision.setLEDPower(config.ledPower);
+        vision.turnLEDOn();
         turret.setTargetWheelSpeed(config.wheelSpeed);
     }
 
@@ -50,7 +50,7 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
     @Override
     protected void finish(boolean interrupted) {
         super.finish(interrupted);
-        vision.resetLEDPower();
+        vision.turnLEDOff();
         turret.resetWheelSpeed();
         turret.setHoodPosition(HoodPosition.DOWN);
     }

@@ -11,18 +11,14 @@ public abstract class AbstractVision extends Subsystem {
     public AbstractVision() {super("Vision");}
 
     /**
-     * Sets targeting LED brightness
-     *
-     * @param power LED brightness
+     * Sets LED brightness to one
      */
-    public abstract void setLEDPower(double power);
+    public abstract void turnLEDOn();
 
     /**
-     * Resets LED brightness to zero
+     * Sets LED brightness to zero
      */
-    public void resetLEDPower() {
-        setLEDPower(0d);
-    }
+    public abstract void turnLEDOff();
 
     /**
      * Gets the most recently updated distance from the target from the Raspberry pi
