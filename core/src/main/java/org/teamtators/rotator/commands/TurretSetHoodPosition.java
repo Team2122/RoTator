@@ -25,18 +25,18 @@ public class TurretSetHoodPosition extends CommandBase implements Configurable<T
 
     @Override
     protected void initialize() {
-        super.initialize();
-        if (picker.getPosition() == null
-                || picker.getPosition() == PickerPosition.HOME
-                || config.hoodPosition != HoodPosition.DOWN) {
+        logger.info("Bringing hood to {} position", config.hoodPosition);
+        if (picker.getPosition() == PickerPosition.HOME
+                && config.hoodPosition != HoodPosition.DOWN) {
             logger.warn("Tried to bring hood up while picker is not down");
             this.cancel();
+        } else {
+            turret.setHoodPosition(config.hoodPosition);
         }
     }
 
     @Override
     protected boolean step() {
-        turret.setHoodPosition(config.hoodPosition);
         return true;
     }
 

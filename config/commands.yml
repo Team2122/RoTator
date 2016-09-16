@@ -32,6 +32,14 @@ HoodUp4:
   class: TurretSetHoodPosition
   hoodPosition: UP4
 
+HoodBumpUp:
+  class: TurretBumpHoodPosition
+  direction: up
+
+HoodBumpDown:
+  class: TurretBumpHoodPosition
+  direction: down
+
 TurretHome:
   speed: .15
 

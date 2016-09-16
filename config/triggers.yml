@@ -7,10 +7,8 @@ Driver:
   B: start whenPressed TurretSpinUp
   X: toggle whenPressed TurretShoot
   A: start whenPressed TurretShoot
-  POV_UP: start whenPressed HoodUp4
-  POV_RIGHT: start whenPressed HoodUp1
-  POV_DOWN: start whenPressed HoodDown
-
+  POV_UP: start whenPressed HoodBumpUp
+  POV_DOWN: start whenPressed HoodBumpDown
 
 Gunner:
 

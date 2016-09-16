@@ -27,7 +27,6 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     private Solenoid hoodDeploySolenoid;
     private Solenoid shortSolenoid;
     private Solenoid longSolenoid;
-    private HoodPosition hoodPosition;
     private VictorSP shooterWheelMotor;
     private Encoder shooterWheelEncoder;
     private VictorSP turretRotationMotor;
@@ -105,12 +104,8 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     }
 
     @Override
-    public HoodPosition getHoodPosition() {
-        return hoodPosition;
-    }
-
-    @Override
     public void setHoodPosition(HoodPosition hoodPosition) {
+        super.setHoodPosition(hoodPosition);
         switch (hoodPosition) {
             case DOWN:
                 shortSolenoid.set(false);
@@ -138,7 +133,6 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
                 hoodDeploySolenoid.set(true);
                 break;
         }
-        this.hoodPosition = hoodPosition;
     }
 
     @Override
