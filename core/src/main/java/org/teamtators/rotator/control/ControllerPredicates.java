@@ -16,7 +16,7 @@ public class ControllerPredicates {
     }
 
     public static ControllerPredicate withinError(double threshold) {
-        return (delta, controller) -> controller.getError() < threshold;
+        return (delta, controller) -> Math.abs(controller.getError()) < threshold;
     }
 
     public static ControllerPredicate sampleWithinError(double time, double threshold) {

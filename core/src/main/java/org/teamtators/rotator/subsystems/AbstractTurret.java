@@ -1,7 +1,10 @@
 package org.teamtators.rotator.subsystems;
 
 import org.teamtators.rotator.control.AbstractController;
+import org.teamtators.rotator.control.LimitState;
+import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.Subsystem;
+import org.teamtators.rotator.tester.ComponentTest;
 
 /**
  * Interface for turret
@@ -35,19 +38,19 @@ public abstract class AbstractTurret extends Subsystem {
     public abstract double getWheelSpeed();
 
     /**
+     * @return The wheel speed setpoint
+     */
+    public double getTargetWheelSpeed() {
+        return getShooterWheelController().getSetpoint();
+    }
+
+    /**
      * Set the wheel speed setpoint
      *
      * @param rps New wheel speed setpoint
      */
     public void setTargetWheelSpeed(double rps) {
         shooterWheelController.setSetpoint(rps);
-    }
-
-    /**
-     * @return The wheel speed setpoint
-     */
-    public double getTargetWheelSpeed() {
-        return getShooterWheelController().getSetpoint();
     }
 
     /**
@@ -149,22 +152,32 @@ public abstract class AbstractTurret extends Subsystem {
         angleController.setName("angleController");
         angleController.setInputProvider(this::getAngle);
         angleController.setOutputConsumer(this::setRotationPower);
-        angleController.setLimitPredicate((delta, controller) -> isAtLeftLimit() || isAtRightLimit());
-        angleController.setMinSetpoint(-100);
-        angleController.setMaxOutput(100);
+        angleController.setLimitPredicate((controller) -> {
+            if (isAtLeftLimit()) return LimitState.NEGATIVE;
+            else if (isAtRightLimit()) return LimitState.POSITIVE;
+            else return LimitState.NEITHER;
+        });
         this.angleController = angleController;
-    }
-
-    public void setTargetAngle(double targetAngle) {
-        getAngleController().setSetpoint(targetAngle);
     }
 
     public double getTargetAngle() {
         return getAngleController().getSetpoint();
     }
 
+    public void setTargetAngle(double targetAngle) {
+        getAngleController().setSetpoint(targetAngle);
+    }
+
     public boolean isAngleOnTarget() {
         return getAngleController().isOnTarget();
+    }
+
+    protected void enableAngleController() {
+        getAngleController().enable();
+    }
+
+    protected void disableAngleController() {
+        getAngleController().disable();
     }
 
     /**
@@ -203,5 +216,26 @@ public abstract class AbstractTurret extends Subsystem {
             return true;
         }
         return false;
+    }
+
+    protected class TurretTest extends ComponentTest {
+        public TurretTest() {
+            super("TurretTest");
+        }
+
+        @Override
+        public void start() {
+            logger.info("Press A to attempt to home turret");
+        }
+
+        @Override
+        public void onButtonDown(LogitechF310.Button button) {
+            switch (button) {
+                case A:
+                    if (!homeTurret())
+                        logger.info("Turret did not home");
+                    break;
+            }
+        }
     }
 }

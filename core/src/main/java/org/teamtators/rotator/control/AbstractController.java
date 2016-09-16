@@ -14,7 +14,7 @@ public abstract class AbstractController extends AbstractSteppable {
     private ControllerInputProvider inputProvider;
     private ControllerOutputConsumer outputConsumer;
     private ControllerPredicate targetPredicate = ControllerPredicates.alwaysFalse();
-    private ControllerPredicate limitPredicate = ControllerPredicates.alwaysFalse();
+    private LimitPredicate limitPredicate = LimitPredicates.nevetAtLimit();
     private OnTargetHandler onTargetHandler = null;
 
     private double minSetpoint = Double.NEGATIVE_INFINITY;
@@ -26,7 +26,7 @@ public abstract class AbstractController extends AbstractSteppable {
     private volatile double input;
     private volatile double output;
     private volatile boolean onTarget;
-    private volatile boolean onLimit;
+    private volatile LimitState limitState;
 
     public AbstractController() {
         this("");
@@ -49,7 +49,7 @@ public abstract class AbstractController extends AbstractSteppable {
         input = 0.0;
         output = 0.0;
         onTarget = false;
-        onLimit = false;
+        limitState = LimitState.NEITHER;
     }
 
 
@@ -58,18 +58,20 @@ public abstract class AbstractController extends AbstractSteppable {
         synchronized (this) {
             input = this.inputProvider.getControllerInput();
             onTarget = targetPredicate.compute(delta, this);
-            onLimit = limitPredicate.compute(delta, this);
+            limitState = limitPredicate.getLimit(this);
         }
 
         if (onTarget && onTargetHandler != null) {
             onTargetHandler.onTarget(this);
         }
 
-        double computedOutput;
-        if (onLimit) {
-            computedOutput = 0;
-        } else {
-            computedOutput = computeOutput(delta);
+        double computedOutput = computeOutput(delta);
+        double minOutput = this.minOutput;
+        double maxOutput = this.maxOutput;
+        if (limitState == LimitState.POSITIVE) {
+            maxOutput = 0;
+        } else if (limitState == LimitState.NEGATIVE) {
+            minOutput = 0;
         }
         computedOutput = applyLimits(computedOutput, minOutput, maxOutput);
 
@@ -129,11 +131,11 @@ public abstract class AbstractController extends AbstractSteppable {
         }
     }
 
-    public ControllerPredicate getLimitPredicate() {
+    public LimitPredicate getLimitPredicate() {
         return limitPredicate;
     }
 
-    public void setLimitPredicate(ControllerPredicate limitPredicate) {
+    public void setLimitPredicate(LimitPredicate limitPredicate) {
         checkNotNull(limitPredicate);
         this.limitPredicate = limitPredicate;
     }
@@ -208,8 +210,8 @@ public abstract class AbstractController extends AbstractSteppable {
         return onTarget;
     }
 
-    public synchronized boolean isOnLimit() {
-        return onLimit;
+    public synchronized LimitState getLimitState() {
+        return limitState;
     }
 
     @Override
@@ -222,5 +224,31 @@ public abstract class AbstractController extends AbstractSteppable {
     public void onDisable() {
         if (outputConsumer != null)
             outputConsumer.setControllerOutput(0.0);
+    }
+
+    protected void configure(Config config) {
+        if (!Double.isNaN(config.maxAbsoluteSetpoint)) {
+            setMaxSetpoint(config.maxAbsoluteSetpoint);
+            setMinSetpoint(-config.maxAbsoluteSetpoint);
+        } else {
+            setMaxSetpoint(config.maxSetpoint);
+            setMinSetpoint(config.minSetpoint);
+        }
+        if (!Double.isNaN(config.maxAbsoluteOutput)) {
+            setMaxOutput(config.maxAbsoluteOutput);
+            setMinOutput(-config.maxAbsoluteOutput);
+        } else {
+            setMinOutput(config.minOutput);
+            setMaxOutput(config.maxOutput);
+        }
+        configureTarget(config.target);
+    }
+
+    protected static class Config {
+        public double maxAbsoluteSetpoint = Double.NaN;
+        public double maxSetpoint = Double.POSITIVE_INFINITY, minSetpoint = Double.NEGATIVE_INFINITY;
+        public double maxAbsoluteOutput = Double.NaN;
+        public double maxOutput = Double.POSITIVE_INFINITY, minOutput = Double.NEGATIVE_INFINITY;
+        public JsonNode target;
     }
 }

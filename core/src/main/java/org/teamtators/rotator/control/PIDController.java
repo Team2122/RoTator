@@ -89,6 +89,7 @@ public class PIDController extends AbstractController implements Configurable<PI
 
     @Override
     protected double computeOutput(double delta) {
+        if (isOnTarget()) return 0;
         double error = getError();
         double output = error * kP;
         if (Math.abs(error) < maxIError) {
@@ -126,11 +127,10 @@ public class PIDController extends AbstractController implements Configurable<PI
         if (config == null) return;
         setPIDF(config.P, config.I, config.D, config.F);
         setMaxIError(config.maxI);
-        configureTarget(config.target);
+        super.configure(config);
     }
 
-    public static class Config {
+    public static class Config extends AbstractController.Config {
         public double P = 0.0, I = 0.0, D = 0.0, F = 0.0, maxI = Double.POSITIVE_INFINITY;
-        public JsonNode target;
     }
 }

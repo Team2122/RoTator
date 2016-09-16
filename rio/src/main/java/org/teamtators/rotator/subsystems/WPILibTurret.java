@@ -21,6 +21,12 @@ import javax.inject.Singleton;
 @Singleton
 public class WPILibTurret extends AbstractTurret implements Configurable<WPILibTurret.Config>, ITestable, StateListener {
 
+    @Inject
+    ControllerFactory controllerFactory;
+    @Inject
+    Scheduler scheduler;
+    @Inject
+    ConfigCommandStore commandStore;
     private VictorSP pinchRollerMotor;
     private VictorSP kingRollerMotor;
     private DistanceLaser ballSensor;
@@ -34,13 +40,6 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     private DigitalSensor leftLimit;
     private DigitalSensor rightLimit;
     private DigitalSensor centerLimit;
-
-    @Inject
-    ControllerFactory controllerFactory;
-    @Inject
-    Scheduler scheduler;
-    @Inject
-    ConfigCommandStore commandStore;
 
     @Inject
     public WPILibTurret() {
@@ -63,6 +62,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         this.centerLimit = config.centerLimit.create();
 
         setShooterWheelController(controllerFactory.create(config.shooterWheelController));
+        setAngleController(controllerFactory.create(config.angleController));
     }
 
     @Override
@@ -82,14 +82,14 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
             case TELEOP:
                 getShooterWheelController().enable();
                 if (isHomed()) {
-                    //TODO: Enable rotation controller here
+                    enableAngleController();
                 } else {
                     scheduler.startCommand(commandStore.getCommand("TurretHome"));
                 }
                 break;
             default:
                 getShooterWheelController().disable();
-                //TODO: Disable rotation controller here
+                disableAngleController();
                 break;
         }
     }
@@ -97,7 +97,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     @Override
     public boolean homeTurret() {
         if (super.homeTurret()) {
-            //TODO: Enable rotation controller here
+            enableAngleController();
             return true;
         }
         return false;
@@ -193,9 +193,11 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
                 new ControllerTest(getShooterWheelController(), 120),
                 new VictorSPTest("turretRotationMotor", turretRotationMotor),
                 new EncoderTest("turretRotationEncoder", turretRotationEncoder),
+                new ControllerTest(getAngleController(), 110),
                 new DigitalSensorTest("leftLimit", leftLimit),
                 new DigitalSensorTest("rightLimit", rightLimit),
-                new DigitalSensorTest("centerLimit", centerLimit));
+                new DigitalSensorTest("centerLimit", centerLimit),
+                new TurretTest());
     }
 
     public static class Config {
@@ -213,5 +215,6 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         public DigitalSensorConfig leftLimit;
         public DigitalSensorConfig rightLimit;
         public DigitalSensorConfig centerLimit;
+        public JsonNode angleController;
     }
 }
