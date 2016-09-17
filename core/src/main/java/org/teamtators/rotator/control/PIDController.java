@@ -1,6 +1,5 @@
 package org.teamtators.rotator.control;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.teamtators.rotator.config.Configurable;
 
 import javax.inject.Inject;
@@ -9,12 +8,12 @@ import javax.inject.Inject;
  * A PID Controller implementation
  */
 public class PIDController extends AbstractController implements Configurable<PIDController.Config> {
+    private int lc = 0;
     private double kP = 0.0;
     private double kI = 0.0;
     private double kD = 0.0;
     private double kF = 0.0;
     private double maxIError = Double.POSITIVE_INFINITY;
-
     private double lastInput;
     private double totalError;
 
@@ -101,6 +100,14 @@ public class PIDController extends AbstractController implements Configurable<PI
 
         lastInput = getInput();
         totalError += error * delta;
+
+        if (getName().equals("shooterWheelController")) {
+            if (lc++ >= 2) {
+//                logger.info("delta: {}, input: {}, output: {}, target: {}", delta, getInput(), output, isOnTarget());
+                logger.info("getInput(): {}, getControllerInput(): {}", getInput(), getInputProvider().getControllerInput());
+                lc = 0;
+            }
+        }
 
         if (Double.isInfinite(output) || Double.isNaN(output))
             return 0;

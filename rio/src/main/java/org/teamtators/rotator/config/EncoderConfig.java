@@ -1,11 +1,14 @@
 package org.teamtators.rotator.config;
 
+import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 
 public class EncoderConfig {
     private int aChannel, bChannel;
     private boolean reverse = false;
     private double distancePerPulse = 1.0;
+    private CounterBase.EncodingType encodingType = CounterBase.EncodingType.k4X;
+    private int samplesToAverage = 0;
 
     public double getDistancePerPulse() {
         return distancePerPulse;
@@ -27,7 +30,7 @@ public class EncoderConfig {
         return bChannel;
     }
 
-    private void setbChannel(int bChannel) {
+    public void setbChannel(int bChannel) {
         this.bChannel = bChannel;
     }
 
@@ -35,13 +38,31 @@ public class EncoderConfig {
         return reverse;
     }
 
-    private void setReverse(boolean reverse) {
+    public void setReverse(boolean reverse) {
         this.reverse = reverse;
     }
 
+    public CounterBase.EncodingType getEncodingType() {
+        return encodingType;
+    }
+
+    public void setEncodingType(CounterBase.EncodingType encodingType) {
+        this.encodingType = encodingType;
+    }
+
+    public int getSamplesToAverage() {
+        return samplesToAverage;
+    }
+
+    public void setSamplesToAverage(int samplesToAverage) {
+        this.samplesToAverage = samplesToAverage;
+    }
+
     public Encoder create() {
-        Encoder encoder = new Encoder(aChannel, bChannel, reverse);
+        Encoder encoder = new Encoder(aChannel, bChannel, reverse, encodingType);
         encoder.setDistancePerPulse(distancePerPulse);
+        if (samplesToAverage >= 1 && samplesToAverage <= 127 )
+            encoder.setSamplesToAverage(samplesToAverage);
         return encoder;
     }
 }

@@ -44,11 +44,15 @@ public class Stepper implements Runnable {
     }
 
     public void add(Steppable steppable) {
+        if (steppable instanceof AbstractController)
+            steppable.onEnable();
         steppables.add(steppable);
     }
 
     public void remove(Steppable steppable) {
         steppables.remove(steppable);
+        if (steppable instanceof AbstractController)
+            steppable.onDisable();
     }
 
     public boolean contains(Steppable steppable) {
