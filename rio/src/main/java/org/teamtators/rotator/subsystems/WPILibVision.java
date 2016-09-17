@@ -8,22 +8,12 @@ import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.tester.ComponentTest;
 import org.teamtators.rotator.tester.ComponentTestGroup;
 import org.teamtators.rotator.tester.ITestable;
-import org.teamtators.rotator.tester.components.VictorSPTest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.List;
 
 @Singleton
 public class WPILibVision extends AbstractVision implements Configurable<WPILibVision.Config>, ITestable {
-
-    public static class Config {
-        public String tableName;
-        public boolean target;
-    }
-
-    private boolean target;
     private VictorSP ledPower;
     private NetworkTable table;
 
@@ -33,18 +23,14 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
 
     @Override
     public void configure(WPILibVision.Config config) {
+        this.ledPower = config.ledPower.create();
         this.table = NetworkTable.getTable(config.tableName);
-        this.target = config.target;
     }
 
     @Override
-    public void turnLEDOn() {
-        ledPower.set(1);
-    }
-
-    @Override
-    public void turnLEDOff(){
-        ledPower.set(0);
+    public void setLedState(boolean on) {
+        super.setLedState(on);
+        ledPower.set(on ? 1.0 : 0.0);
     }
 
     @Override
@@ -60,8 +46,12 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
     @Override
     public ComponentTestGroup getTestGroup() {
         return new ComponentTestGroup("Vision",
-                new VictorSPTest("ledPower", ledPower),
                 new VisionTest());
+    }
+
+    public static class Config {
+        public VictorSPConfig ledPower;
+        public String tableName;
     }
 
     private class VisionTest extends ComponentTest {
@@ -71,13 +61,21 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
 
         @Override
         public void start() {
-            logger.info("Press A to get current vision information");
+            logger.info("Press A to turn leds on, B to turn leds off, X to get current vision information");
         }
 
         @Override
         public void onButtonDown(LogitechF310.Button button) {
             switch (button) {
                 case A:
+                    logger.info("LEDS on");
+                    setLedState(true);
+                    break;
+                case B:
+                    logger.info("LEDS off");
+                    setLedState(false);
+                    break;
+                case X:
                     double angle = getAngle();
                     double distance = getDistance();
                     logger.info("Angle = {} degrees, Distance = {} inches", angle, distance);

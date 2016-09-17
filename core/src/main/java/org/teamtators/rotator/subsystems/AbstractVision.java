@@ -10,15 +10,23 @@ public abstract class AbstractVision extends Subsystem {
 
     public AbstractVision() {super("Vision");}
 
-    /**
-     * Sets LED brightness to one
-     */
-    public abstract void turnLEDOn();
+    private boolean ledState = false;
 
     /**
-     * Sets LED brightness to zero
+     * Sets whether the vision leds are on or off
+     * @param on If true, turns the leds on. If false, turns the leds off
      */
-    public abstract void turnLEDOff();
+    public void setLedState(boolean on) {
+        ledState = on;
+    }
+
+    /**
+     * Gets the current led state
+     * @return True if the leds are on
+     */
+    public boolean getLedState() {
+        return ledState;
+    }
 
     /**
      * Gets the most recently updated distance from the target from the Raspberry pi

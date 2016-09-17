@@ -12,7 +12,7 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
     private AbstractPicker picker;
 
     public TurretPrep(CoreRobot robot) {
-        super("TurretTarget");
+        super("TurretPrep");
         this.turret = robot.turret();
         this.vision = robot.vision();
         this.picker = robot.picker();
@@ -34,15 +34,17 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
             return;
         }
         turret.setHoodPosition(HoodPosition.UP1);
-        vision.turnLEDOn();
         turret.setTargetWheelSpeed(config.wheelSpeed);
+        if (config.target)
+            vision.setLedState(true);
     }
 
     @Override
     protected boolean step() {
-        if (!(turret.isAtLeftLimit() || turret.isAtRightLimit())) {  //Unsure if there is another safety check elsewhere
-            //TODO position turret
-            vision.getAngle();
+        if (config.target) {
+            double deltaAngle = vision.getAngle();
+            double currentAngle = turret.getAngle();
+            turret.setTargetAngle(currentAngle + deltaAngle);
         }
         return false;
     }
@@ -50,13 +52,13 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
     @Override
     protected void finish(boolean interrupted) {
         super.finish(interrupted);
-        vision.turnLEDOff();
         turret.resetWheelSpeed();
         turret.setHoodPosition(HoodPosition.DOWN);
+        vision.setLedState(false);
     }
 
     public static class Config {
-        public double ledPower;
+        public boolean target = false;
         public double wheelSpeed;
     }
 }

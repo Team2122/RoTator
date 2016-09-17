@@ -64,6 +64,12 @@ TurretSpinUp:
   class: TurretSetWheelSpeed
   speed: 75.0
 
-TurretTarget:
-  ledPower: 1.0
+TurretShootPrep:
+  class: TurretPrep
+  target: true
   wheelSpeed: 75
+
+TurretBarfPrep:
+  class: TurretPrep
+  target: false
+  wheelSpeed: 25.0

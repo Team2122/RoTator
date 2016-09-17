@@ -4,11 +4,6 @@ import org.teamtators.rotator.subsystems.AbstractVision;
 
 public class NoopVision extends AbstractVision {
     @Override
-    public void setLEDPower(double power) {
-        
-    }
-
-    @Override
     public double getDistance() {
         return 0;
     }
