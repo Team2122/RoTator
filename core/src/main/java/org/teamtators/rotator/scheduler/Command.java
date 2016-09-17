@@ -95,9 +95,7 @@ public abstract class Command {
         return true;
     }
 
-    private boolean takeRequirements() {
-        if (requirements == null)
-            return true;
+    protected boolean takeRequirements(Iterable<Subsystem> requirements) {
         boolean anyRequiring = false;
         for (Subsystem subsystem : requirements) {
             Command requiringCommand = subsystem.getRequiringCommand();
@@ -109,6 +107,14 @@ public abstract class Command {
             }
         }
         return !anyRequiring;
+    }
+
+    protected boolean takeRequirements(Subsystem... requirements) {
+        return takeRequirements(Arrays.asList(requirements));
+    }
+
+    protected boolean takeRequirements() {
+        return this.requirements == null || takeRequirements(this.requirements);
     }
 
     boolean startRun(CommandRunContext context) {

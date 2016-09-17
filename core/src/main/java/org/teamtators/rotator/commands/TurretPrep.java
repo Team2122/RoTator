@@ -43,8 +43,10 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
     protected boolean step() {
         if (config.target) {
             double deltaAngle = vision.getAngle();
-            double currentAngle = turret.getAngle();
-            turret.setTargetAngle(currentAngle + deltaAngle);
+            if (!Double.isNaN(deltaAngle)) {
+                double currentAngle = turret.getAngle();
+                turret.setTargetAngle(currentAngle + deltaAngle);
+            }
         }
         return false;
     }

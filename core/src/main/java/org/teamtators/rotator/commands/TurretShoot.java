@@ -5,6 +5,7 @@ import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.subsystems.AbstractTurret;
+import org.teamtators.rotator.subsystems.AbstractVision;
 import org.teamtators.rotator.subsystems.HoodPosition;
 
 /**
@@ -13,12 +14,14 @@ import org.teamtators.rotator.subsystems.HoodPosition;
 public class TurretShoot extends CommandBase implements Configurable<TurretShoot.Config> {
     private Config config;
     private AbstractTurret turret;
+    private AbstractVision vision;
     private ITimeProvider timer;
     private double startingTime;
 
     public TurretShoot(CoreRobot robot) {
         super("PickerPick");
         this.turret = robot.turret();
+        this.vision = robot.vision();
         this.timer = robot.timeProvider();
     }
 
@@ -30,21 +33,25 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
     @Override
     protected void initialize() {
         startingTime = timer.getTimestamp();
-        if (false && !turret.isAtTargetWheelSpeed()) {
+        double wheelSpeed = turret.getWheelSpeed();
+        if (!turret.isAtTargetWheelSpeed()) {
             logger.warn("Turret wheel speed not at target (speed: {}, target {}), not firing.",
-                    turret.getWheelSpeed(), turret.getTargetWheelSpeed());
+                    wheelSpeed, turret.getTargetWheelSpeed());
             cancel();
         } else if (turret.getHoodPosition() == HoodPosition.DOWN) {
             logger.warn("Hood currently in down position, not firing.");
             cancel();
         } else {
-            logger.info("Shooting at {} RPS", turret.getWheelSpeed());
+            double angle = turret.getAngle();
+            double angleOffset = vision.getAngle();
+            logger.info("Shooting at {} RPS, pointed at {} degrees, vision offset of {}", wheelSpeed, angle,
+                    angleOffset);
+            turret.setKingRollerPower(config.kingRollerPower);
         }
     }
 
     @Override
     protected boolean step() {
-        turret.setKingRollerPower(config.kingRollerPower);
         return timer.getTimestamp() - startingTime > config.timeout;
     }
 
@@ -52,6 +59,9 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
     protected void finish(boolean interrupted) {
         super.finish(interrupted);
         turret.resetKingRollerPower();
+        if (!interrupted) { // if we successfully shot
+            takeRequirements(turret); // cancel everything else using turret (TurretPrep)
+        }
     }
 
     static class Config {
