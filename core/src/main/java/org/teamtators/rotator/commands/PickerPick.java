@@ -36,7 +36,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
 
     @Override
     protected boolean step() {
-        if (turret.getBallDistance() <= config.ballDistance) {
+        if (turret.getBallDistance() <= config.maxBallDistance && turret.getBallDistance() >= config.minBallDistance) {
             return true;
         }
         //Starts the rollers
@@ -59,6 +59,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         public double pickRoller;
         public double pinchRoller;
         public double kingRoller;
-        public double ballDistance;
+        public double minBallDistance = Double.NEGATIVE_INFINITY;
+        public double maxBallDistance = Double.POSITIVE_INFINITY;
     }
 }
