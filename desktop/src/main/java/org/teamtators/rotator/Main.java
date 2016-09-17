@@ -13,6 +13,7 @@ import org.teamtators.rotator.config.Configurables;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.control.SystemNanoTimeTimeProvider;
+import org.teamtators.rotator.datastream.DataCollector;
 import org.teamtators.rotator.datastream.DataServer;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.scheduler.Scheduler;
@@ -22,9 +23,7 @@ import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.ManualTester;
 import org.teamtators.rotator.ui.SimulationFrame;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Main {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -48,8 +47,7 @@ public class Main {
         robot = DaggerDesktopRobot.create();
         stepper = robot.stepper();
         uiStepper = robot.uiStepper();
-        dataServer = new DataServer();
-        dataServer.setTimeProvider(new SystemNanoTimeTimeProvider());
+        dataServer = robot.dataServer();
         ConfigLoader configLoader = robot.configLoader();
         Scheduler scheduler = robot.scheduler();
         ManualTester manualTester = robot.manualTester();
@@ -92,19 +90,7 @@ public class Main {
             simulationFrame.repaint();
         });
 
-        stepper.add(delta -> {
-            Map<String,Object> map = new HashMap<>();
-            map.put("timestamp", String.valueOf(System.currentTimeMillis()));
-            map.put("graphvalue", (System.currentTimeMillis()/1000)%10);
-            ObjectMapper mapper = new ObjectMapper(new JsonFactory());
-            String data = null;
-            try {
-                data = mapper.writeValueAsString(map);
-                dataServer.setData(data);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        });
+        stepper.add(robot.dataCollector());
 
         logger.info("Opening window");
         simulationFrame.setVisible(true);

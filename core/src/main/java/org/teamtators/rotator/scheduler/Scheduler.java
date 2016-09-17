@@ -160,4 +160,9 @@ public final class Scheduler implements CommandRunContext {
             listener.onEnterState(currentState);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, ICommandRun> getRunningCommands() {
+        return (Map)runningCommands;
+    }
 }

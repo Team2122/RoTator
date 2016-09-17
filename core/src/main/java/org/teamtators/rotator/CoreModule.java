@@ -7,7 +7,10 @@ import dagger.Provides;
 import org.teamtators.rotator.commands.CoreCommands;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.control.ForController;
+import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.Stepper;
+import org.teamtators.rotator.datastream.DataCollector;
+import org.teamtators.rotator.datastream.DataServer;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.CommandStore;
 import org.teamtators.rotator.scheduler.Scheduler;
@@ -66,5 +69,23 @@ public class CoreModule {
     public List<Subsystem> providesSubsystems(AbstractDrive drive, AbstractPicker picker, AbstractTurret turret,
                                               AbstractOperatorInterface operatorInterface, AbstractVision vision) {
         return Arrays.asList(drive, picker, turret, operatorInterface, vision);
+    }
+//
+//    @Provides
+//    @Singleton
+//    public DataCollector providesDataCollector(Scheduler scheduler, DataServer dataServer, List<Subsystem> subsystems) {
+//        DataCollector dataCollector = new DataCollector();
+//        dataCollector.setDataServer(dataServer);
+//        dataCollector.setScheduler(scheduler);
+//        dataCollector.setSubsystems(subsystems);
+//        return dataCollector;
+//    }
+
+    @Provides
+    @Singleton
+    public DataServer providesDataServer(ITimeProvider timeProvider) {
+        DataServer dataServer = new DataServer();
+        dataServer.setTimeProvider(timeProvider);
+        return dataServer;
     }
 }
