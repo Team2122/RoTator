@@ -1,6 +1,7 @@
 package org.teamtators.rotator.tester;
 
 import org.teamtators.rotator.CommandBase;
+import org.teamtators.rotator.commands.DriveUtils;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.RobotState;
 
@@ -14,6 +15,8 @@ import java.util.Map;
  */
 public class ManualTester extends CommandBase {
     public static final LogitechF310.Axis TEST_AXIS = LogitechF310.Axis.RIGHT_STICK_Y;
+    public static final double DEADZONE = 0.05;
+    public static final double EXPONENT = 2.0;
     private int testGroupIndex = 0;
     private int testIndex = 0;
 
@@ -47,6 +50,7 @@ public class ManualTester extends CommandBase {
         ComponentTest test = getCurrentTest();
         if (test == null) return false;
         double axisValue = -joystick.getAxisValue(TEST_AXIS);
+        axisValue = DriveUtils.applyDriveModifiers(axisValue, DEADZONE, 1.0, EXPONENT);
         test.updateAxis(axisValue);
         for (LogitechF310.Button button : LogitechF310.Button.values()) {
             boolean value = joystick.getButtonValue(button);
