@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
+    <timestamp key="fileTimestamp" datePattern="yyyy-MM-dd-HH mm.ss" />
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="File" class="ch.qos.logback.core.FileAppender">
+        <file>/media/sda1/${fileTimestamp} RoTator.log</file>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
@@ -8,5 +16,6 @@
 
     <root level="debug">
         <appender-ref ref="Console"/>
+        <appender-ref ref="File"/>
     </root>
 </configuration>
