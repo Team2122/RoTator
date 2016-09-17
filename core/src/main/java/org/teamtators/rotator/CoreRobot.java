@@ -3,6 +3,7 @@ package org.teamtators.rotator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
+import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.config.TriggerBinder;
 import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.ITimeProvider;
@@ -39,6 +40,8 @@ public interface CoreRobot {
     ConfigCommandStore commandStore();
 
     ConfigLoader configLoader();
+
+    ControllerFactory controllerFactory();
 
     List<Subsystem> subsystems();
 
