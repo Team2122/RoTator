@@ -83,3 +83,7 @@ TurretBumpLeft:
 TurretBumpRight:
   class: TurretBumpRotation
   angle: 10.0
+
+WaitTest:
+  class: WaitCommand
+  period: 3.0
