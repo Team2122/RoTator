@@ -36,8 +36,10 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
 
     @Override
     protected boolean step() {
-        if (turret.getBallDistance() <= config.ballDistance) {
+        if (turret.getBallDistance() <= config.ballDistance && picker.getPosition() == PickerPosition.PICK) {
             return true;
+        }else if(turret.getBallDistance() <= config.ballDistance){
+            picker.setPosition(PickerPosition.PICK);
         }
         //Starts the rollers
         picker.setPower(config.pickRoller);
