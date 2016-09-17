@@ -45,7 +45,7 @@ public class Main implements StateListener {
 
         commandStore.setRobot(robot);
 
-        String profileName = configLoader.load("profile.yml").textValue();
+        String profileName = configLoader.getProfileConfig("profile.yml", "empty").textValue();
         logger.debug("Loading configs with profile {}");
         ObjectNode commandsConfig = (ObjectNode) configLoader.getProfileConfig("commands.yml", profileName);
         ObjectNode simulationConfig = (ObjectNode) configLoader.getProfileConfig("subsystems.yml", profileName);

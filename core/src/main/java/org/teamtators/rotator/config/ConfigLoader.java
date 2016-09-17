@@ -26,7 +26,34 @@ public class ConfigLoader {
         this.configDir = configDir;
     }
 
-    public JsonNode load(String fileName) {
+    /**
+     * Get a config, modified for the specified profile
+     *
+     * @param configName  Config to get
+     * @param profileName Profile to apply
+     * @return Combined config for profile
+     */
+    public JsonNode getProfileConfig(String configName, String profileName) {
+        JsonNode mainConfig = load(configName);
+        if (profileName.equals("empty")) {
+            return mainConfig;
+        }
+        File file = new File(configDir + File.separator + profileName + File.separator + configName);
+        File folder = new File(configDir + File.separator + profileName);
+        // check if we should just use default config
+        if (!file.exists()) {
+            logger.info("No profile config file exists for {}, using base config", configName);
+            return mainConfig;
+        } else if (!folder.exists()) {
+            logger.warn("No such profile as {} found, base config will be used.", profileName);
+            return mainConfig;
+        } else {
+            JsonNode profileConfig = load(profileName + File.separator + configName);
+            return mergeNodes(mainConfig, profileConfig);
+        }
+    }
+
+    private JsonNode load(String fileName) {
         String filePath = configDir + File.separator + fileName;
         try (InputStream fileStream = new FileInputStream(filePath)) {
             logger.debug("Loading config from path {}", filePath);
@@ -37,33 +64,13 @@ public class ConfigLoader {
     }
 
     /**
-     * Get a config, modified for the specified profile
-     *
-     * @param configName  Config to get
-     * @param profileName Profile to apply
-     * @return Combined config for profile
-     */
-    public JsonNode getProfileConfig(String configName, String profileName) {
-        // TODO: check if that profile even exists
-        JsonNode mainConfig = load(configName);
-        File f = new File(configDir + File.separator + profileName + File.separator + configName);
-        // check if we should just use default config
-        if (profileName.equals("empty") || !f.exists()) {
-            return mainConfig;
-        } else {
-            JsonNode profileConfig = load(profileName + File.separator + configName);
-            return mergeNodes(mainConfig, profileConfig);
-        }
-    }
-
-    /**
      * Combine two JsonNodes
      *
      * @param mainNode   Node to merge into
      * @param updateNode Node to merge with
      * @return Combined node
      */
-    public static JsonNode mergeNodes(JsonNode mainNode, JsonNode updateNode) {
+    private JsonNode mergeNodes(JsonNode mainNode, JsonNode updateNode) {
         Iterator<String> fieldNames = updateNode.fieldNames();
         while (fieldNames.hasNext()) {
             String fieldName = fieldNames.next();

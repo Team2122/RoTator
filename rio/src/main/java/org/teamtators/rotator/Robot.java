@@ -65,7 +65,7 @@ public class Robot extends IterativeRobot {
         commandStore.setRobot(robot);
 
         logger.debug("Created injector. Loading configs");
-        String profileName = configLoader.load("profile.yml").textValue();
+        String profileName = configLoader.getProfileConfig("profile.yml", "empty").textValue();
         logger.debug("Currently active config profile: {}", profileName);
         ObjectNode commandsConfig = (ObjectNode) configLoader.getProfileConfig("commands.yml", profileName);
         ObjectNode subsystemsConfig = (ObjectNode) configLoader.getProfileConfig("subsystems.yml", profileName);
