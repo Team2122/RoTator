@@ -70,22 +70,4 @@ public class CoreModule {
                                               AbstractOperatorInterface operatorInterface, AbstractVision vision) {
         return Arrays.asList(drive, picker, turret, operatorInterface, vision);
     }
-//
-//    @Provides
-//    @Singleton
-//    public DataCollector providesDataCollector(Scheduler scheduler, DataServer dataServer, List<Subsystem> subsystems) {
-//        DataCollector dataCollector = new DataCollector();
-//        dataCollector.setDataServer(dataServer);
-//        dataCollector.setScheduler(scheduler);
-//        dataCollector.setSubsystems(subsystems);
-//        return dataCollector;
-//    }
-
-    @Provides
-    @Singleton
-    public DataServer providesDataServer(ITimeProvider timeProvider) {
-        DataServer dataServer = new DataServer();
-        dataServer.setTimeProvider(timeProvider);
-        return dataServer;
-    }
 }

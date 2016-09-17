@@ -3,6 +3,7 @@ package org.teamtators.rotator.datastream;
 import org.teamtators.rotator.control.ITimeProvider;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+@Singleton
 public class DataServer {
     private ServerSocket server;
     private List<OutputStream> clients;
@@ -21,6 +23,7 @@ public class DataServer {
     private Thread dataThreadThread;
     private ITimeProvider timeProvider;
 
+    @Inject
     public DataServer() {
         try {
             server = new ServerSocket(4123);
@@ -65,7 +68,7 @@ public class DataServer {
                 double startTime = timeProvider.getTimestamp();
                 if (data != null) {
                     Iterator<OutputStream> iterator = clients.iterator();
-                    while(iterator.hasNext()) {
+                    while (iterator.hasNext()) {
                         OutputStream client = iterator.next();
                         try {
                             client.write(data.getBytes());

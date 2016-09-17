@@ -3,9 +3,12 @@ package org.teamtators.rotator.datastream;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer;
+import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.Steppable;
-import org.teamtators.rotator.scheduler.*;
+import org.teamtators.rotator.scheduler.Command;
+import org.teamtators.rotator.scheduler.ICommandRun;
+import org.teamtators.rotator.scheduler.Scheduler;
+import org.teamtators.rotator.scheduler.Subsystem;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,6 +22,7 @@ public class DataCollector implements Steppable {
     private Scheduler scheduler;
     private DataServer dataServer;
     private List<Subsystem> subsystems;
+    private ITimeProvider timeProvider;
 
     @Inject
     public DataCollector() {
@@ -28,25 +32,25 @@ public class DataCollector implements Steppable {
     @Override
     public void step(double delta) {
         Map<String, Object> map = new HashMap<>();
-        map.put("timestamp", String.valueOf(System.currentTimeMillis()));
-        map.put("graphvalue", (System.currentTimeMillis() / 1000) % 10);
+        map.put("timestamp", timeProvider.getTimestamp());
+        map.put("graphvalue", (int) (timeProvider.getTimestamp() % 10));
         List<Object> commandsData = new ArrayList<>();
-        Map<String,ICommandRun> commands = scheduler.getRunningCommands();
-        for(String key : commands.keySet()) {
+        Map<String, ICommandRun> commands = scheduler.getRunningCommands();
+        for (String key : commands.keySet()) {
             ICommandRun commandRun = commands.get(key);
             Command command = commandRun.getCommand();
-            Map<String,Object> commandMap = new HashMap<>();
+            Map<String, Object> commandMap = new HashMap<>();
             commandMap.put("name", key);
-            if(command instanceof DataProvider) {
+            if (command instanceof DataProvider) {
                 ((DataProvider) command).addData(commandMap);
             }
             commandsData.add(commandMap);
         }
         map.put("commands", commandsData);
         Map<String, Object> subsystemData = new HashMap<>();
-        for(Subsystem subsystem : subsystems) {
+        for (Subsystem subsystem : subsystems) {
             Map<String, Object> subsystemMap = new HashMap<>();
-            if(subsystem instanceof DataProvider) {
+            if (subsystem instanceof DataProvider) {
                 ((DataProvider) subsystem).addData(subsystemData);
             }
             subsystemData.put(subsystem.getName(), subsystemMap);
@@ -74,5 +78,10 @@ public class DataCollector implements Steppable {
     @Inject
     public void setSubsystems(List<Subsystem> subsystems) {
         this.subsystems = subsystems;
+    }
+
+    @Inject
+    public void setTimeProvider(ITimeProvider timeProvider) {
+        this.timeProvider = timeProvider;
     }
 }
