@@ -9,7 +9,9 @@ Driver:
   A: start whenPressed TurretShoot
   POV_UP: start whenPressed HoodBumpUp
   POV_DOWN: start whenPressed HoodBumpDown
+  BACK: start whenPressed PickerToHome
 
 Gunner:
 
 defaults: [ DriveTank ]
+

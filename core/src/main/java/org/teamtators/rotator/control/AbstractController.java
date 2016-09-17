@@ -15,6 +15,7 @@ public abstract class AbstractController extends AbstractSteppable {
     private ControllerOutputConsumer outputConsumer;
     private ControllerPredicate targetPredicate = ControllerPredicates.alwaysFalse();
     private LimitPredicate limitPredicate = LimitPredicates.nevetAtLimit();
+    private boolean stopOnTarget = false;
     private OnTargetHandler onTargetHandler = null;
 
     private double minSetpoint = Double.NEGATIVE_INFINITY;
@@ -65,7 +66,12 @@ public abstract class AbstractController extends AbstractSteppable {
             onTargetHandler.onTarget(this);
         }
 
-        double computedOutput = computeOutput(delta);
+        double computedOutput;
+        if (onTarget && stopOnTarget) {
+            computedOutput = 0;
+        } else {
+            computedOutput = computeOutput(delta);
+        }
         double minOutput = this.minOutput;
         double maxOutput = this.maxOutput;
         if (limitState == LimitState.POSITIVE) {
@@ -110,6 +116,14 @@ public abstract class AbstractController extends AbstractSteppable {
         this.targetPredicate = targetPredicate;
     }
 
+    public boolean isStopOnTarget() {
+        return stopOnTarget;
+    }
+
+    public void setStopOnTarget(boolean stopOnTarget) {
+        this.stopOnTarget = stopOnTarget;
+    }
+
     public void configureTarget(JsonNode config) {
         if (config == null) return;
         if (!config.isObject()) {
@@ -126,8 +140,15 @@ public abstract class AbstractController extends AbstractSteppable {
             targetPredicate = new ControllerPredicates.SampleTime(time, targetPredicate);
         }
         setTargetPredicate(targetPredicate);
-        if (config.has("disable") && config.get("disable").asBoolean()) {
-            setOnTargetHandler(OnTargetHandlers.disableController());
+        if (config.has("disable")) {
+            OnTargetHandler onTargetHandler = null;
+            if (config.get("disable").asBoolean()) {
+                onTargetHandler = OnTargetHandlers.disableController();
+            }
+            setOnTargetHandler(onTargetHandler);
+        }
+        if (config.has("stop")) {
+            setStopOnTarget(config.get("stop").asBoolean());
         }
     }
 

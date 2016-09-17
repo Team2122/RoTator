@@ -22,17 +22,16 @@ Turret:
   longSolenoid: 2
   shooterWheelMotor: { channel: 2, inverted: true }
   shooterWheelEncoder: { aChannel: 4, bChannel: 5, reverse: true, distancePerPulse: 0.0009765625 }
-  shooterWheelController: { type: PID, P: 0.01, F: 0.0075 }
+  shooterWheelController: { type: PID, P: 0.02, F: 0.005, minOutput: 0.0, target: { within: 1.0 } }
   turretRotationMotor: { channel: 4, inverted: true }
   turretRotationEncoder: { aChannel: 6, bChannel: 7, reverse: true, distancePerPulse: 0.02538 }
-#  angleController: { type: step, highSpeed: 0.5, highThreshold: 2.5, lowSpeed: 0.15, lowThreshold: 0.25 }
   angleController:
     type: PID
     maxAbsoluteSetpoint: 110.0
     P: .1
     D: 0
     maxAbsoluteOutput: 0.75
-    target: { within: .25 }
+    target: { within: .25, stop: true }
   leftLimit: { channel: 11, type: NPN }
   rightLimit: { channel: 10, type: NPN }
   centerLimit: { channel: 12, type: NPN }

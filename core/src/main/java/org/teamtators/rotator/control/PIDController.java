@@ -89,7 +89,6 @@ public class PIDController extends AbstractController implements Configurable<PI
 
     @Override
     protected double computeOutput(double delta) {
-        if (isOnTarget()) return 0;
         double error = getError();
         double output = error * kP;
         if (Math.abs(error) < maxIError) {
