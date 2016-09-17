@@ -55,6 +55,7 @@ public class DataCollector implements Steppable {
             }
             subsystemData.put(subsystem.getName(), subsystemMap);
         }
+        map.put("subsystems", subsystemData);
         ObjectMapper mapper = new ObjectMapper(new JsonFactory());
         String data = null;
         try {
