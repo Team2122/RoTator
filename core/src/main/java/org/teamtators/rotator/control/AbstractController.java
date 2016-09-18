@@ -5,13 +5,21 @@ import com.google.common.collect.EvictingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.config.ConfigException;
+import org.teamtators.rotator.datalogging.DataCollector;
+import org.teamtators.rotator.datalogging.DataLoggable;
+import org.teamtators.rotator.datalogging.LogDataProvider;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public abstract class AbstractController extends AbstractSteppable {
+public abstract class AbstractController extends AbstractSteppable implements DataLoggable {
     protected Logger logger;
+    @Inject
+    DataCollector dataCollector;
     private String name;
-
     private ControllerInputProvider inputProvider;
     private int inputSamplesToAverage;
     private EvictingQueue<Double> inputSampleQueue;
@@ -20,6 +28,7 @@ public abstract class AbstractController extends AbstractSteppable {
     private LimitPredicate limitPredicate = LimitPredicates.neverAtLimit();
     private boolean stopOnTarget = false;
     private OnTargetHandler onTargetHandler = null;
+    private boolean dataLog = false;
 
     private double minSetpoint = Double.NEGATIVE_INFINITY;
     private double maxSetpoint = Double.POSITIVE_INFINITY;
@@ -32,6 +41,7 @@ public abstract class AbstractController extends AbstractSteppable {
     private volatile double output;
     private volatile boolean onTarget;
     private volatile LimitState limitState;
+    private LogDataProvider logDataProvider = null;
 
     public AbstractController() {
         this("");
@@ -264,12 +274,16 @@ public abstract class AbstractController extends AbstractSteppable {
     public void onEnable() {
         checkNotNull(inputProvider, "input must be set on a controller before using");
         checkNotNull(outputConsumer, "output must be set on a controller before using");
+        if (isDataLogging()) {
+            dataCollector.startProvider(getLogDataProvider());
+        }
     }
 
     @Override
     public void onDisable() {
         if (outputConsumer != null)
             outputConsumer.setControllerOutput(0.0);
+        dataCollector.stopProvider(getLogDataProvider());
     }
 
     protected void configure(Config config) {
@@ -289,6 +303,29 @@ public abstract class AbstractController extends AbstractSteppable {
             setMaxOutput(config.maxOutput);
         }
         configureTarget(config.target);
+        setDataLogging(config.dataLogging);
+    }
+
+    @Override
+    public LogDataProvider getLogDataProvider() {
+        if (logDataProvider == null) logDataProvider = new ControllerLogDataProvider();
+        return logDataProvider;
+    }
+
+    public boolean isDataLogging() {
+        return dataLog;
+    }
+
+    public void setDataLogging(boolean dataLogging) {
+        this.dataLog = dataLogging;
+        boolean enabled = isEnabled();
+        if (dataLogging) {
+            if (enabled) {
+                dataCollector.startProvider(getLogDataProvider());
+            }
+        } else {
+            dataCollector.stopProvider(getLogDataProvider());
+        }
     }
 
     protected static class Config {
@@ -298,5 +335,23 @@ public abstract class AbstractController extends AbstractSteppable {
         public double maxAbsoluteOutput = Double.NaN;
         public double maxOutput = Double.POSITIVE_INFINITY, minOutput = Double.NEGATIVE_INFINITY;
         public JsonNode target;
+        public boolean dataLogging = false;
+    }
+
+    private class ControllerLogDataProvider implements LogDataProvider {
+        @Override
+        public String getName() {
+            return AbstractController.this.getName();
+        }
+
+        @Override
+        public List<Object> getKeys() {
+            return Arrays.asList("setpoint", "input", "output", "onTarget");
+        }
+
+        @Override
+        public List<Object> getValues() {
+            return Arrays.asList(getSetpoint(), getInput(), output, isOnTarget());
+        }
     }
 }

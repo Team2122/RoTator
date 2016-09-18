@@ -48,4 +48,10 @@ public class RioModule {
     static String providesConfigDir() {
         return "/home/lvuser/config";
     }
+
+    @Provides
+    @Named("dataLogDir")
+    static String providesDataLogDir() {
+        return "/media/sda1/datalogs";
+    }
 }
