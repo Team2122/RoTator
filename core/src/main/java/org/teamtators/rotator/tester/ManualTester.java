@@ -42,7 +42,7 @@ public class ManualTester extends CommandBase {
             this.cancel();
         }
         lastStates.clear();
-        beginTestGroup(0);
+        beginTestGroup(testGroupIndex, testIndex);
     }
 
     @Override
@@ -132,7 +132,11 @@ public class ManualTester extends CommandBase {
     }
 
     public void beginTestGroup(int index) {
-        testGroupIndex = index;
+        beginTestGroup(index, 0);
+    }
+
+    public void beginTestGroup(int groupIndex, int testIndex) {
+        testGroupIndex = groupIndex;
         if (getCurrentTestGroup() == null) {
             logger.info("==== There are no test groups ====");
             return;
