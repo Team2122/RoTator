@@ -74,3 +74,11 @@ TurretBarfPrep:
   class: TurretPrep
   target: false
   wheelSpeed: 60.0
+
+TurretBumpLeft:
+  class: TurretBumpRotation
+  angle: -3.0
+
+TurretBumpRight:
+  class: TurretBumpRotation
+  angle: 3.0

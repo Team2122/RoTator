@@ -13,6 +13,7 @@ public class CoreCommands {
         commandStore.registerClass(PickerSetPosition.class);
 
         commandStore.registerClass(TurretBumpHoodPosition.class);
+        commandStore.registerClass(TurretBumpRotation.class);
         commandStore.registerClass(TurretHome.class);
         commandStore.registerClass(TurretSetHoodPosition.class);
         commandStore.registerClass(TurretSetWheelSpeed.class);
