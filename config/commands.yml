@@ -67,7 +67,8 @@ TurretSpinUp:
 TurretShootPrep:
   class: TurretPrep
   target: true
-  wheelSpeed: 88
+  wheelSpeed: 85
+  targetDelay: 1.0
 
 TurretBarfPrep:
   class: TurretPrep

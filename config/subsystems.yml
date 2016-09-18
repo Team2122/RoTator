@@ -45,7 +45,7 @@ Turret:
     P: .1
     D: 0
     maxAbsoluteOutput: 0.75
-    target: { within: .25, stop: true }
+    target: { within: .5, stop: true }
   leftLimit: { channel: 11, type: NPN }
   rightLimit: { channel: 10, type: NPN }
   centerLimit: { channel: 12, type: NPN }
