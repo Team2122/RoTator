@@ -27,8 +27,16 @@ Turret:
     reverse: true
     distancePerPulse: 0.0009765625
     encodingType: k1X
-    samplesToAverage: 127
-  shooterWheelController: { type: PID, P: 0.025, I: 0.000, maxI: 5.0, F: 0.0025, minOutput: 0.0, target: { within: 3.0 } }
+    samplesToAverage: 100
+  shooterWheelController:
+    type: PID
+    inputSamplesToAverage: 16
+    P: 0.025
+    I: 0.025
+    maxI: 10.0
+    F: 0.004
+    minOutput: 0.0
+    target: { within: 1.0 }
   turretRotationMotor: { channel: 4, inverted: true }
   turretRotationEncoder: { aChannel: 6, bChannel: 7, reverse: true, distancePerPulse: 0.02538 }
   angleController:

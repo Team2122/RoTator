@@ -1,6 +1,7 @@
 package org.teamtators.rotator.control;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.EvictingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.config.ConfigException;
@@ -12,6 +13,8 @@ public abstract class AbstractController extends AbstractSteppable {
     private String name;
 
     private ControllerInputProvider inputProvider;
+    private int inputSamplesToAverage;
+    private EvictingQueue<Double> inputSampleQueue;
     private ControllerOutputConsumer outputConsumer;
     private ControllerPredicate targetPredicate = ControllerPredicates.alwaysFalse();
     private LimitPredicate limitPredicate = LimitPredicates.nevetAtLimit();
@@ -35,6 +38,7 @@ public abstract class AbstractController extends AbstractSteppable {
 
     public AbstractController(String name) {
         reset();
+        setInputSamplesToAverage(1);
         setName(name);
     }
 
@@ -57,7 +61,13 @@ public abstract class AbstractController extends AbstractSteppable {
     @Override
     public final void step(double delta) {
         synchronized (this) {
-            input = this.inputProvider.getControllerInput();
+            double computedInput = this.inputProvider.getControllerInput();
+            if (inputSamplesToAverage == 1) {
+                input = computedInput;
+            } else {
+                inputSampleQueue.add(computedInput);
+                input = inputSampleQueue.stream().mapToDouble(d -> d).average().orElse(0.0);
+            }
             onTarget = targetPredicate.compute(delta, this);
             limitState = limitPredicate.getLimit(this);
         }
@@ -96,6 +106,15 @@ public abstract class AbstractController extends AbstractSteppable {
     public void setInputProvider(ControllerInputProvider inputProvider) {
         checkNotNull(inputProvider);
         this.inputProvider = inputProvider;
+    }
+
+    public int getInputSamplesToAverage() {
+        return inputSamplesToAverage;
+    }
+
+    public void setInputSamplesToAverage(int inputSamplesToAverage) {
+        this.inputSamplesToAverage = inputSamplesToAverage;
+        this.inputSampleQueue = EvictingQueue.create(inputSamplesToAverage);
     }
 
     public ControllerOutputConsumer getOutputConsumer() {
@@ -248,6 +267,7 @@ public abstract class AbstractController extends AbstractSteppable {
     }
 
     protected void configure(Config config) {
+        setInputSamplesToAverage(config.inputSamplesToAverage);
         if (!Double.isNaN(config.maxAbsoluteSetpoint)) {
             setMaxSetpoint(config.maxAbsoluteSetpoint);
             setMinSetpoint(-config.maxAbsoluteSetpoint);
@@ -266,6 +286,7 @@ public abstract class AbstractController extends AbstractSteppable {
     }
 
     protected static class Config {
+        public int inputSamplesToAverage = 1;
         public double maxAbsoluteSetpoint = Double.NaN;
         public double maxSetpoint = Double.POSITIVE_INFINITY, minSetpoint = Double.NEGATIVE_INFINITY;
         public double maxAbsoluteOutput = Double.NaN;

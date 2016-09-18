@@ -61,7 +61,7 @@ public class EncoderConfig {
     public Encoder create() {
         Encoder encoder = new Encoder(aChannel, bChannel, reverse, encodingType);
         encoder.setDistancePerPulse(distancePerPulse);
-        if (samplesToAverage >= 1 && samplesToAverage <= 127 )
+        if (samplesToAverage != 0)
             encoder.setSamplesToAverage(samplesToAverage);
         return encoder;
     }
