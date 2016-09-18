@@ -32,6 +32,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         super.initialize();
         //Extends the picker
         picker.setPosition(PickerPosition.PICK);
+        turret.setTargetAngle(0);
     }
 
     @Override
