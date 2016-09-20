@@ -29,7 +29,7 @@ public class StepController extends AbstractController implements Configurable<S
 
     private class LowThresholdPredicate implements ControllerPredicate {
         @Override
-        public boolean compute(double delta, AbstractController controller) {
+        public boolean compute(AbstractController controller) {
             return Math.abs(controller.getError()) < lowThreshold;
         }
     }

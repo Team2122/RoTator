@@ -30,6 +30,15 @@ Turret:
     momentum: 50
     dampening: 4
   shooterWheelEncoder: { multiplier: 1 }
+  shooterWheelController:
+    type: PID
+    inputSamplesToAverage: 16
+    P: 0.025
+    I: 0.025
+    maxI: 10.0
+    F: 0.004
+    minOutput: 0.0
+    target: { within: 1.0 }
   rotationMotor: # 1 x 550
     maxRPM: 19000
     maxTorque: 3.36 # 3.36in-lbf * 1
@@ -51,4 +60,11 @@ Turret:
     momentum: 50
     dampening: 4
   pinchRollerEncoder: { multiplier: 1 }
+  angleController:
+    type: PID
+    maxAbsoluteSetpoint: 110.0
+    P: .1
+    D: 0
+    maxAbsoluteOutput: 0.75
+    target: { within: .5, stop: true }
 Vision:

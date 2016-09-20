@@ -61,8 +61,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         this.rightLimit = config.rightLimit.create();
         this.centerLimit = config.centerLimit.create();
 
-        setShooterWheelController(controllerFactory.create(config.shooterWheelController));
-        setAngleController(controllerFactory.create(config.angleController));
+        super.configure(config);
     }
 
     @Override
@@ -200,7 +199,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
                 new TurretTest());
     }
 
-    public static class Config {
+    public static class Config extends AbstractTurret.Config {
         public VictorSPConfig pinchRollerMotor;
         public VictorSPConfig kingRollerMotor;
         public DistanceLaserConfig ballSensor;
@@ -209,12 +208,10 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         public int longSolenoid;
         public VictorSPConfig shooterWheelMotor;
         public EncoderConfig shooterWheelEncoder;
-        public JsonNode shooterWheelController;
         public VictorSPConfig turretRotationMotor;
         public EncoderConfig turretRotationEncoder;
         public DigitalSensorConfig leftLimit;
         public DigitalSensorConfig rightLimit;
         public DigitalSensorConfig centerLimit;
-        public JsonNode angleController;
     }
 }

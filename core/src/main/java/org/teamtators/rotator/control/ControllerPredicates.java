@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ControllerPredicates {
     public static ControllerPredicate staticValue(boolean value) {
-        return (delta, controller) -> value;
+        return (controller) -> value;
     }
 
     public static ControllerPredicate alwaysTrue() {
@@ -16,7 +16,7 @@ public class ControllerPredicates {
     }
 
     public static ControllerPredicate withinError(double threshold) {
-        return (delta, controller) -> Math.abs(controller.getError()) < threshold;
+        return (controller) -> Math.abs(controller.getError()) < threshold;
     }
 
     public static ControllerPredicate sampleWithinError(double time, double threshold) {
@@ -34,9 +34,9 @@ public class ControllerPredicates {
         }
 
         @Override
-        public boolean compute(double delta, AbstractController controller) {
-            if (baseChecker.compute(delta, controller)) {
-                currentTime += delta;
+        public boolean compute(AbstractController controller) {
+            if (baseChecker.compute(controller)) {
+                currentTime += controller.getLastDelta();
                 if (currentTime > time) {
                     return true;
                 }

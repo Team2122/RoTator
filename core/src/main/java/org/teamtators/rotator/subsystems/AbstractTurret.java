@@ -1,22 +1,22 @@
 package org.teamtators.rotator.subsystems;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.EvictingQueue;
-import org.teamtators.rotator.control.AbstractController;
-import org.teamtators.rotator.control.ControllerInputProvider;
-import org.teamtators.rotator.control.LimitState;
-import org.teamtators.rotator.control.PIDController;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.teamtators.rotator.config.ControllerFactory;
+import org.teamtators.rotator.control.*;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.tester.ComponentTest;
 
-import java.util.Queue;
+import javax.inject.Inject;
 
 /**
  * Interface for turret
  * Shoots the ball
  */
 public abstract class AbstractTurret extends Subsystem {
+    @Inject
+    ControllerFactory controllerFactory;
+
     private AbstractController shooterWheelController = null;
     private AbstractController angleController = null;
     private boolean homed = false;
@@ -158,11 +158,7 @@ public abstract class AbstractTurret extends Subsystem {
         angleController.setName("angleController");
         angleController.setInputProvider(this::getAngle);
         angleController.setOutputConsumer(this::setRotationPower);
-        angleController.setLimitPredicate((controller) -> {
-            if (isAtLeftLimit()) return LimitState.NEGATIVE;
-            else if (isAtRightLimit()) return LimitState.POSITIVE;
-            else return LimitState.NEITHER;
-        });
+        angleController.setLimitPredicate(LimitPredicates.doubleLimits(this::isAtLeftLimit, this::isAtRightLimit));
         this.angleController = angleController;
     }
 
@@ -244,4 +240,15 @@ public abstract class AbstractTurret extends Subsystem {
             }
         }
     }
+
+    protected static class Config {
+        public JsonNode shooterWheelController;
+        public JsonNode angleController;
+    }
+
+    protected void configure(Config config) {
+        setShooterWheelController(controllerFactory.create(config.shooterWheelController));
+        setAngleController(controllerFactory.create(config.angleController));
+    }
+
 }

@@ -17,7 +17,7 @@ public abstract class AbstractController extends AbstractSteppable {
     private EvictingQueue<Double> inputSampleQueue;
     private ControllerOutputConsumer outputConsumer;
     private ControllerPredicate targetPredicate = ControllerPredicates.alwaysFalse();
-    private LimitPredicate limitPredicate = LimitPredicates.nevetAtLimit();
+    private LimitPredicate limitPredicate = LimitPredicates.neverAtLimit();
     private boolean stopOnTarget = false;
     private OnTargetHandler onTargetHandler = null;
 
@@ -26,6 +26,7 @@ public abstract class AbstractController extends AbstractSteppable {
     private double minOutput = Double.NEGATIVE_INFINITY;
     private double maxOutput = Double.POSITIVE_INFINITY;
 
+    private volatile double lastDelta;
     private volatile double setpoint;
     private volatile double input;
     private volatile double output;
@@ -50,6 +51,7 @@ public abstract class AbstractController extends AbstractSteppable {
 
     public synchronized void reset() {
         disable();
+        lastDelta = 0.0;
         setpoint = 0.0;
         input = 0.0;
         output = 0.0;
@@ -57,10 +59,10 @@ public abstract class AbstractController extends AbstractSteppable {
         limitState = LimitState.NEITHER;
     }
 
-
     @Override
     public final void step(double delta) {
         synchronized (this) {
+            this.lastDelta = delta;
             double computedInput = this.inputProvider.getControllerInput();
             if (inputSamplesToAverage == 1) {
                 input = computedInput;
@@ -68,7 +70,7 @@ public abstract class AbstractController extends AbstractSteppable {
                 inputSampleQueue.add(computedInput);
                 input = inputSampleQueue.stream().mapToDouble(d -> d).average().orElse(0.0);
             }
-            onTarget = targetPredicate.compute(delta, this);
+            onTarget = targetPredicate.compute(this);
             limitState = limitPredicate.getLimit(this);
         }
 
@@ -218,6 +220,10 @@ public abstract class AbstractController extends AbstractSteppable {
 
     public void setMaxOutput(double maxOutput) {
         this.maxOutput = maxOutput;
+    }
+
+    public synchronized double getLastDelta() {
+        return lastDelta;
     }
 
     public synchronized double getSetpoint() {

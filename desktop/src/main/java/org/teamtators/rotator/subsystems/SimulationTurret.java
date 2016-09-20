@@ -1,10 +1,13 @@
 package org.teamtators.rotator.subsystems;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.control.Steppable;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class SimulationTurret extends AbstractTurret implements Steppable, Configurable<SimulationTurret.Config> {
     private SimulationMotor shooterWheelMotor = new SimulationMotor();
     private SimulationEncoder shooterWheelEncoder = new SimulationEncoder();
@@ -73,12 +76,12 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
 
     @Override
     public boolean isAtLeftLimit() {
-        return getAngle() <= -100;
+        return getAngle() <= getShooterWheelController().getMinSetpoint();
     }
 
     @Override
     public boolean isAtRightLimit() {
-        return getAngle() >= 100;
+        return getAngle() >= getShooterWheelController().getMaxSetpoint();
     }
 
     @Override
@@ -105,9 +108,11 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
         kingRollerEncoder.configure(config.kingRollerEncoder);
         pinchRollerMotor.configure(config.pinchRollerMotor);
         pinchRollerEncoder.configure(config.pinchRollerEncoder);
+
+        super.configure(config);
     }
 
-    public static class Config {
+    public static class Config extends AbstractTurret.Config {
         public SimulationMotor.Config shooterWheelMotor;
         public SimulationEncoder.Config shooterWheelEncoder;
         public SimulationMotor.Config rotationMotor;
