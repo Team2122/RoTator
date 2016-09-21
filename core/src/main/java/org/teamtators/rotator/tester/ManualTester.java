@@ -142,7 +142,7 @@ public class ManualTester extends CommandBase {
             return;
         }
         logger.info("==== Entering Test Group '{}' ====", getCurrentTestGroup().getName());
-        beginTest(0);
+        beginTest(testIndex);
     }
 
     public void nextTestGroup() {
