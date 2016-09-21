@@ -11,6 +11,10 @@ public class Commands {
         return new SequentialCommand(sequence);
     }
 
+    public static Command parallel(Command... parallel) {
+        return new ParallelCommand(parallel);
+    }
+
     public static Command log(String message) {
         return new LogCommand("LogCommand" + nextLogCommandNumber++, message);
     }
