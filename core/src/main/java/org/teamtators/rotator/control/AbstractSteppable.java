@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class AbstractSteppable implements Steppable {
     private Stepper stepper;
+    private int executionOrder = Steppable.super.getExecutionOrder();
 
     public final Stepper getStepper() {
         return stepper;
@@ -39,5 +40,15 @@ public abstract class AbstractSteppable implements Steppable {
 
     public final boolean isEnabled() {
         return stepper != null && stepper.contains(this);
+    }
+
+    @Override
+    public int getExecutionOrder() {
+        return executionOrder;
+    }
+
+    public AbstractSteppable setExecutionOrder(int executionOrder) {
+        this.executionOrder = executionOrder;
+        return this;
     }
 }

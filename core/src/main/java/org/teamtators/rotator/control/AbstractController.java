@@ -51,6 +51,7 @@ public abstract class AbstractController extends AbstractSteppable implements Da
         reset();
         setInputSamplesToAverage(1);
         setName(name);
+        setExecutionOrder(200);
     }
 
     private static double applyLimits(double value, double min, double max) {
@@ -61,6 +62,7 @@ public abstract class AbstractController extends AbstractSteppable implements Da
 
     public synchronized void reset() {
         disable();
+        clearInputSamples();
         lastDelta = 0.0;
         setpoint = 0.0;
         input = 0.0;
@@ -127,6 +129,10 @@ public abstract class AbstractController extends AbstractSteppable implements Da
     public void setInputSamplesToAverage(int inputSamplesToAverage) {
         this.inputSamplesToAverage = inputSamplesToAverage;
         this.inputSampleQueue = EvictingQueue.create(inputSamplesToAverage);
+    }
+
+    public void clearInputSamples() {
+        this.inputSampleQueue.clear();
     }
 
     public ControllerOutputConsumer getOutputConsumer() {

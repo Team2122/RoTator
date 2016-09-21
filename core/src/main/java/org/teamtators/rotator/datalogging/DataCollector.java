@@ -37,6 +37,7 @@ public class DataCollector extends AbstractSteppable {
 
     @Inject
     public DataCollector() {
+        setExecutionOrder(400);
     }
 
     public String getOutputDir() {
@@ -47,7 +48,10 @@ public class DataCollector extends AbstractSteppable {
     public void setOutputDir(@Named("dataLogDir") String outputDir) {
         this.outputDir = outputDir;
         try {
-            new File(outputDir).mkdirs();
+            File outputDirFile = new File(outputDir);
+            if (outputDirFile.mkdirs()) {
+                logger.debug("Created data log directory {}", outputDirFile);
+            }
         } catch (SecurityException e) {
             logger.error("Security policy prevented creation of data logging dir", e);
         }

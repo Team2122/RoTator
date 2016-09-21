@@ -28,6 +28,11 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
     }
 
     @Override
+    public int getExecutionOrder() {
+        return 200;
+    }
+
+    @Override
     public void step(double delta) {
         shooterWheelMotor.step(delta);
         shooterWheelEncoder.step(delta);

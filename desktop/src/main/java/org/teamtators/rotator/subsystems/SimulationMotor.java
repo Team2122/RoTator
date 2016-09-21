@@ -20,6 +20,11 @@ public class SimulationMotor implements Steppable, Configurable<SimulationMotor.
     }
 
     @Override
+    public int getExecutionOrder() {
+        return 90;
+    }
+
+    @Override
     public void configure(Config config) {
         this.config = config;
     }

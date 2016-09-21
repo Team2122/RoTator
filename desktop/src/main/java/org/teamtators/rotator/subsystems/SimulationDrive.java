@@ -29,6 +29,11 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
         reset();
     }
 
+    @Override
+    public int getExecutionOrder() {
+        return 200;
+    }
+
     public double getMaxX() {
         return maxX;
     }

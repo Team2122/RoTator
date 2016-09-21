@@ -19,6 +19,11 @@ public class SimulationEncoder implements Steppable, Configurable<SimulationEnco
         rotations = 0;
     }
 
+    @Override
+    public int getExecutionOrder() {
+        return 80;
+    }
+
     public SimulationMotor getMotor() {
         return motor;
     }

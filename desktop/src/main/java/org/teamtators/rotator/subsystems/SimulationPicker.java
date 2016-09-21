@@ -17,6 +17,11 @@ public class SimulationPicker extends AbstractPicker implements Steppable, Confi
     }
 
     @Override
+    public int getExecutionOrder() {
+        return 200;
+    }
+
+    @Override
     public void step(double delta) {
         pickerMotor.step(delta);
     }
