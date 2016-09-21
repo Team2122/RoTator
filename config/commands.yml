@@ -77,8 +77,8 @@ TurretBarfPrep:
 
 TurretBumpLeft:
   class: TurretBumpRotation
-  angle: -3.0
+  angle: -10.0
 
 TurretBumpRight:
   class: TurretBumpRotation
-  angle: 3.0
+  angle: 10.0

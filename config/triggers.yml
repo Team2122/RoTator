@@ -9,6 +9,8 @@ Driver:
   A: start whenPressed TurretShoot
   POV_UP: start whenPressed HoodBumpUp
   POV_DOWN: start whenPressed HoodBumpDown
+  POV_LEFT: start whenPressed TurretBumpLeft
+  POV_RIGHT: start whenPressed TurretBumpRight
   BACK: start whenPressed PickerToHome
   START: toggle whenPressed TurretBarfPrep
 
