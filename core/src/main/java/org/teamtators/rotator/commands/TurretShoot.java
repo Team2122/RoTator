@@ -16,7 +16,8 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
     private AbstractTurret turret;
     private AbstractVision vision;
     private ITimeProvider timer;
-    private double startingTime;
+    private double commandStartTime = Double.POSITIVE_INFINITY;
+    private double rollingStartTime = Double.POSITIVE_INFINITY;
 
     public TurretShoot(CoreRobot robot) {
         super("PickerPick");
@@ -32,32 +33,43 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
 
     @Override
     protected void initialize() {
-        startingTime = timer.getTimestamp();
+        commandStartTime = timer.getTimestamp();
+    }
+
+    @Override
+    protected boolean step() {
+        double timestamp = timer.getTimestamp();
+        if (timestamp - rollingStartTime > config.rollingTimeout) { // if rolling has finished, end command
+            return true;
+        } else if (rollingStartTime != Double.POSITIVE_INFINITY) { // if rolling has started, continue rolling
+            return false;
+        } else if (timestamp - commandStartTime > config.commandTimeout) { // if command has timed out, cancel it
+            logger.warn("Command timed out");
+            cancel();
+        }
+        // check if roller isn't ready to start yet
         double wheelSpeed = turret.getWheelSpeed();
         if (!turret.isAtTargetWheelSpeed()) {
-            logger.warn("Turret wheel speed not at target (speed: {}, target {}), not firing.",
+            logger.trace("Turret wheel speed not at target (speed: {}, target {}), not firing.",
                     wheelSpeed, turret.getTargetWheelSpeed());
-            cancel();
         } else if (turret.getHoodPosition() == HoodPosition.DOWN) {
-            logger.warn("Hood currently in down position, not firing.");
-            cancel();
+            logger.trace("Hood currently in down position, not firing.");
         } else {
+            // start rolling
+            rollingStartTime = timestamp;
             double angle = turret.getAngle();
             double angleOffset = vision.getAngle();
             logger.info("Shooting at {} RPS, pointed at {} degrees, vision offset of {}", wheelSpeed, angle,
                     angleOffset);
             turret.setKingRollerPower(config.kingRollerPower);
         }
-    }
-
-    @Override
-    protected boolean step() {
-        return timer.getTimestamp() - startingTime > config.timeout;
+        return false;
     }
 
     @Override
     protected void finish(boolean interrupted) {
         super.finish(interrupted);
+        turret.setTargetAngle(0);
         turret.resetKingRollerPower();
         if (!interrupted) { // if we successfully shot
             takeRequirements(turret); // cancel everything else using turret (TurretPrep)
@@ -66,6 +78,7 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
 
     static class Config {
         public double kingRollerPower;
-        public double timeout;
+        public double commandTimeout;
+        public double rollingTimeout;
     }
 }
