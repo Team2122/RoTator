@@ -54,8 +54,8 @@ PickerPick:
 
 TurretShoot:
   kingRollerPower: 1.0
-  commandTimeout: 2.0
-  rollingTimeout: 1.0
+  waitTimeout: 2.0
+  shootTime: 1.0
 
 TurretStopWheel:
   class: TurretSetWheelSpeed
