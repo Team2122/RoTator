@@ -15,10 +15,13 @@ import javax.inject.Singleton;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * Collects quantitative data from various sources on the robot and logs it to a file
@@ -26,14 +29,18 @@ import java.util.stream.Collectors;
 @Singleton
 public class DataCollector extends AbstractSteppable {
     private static final Logger logger = LoggerFactory.getLogger(DataCollector.class);
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
+    @Inject
+    public ITimeProvider timeProvider;
     private Set<ProviderUsage> providers = ConcurrentHashMap.newKeySet();
     private String outputDir;
 
     @Inject
-    public ITimeProvider timeProvider;
-
-    @Inject
     public DataCollector() {
+    }
+
+    public String getOutputDir() {
+        return outputDir;
     }
 
     @Inject
@@ -46,10 +53,6 @@ public class DataCollector extends AbstractSteppable {
         }
     }
 
-    public String getOutputDir() {
-        return outputDir;
-    }
-
     /**
      * Register a new data provider to be used periodically
      *
@@ -57,18 +60,22 @@ public class DataCollector extends AbstractSteppable {
      */
     public void startProvider(LogDataProvider provider) {
         Preconditions.checkNotNull(provider);
+        if (!isEnabled()) enable();
         FileWriter writer;
         CSVPrinter printer;
+        String timestamp = DATE_FORMAT.format(new Date());
+        String fileName = String.format("%s/%s %s.csv", outputDir, timestamp, provider.getName());
         try {
-            writer = new FileWriter(outputDir + "/" + provider.getName() + ".csv");
+            writer = new FileWriter(fileName);
             printer = new CSVPrinter(writer, CSVFormat.EXCEL);
         } catch (IOException e) {
             logger.error("Failed to create outputs for new data provider " + provider.getName(), e);
             return;
         }
-        providers.add(new ProviderUsage(provider, writer, printer));
+        logger.debug("Starting data logging for {} to {}", provider.getName(), fileName);
         Iterable<Object> keys = Iterables.concat(Collections.singletonList("timestamp"), provider.getKeys());
         addRow(printer, keys);
+        providers.add(new ProviderUsage(provider, writer, printer));
     }
 
     /**
@@ -78,8 +85,20 @@ public class DataCollector extends AbstractSteppable {
      */
     public void stopProvider(LogDataProvider provider) {
         Preconditions.checkNotNull(provider);
-        providers = providers.stream().filter(current ->
-                !current.provider.getName().equals(provider.getName())).collect(Collectors.toSet());
+        Optional<ProviderUsage> providerUsage = providers.stream()
+                .filter(current -> current.provider.getName().equals(provider.getName()))
+                .findFirst();
+        if (providerUsage.isPresent()) {
+            ProviderUsage usage = providerUsage.get();
+            providers.remove(usage);
+            logger.debug("Stopping datalogging and flushing file for provider {}", provider.getName());
+            try {
+                usage.csvPrinter.flush();
+                usage.csvPrinter.close();
+            } catch (IOException e) {
+                logger.error("Error flushing csv file", e);
+            }
+        }
     }
 
     private void addRow(CSVPrinter printer, Iterable<Object> row) {

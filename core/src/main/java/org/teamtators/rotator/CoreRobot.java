@@ -7,6 +7,7 @@ import org.teamtators.rotator.config.TriggerBinder;
 import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.Stepper;
+import org.teamtators.rotator.datalogging.DataCollector;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.scheduler.Subsystem;
@@ -47,4 +48,6 @@ public interface CoreRobot {
 
     @ForController
     Stepper stepper();
+
+    DataCollector dataCollector();
 }

@@ -11,6 +11,7 @@ import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
 import org.teamtators.rotator.config.TriggerBinder;
 import org.teamtators.rotator.control.Stepper;
+import org.teamtators.rotator.datalogging.DataCollector;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.scheduler.Scheduler;
@@ -60,6 +61,7 @@ public class Robot extends IterativeRobot {
         ObjectMapper objectMapper = robot.objectMapper();
         ManualTester manualTester = robot.manualTester();
         TriggerBinder triggerBinder = robot.triggerBinder();
+        DataCollector dataCollector = robot.dataCollector();
         Stepper stepper = robot.stepper();
 
         commandStore.setRobot(robot);
