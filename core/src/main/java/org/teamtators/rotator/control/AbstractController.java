@@ -132,7 +132,8 @@ public abstract class AbstractController extends AbstractSteppable implements Da
     }
 
     public void clearInputSamples() {
-        this.inputSampleQueue.clear();
+        if (inputSampleQueue != null)
+            this.inputSampleQueue.clear();
     }
 
     public ControllerOutputConsumer getOutputConsumer() {
