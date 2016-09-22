@@ -33,17 +33,24 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
 
     @Override
     protected void initialize() {
+        if (turret.getHoodPosition() == HoodPosition.DOWN) {
+            logger.warn("Hood currently in down position, not firing.");
+            cancel();
+            return;
+        }
+        logger.info("Waiting for shooter to be ready to shoot");
         commandStartTime = timer.getTimestamp();
+        rollingStartTime = Double.NaN;
     }
 
     @Override
     protected boolean step() {
         double timestamp = timer.getTimestamp();
-        if (timestamp - rollingStartTime > config.shootTime) { // if rolling has finished, end command
+        if (timestamp >= rollingStartTime + config.shootTime) { // if rolling has finished, end command
             return true;
-        } else if (rollingStartTime != Double.NaN) { // if rolling has staIrted, continue rolling
+        } else if (!Double.isNaN(rollingStartTime)) { // if rolling has started, continue rolling
             return false;
-        } else if (timestamp - commandStartTime > config.waitTimeout) { // if command has timed out, cancel it
+        } else if (timestamp >= commandStartTime + config.waitTimeout) { // if command has timed out, cancel it
             logger.warn("Command timed out");
             cancel();
             return false;
@@ -53,8 +60,6 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
         if (!turret.isAtTargetWheelSpeed()) {
             logger.trace("Turret wheel speed not at target (speed: {}, target {}), not firing.",
                     wheelSpeed, turret.getTargetWheelSpeed());
-        } else if (turret.getHoodPosition() == HoodPosition.DOWN) {
-            logger.trace("Hood currently in down position, not firing.");
         } else if (!turret.isAngleOnTarget()) {
             logger.trace("Turret angle is not on target, not firing");
         } else {
@@ -75,8 +80,8 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
         turret.resetKingRollerPower();
         if (!interrupted) { // if we successfully shot
             takeRequirements(turret); // cancel everything else using turret (TurretPrep)
+            turret.setTargetAngle(0);
         }
-        turret.setTargetAngle(0);
     }
 
     static class Config {
