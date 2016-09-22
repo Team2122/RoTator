@@ -9,6 +9,7 @@ public class InputDifferentiator extends AbstractSteppable implements Controller
 
     @Inject
     public InputDifferentiator() {
+        setExecutionOrder(50);
         reset();
     }
 
@@ -18,14 +19,14 @@ public class InputDifferentiator extends AbstractSteppable implements Controller
     }
 
     public void reset() {
-        lastInput = 0.0;
+        lastInput = Double.NaN;
         lastRate = 0.0;
     }
 
     @Override
     public void step(double delta) {
         double input = inputProvider.getControllerInput();
-        lastRate = (input - lastInput) / delta;
+        lastRate = Double.isNaN(lastInput) ? 0.0 : (input - lastInput) / delta;
         lastInput = input;
     }
 

@@ -27,10 +27,10 @@ Turret:
     reverse: true
     distancePerPulse: 0.0009765625
     encodingType: k1X
-    samplesToAverage: 100
+#    samplesToAverage: 100
   shooterWheelController:
     type: PID
-    inputSamplesToAverage: 16
+#    inputSamplesToAverage: 16
     P: 0.025
     I: 0.025
     maxI: 10.0
