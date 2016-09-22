@@ -15,6 +15,11 @@ public class NoopTurret extends AbstractTurret {
     }
 
     @Override
+    public double getWheelRotations() {
+        return 0;
+    }
+
+    @Override
     public HoodPosition getHoodPosition() {
         return null;
     }

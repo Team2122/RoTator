@@ -17,6 +17,9 @@ public abstract class AbstractTurret extends Subsystem {
     @Inject
     ControllerFactory controllerFactory;
 
+    @Inject
+    InputDifferentiator shooterWheelInputDifferentiator;
+
     private AbstractController shooterWheelController = null;
     private AbstractController angleController = null;
     private boolean homed = false;
@@ -42,6 +45,8 @@ public abstract class AbstractTurret extends Subsystem {
     }
 
     public abstract double getWheelSpeed();
+
+    public abstract double getWheelRotations();
 
     /**
      * @return The wheel speed setpoint
@@ -70,9 +75,24 @@ public abstract class AbstractTurret extends Subsystem {
         return shooterWheelController;
     }
 
+    protected void enableShooterWheelController() {
+        shooterWheelInputDifferentiator.enable();
+        shooterWheelController.enable();
+    }
+
+    protected void disableShooterWheelController() {
+        shooterWheelInputDifferentiator.disable();
+        shooterWheelController.disable();
+    }
+
+    protected InputDifferentiator getShooterWheelInputDifferentiator() {
+        return shooterWheelInputDifferentiator;
+    }
+
     protected void setShooterWheelController(AbstractController shooterWheelController) {
         shooterWheelController.setName("shooterWheelController");
-        shooterWheelController.setInputProvider(this::getWheelSpeed);
+        shooterWheelInputDifferentiator.setInputProvider(this::getWheelRotations);
+        shooterWheelController.setInputProvider(shooterWheelInputDifferentiator);
         shooterWheelController.setOutputConsumer(this::setWheelPower);
         this.shooterWheelController = shooterWheelController;
     }

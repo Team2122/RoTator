@@ -75,11 +75,16 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     }
 
     @Override
+    public double getWheelRotations() {
+        return shooterWheelEncoder.getDistance();
+    }
+
+    @Override
     public void onEnterState(RobotState newState) {
         switch (newState) {
             case AUTONOMOUS:
             case TELEOP:
-                getShooterWheelController().enable();
+                enableShooterWheelController();
                 if (isHomed()) {
                     enableAngleController();
                 } else {
@@ -87,7 +92,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
                 }
                 break;
             default:
-                getShooterWheelController().disable();
+                disableShooterWheelController();
                 disableAngleController();
                 break;
         }
