@@ -1,6 +1,5 @@
 package org.teamtators.rotator.subsystems;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.control.Steppable;
 
@@ -52,6 +51,11 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
     @Override
     public double getWheelSpeed() {
         return shooterWheelEncoder.getRate();
+    }
+
+    @Override
+    public double getWheelRotations() {
+        return shooterWheelEncoder.getDistance();
     }
 
     @Override

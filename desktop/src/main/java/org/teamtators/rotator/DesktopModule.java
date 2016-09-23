@@ -8,7 +8,6 @@ import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.operatorInterface.SimulationOperatorInterface;
 import org.teamtators.rotator.subsystems.*;
-
 import org.teamtators.rotator.subsystems.noop.NoopVision;
 import org.teamtators.rotator.ui.WASDJoystick;
 
@@ -53,6 +52,12 @@ public class DesktopModule {
     @Named("configDir")
     static String providesConfigDir() {
         return "./config";
+    }
+
+    @Provides
+    @Named("dataLogDir")
+    static String providesDataLogDir() {
+        return "./datalogs";
     }
 
     @Provides
