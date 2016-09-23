@@ -1,15 +1,11 @@
 package org.teamtators.rotator.subsystems.noop;
 
 import org.teamtators.rotator.subsystems.AbstractVision;
+import org.teamtators.rotator.subsystems.VisionData;
 
 public class NoopVision extends AbstractVision {
     @Override
-    public double getDistance() {
-        return 0;
-    }
-
-    @Override
-    public double getAngle() {
-        return 0;
+    public VisionData getVisionData() {
+        return new VisionData(0, 0, 0);
     }
 }

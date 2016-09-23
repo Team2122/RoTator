@@ -66,7 +66,7 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
             // start rolling
             rollingStartTime = timestamp;
             double angle = turret.getAngle();
-            double angleOffset = vision.getAngle();
+            double angleOffset = vision.getVisionData().getAngle();
             logger.info("Shooting at {} RPS, pointed at {} degrees, vision offset of {}", wheelSpeed, angle,
                     angleOffset);
             turret.setKingRollerPower(config.kingRollerPower);

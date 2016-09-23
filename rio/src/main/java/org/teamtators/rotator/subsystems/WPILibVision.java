@@ -34,13 +34,16 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
     }
 
     @Override
-    public double getDistance() {
-        return table.getNumber("distance", Double.NaN);
-    }
-
-    @Override
-    public double getAngle() {
-        return table.getNumber("angle", Double.NaN);
+    public VisionData getVisionData() {
+        double frameNum = table.getNumber("frameNumber", Double.NaN);
+        int frameNumber;
+        if (Double.isNaN(frameNum))
+            frameNumber = 0;
+        else
+            frameNumber = (int) frameNum;
+        double distance = table.getNumber("distance", Double.NaN);
+        double angle = table.getNumber("angle", Double.NaN);
+        return new VisionData(frameNumber, distance, angle);
     }
 
     @Override
@@ -76,9 +79,12 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
                     setLedState(false);
                     break;
                 case X:
-                    double angle = getAngle();
-                    double distance = getDistance();
-                    logger.info("Angle = {} degrees, Distance = {} inches", angle, distance);
+                    VisionData visionData = getVisionData();
+                    int frameNumber = visionData.getFrameNumber();
+                    double angle = visionData.getAngle();
+                    double distance = visionData.getDistance();
+                    logger.info("Frame Number = {}, Angle = {} degrees, Distance = {} inches", frameNumber,
+                            angle, distance);
                     break;
             }
         }

@@ -29,17 +29,9 @@ public abstract class AbstractVision extends Subsystem {
     }
 
     /**
-     * Gets the most recently updated distance from the target from the Raspberry pi
+     * Gets the current vision data from the vision system.
      *
-     * @return distance from the target
+     * @return The current vision data.
      */
-    public abstract double getDistance();
-
-    /**
-     * Gets the most recently updated relative turret angle from the target from the Raspberry pi
-     * This is an offset from the current turret angle, not the absolute angle
-     *
-     * @return target relative turret angle
-     */
-    public abstract double getAngle();
+    public abstract VisionData getVisionData();
 }

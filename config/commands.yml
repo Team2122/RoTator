@@ -69,7 +69,7 @@ TurretShootPrep:
   class: TurretPrep
   target: true
   wheelSpeed: 85
-  targetDelay: 1.0
+  dataLogging: true
 
 TurretBarfPrep:
   class: TurretPrep

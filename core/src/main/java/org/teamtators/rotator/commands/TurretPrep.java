@@ -4,7 +4,12 @@ import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.control.ITimeProvider;
+import org.teamtators.rotator.datalogging.DataCollector;
+import org.teamtators.rotator.datalogging.LogDataProvider;
 import org.teamtators.rotator.subsystems.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class TurretPrep extends CommandBase implements Configurable<TurretPrep.Config> {
     private Config config;
@@ -12,7 +17,13 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
     private AbstractVision vision;
     private AbstractPicker picker;
     private ITimeProvider timer;
-    private double targetStart;
+    private int lastFrameNumber;
+    private double deltaAngle;
+    private double newAngle;
+    private double currentAngle;
+
+    private DataCollector dataCollector;
+    private LogDataProvider logDataProvider = null;
 
     public TurretPrep(CoreRobot robot) {
         super("TurretPrep");
@@ -20,6 +31,7 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
         this.vision = robot.vision();
         this.picker = robot.picker();
         this.timer = robot.timeProvider();
+        this.dataCollector = robot.dataCollector();
         requires(turret);
         requires(vision);
     }
@@ -41,24 +53,32 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
         turret.setTargetWheelSpeed(config.wheelSpeed);
         if (config.target)
             vision.setLedState(true);
-        targetStart = Double.NEGATIVE_INFINITY;
+        lastFrameNumber = Integer.MIN_VALUE;
+        if (config.dataLogging)
+            dataCollector.startProvider(getLogDataProvider());
     }
 
     @Override
     protected boolean step() {
         if (config.target) {
-            double deltaAngle = vision.getAngle();
-            double now = timer.getTimestamp();
-            if (turret.isAngleOnTarget() && Double.isNaN(targetStart)) {
-                targetStart = now;
-                logger.debug("Waiting for vision to stabilize for {} s", config.target);
-            }
-            if (!Double.isNaN(deltaAngle) && now >= targetStart + config.targetDelay) {
-                double currentAngle = turret.getAngle();
-                double newAngle = currentAngle + deltaAngle;
+            VisionData visionData = vision.getVisionData();
+            int frameNumber = visionData.getFrameNumber();
+            deltaAngle = visionData.getAngle();
+            currentAngle = turret.getAngle();
+            if (frameNumber != lastFrameNumber && !Double.isNaN(deltaAngle)) {
+                logger.trace("Received new vision frame {}", frameNumber);
+                lastFrameNumber = frameNumber;
+//                double now = timer.getTimestamp();
+//                if (turret.isAngleOnTarget() && Double.isNaN(targetStart)) {
+//                    targetStart = now;
+//                    logger.debug("Waiting for vision to stabilize for {} s", config.target);
+//                }
+//                if (!Double.isNaN(deltaAngle) && now >= targetStart + config.targetDelay) {
+                newAngle = currentAngle + deltaAngle;
                 turret.setTargetAngle(newAngle);
                 logger.info("Moving turret {} degrees. Final angle will be {}", deltaAngle, newAngle);
-                targetStart = Double.NaN;
+//                    targetStart = Double.NaN;
+//                }
             }
         }
         return false;
@@ -70,11 +90,34 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
         turret.resetWheelSpeed();
         turret.setHoodPosition(HoodPosition.DOWN);
         vision.setLedState(false);
+        dataCollector.stopProvider(getLogDataProvider());
+    }
+
+    public LogDataProvider getLogDataProvider() {
+        if (logDataProvider == null) {
+            logDataProvider = new LogDataProvider() {
+                @Override
+                public String getName() {
+                    return TurretPrep.this.getName();
+                }
+
+                @Override
+                public List<Object> getKeys() {
+                    return Arrays.asList("lastFrameNumber", "deltaAngle", "newAngle", "currentAngle");
+                }
+
+                @Override
+                public List<Object> getValues() {
+                    return Arrays.asList(lastFrameNumber, deltaAngle, newAngle, currentAngle);
+                }
+            };
+        }
+        return logDataProvider;
     }
 
     public static class Config {
         public boolean target = false;
         public double wheelSpeed;
-        public double targetDelay;
+        public boolean dataLogging = false;
     }
 }
