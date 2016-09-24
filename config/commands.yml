@@ -94,3 +94,10 @@ DriveStraightTest:
   power: 0.2
   distance: 10.0
   angleController: { type: PID, P: 0.0375 }
+
+AutoInit:
+  class: CommandChooser
+  commands:
+    - PickerToCheval
+    - PickerToHome
+    - PickerToPick

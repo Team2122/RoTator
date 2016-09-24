@@ -28,7 +28,7 @@ public class Main implements StateListener {
     private Stepper stepper;
     private Stepper uiStepper;
     private DesktopRobot robot;
-    private IChooser<Command> autoModeChooser;
+    private Command autoCommand;
     private Scheduler scheduler;
 
     public static void main(String[] args) {
@@ -46,7 +46,6 @@ public class Main implements StateListener {
         robot = DaggerDesktopRobot.create();
         stepper = robot.stepper();
         uiStepper = robot.uiStepper();
-        autoModeChooser = robot.autoChooser();
         ConfigLoader configLoader = robot.configLoader();
         scheduler = robot.scheduler();
         ManualTester manualTester = robot.manualTester();
@@ -92,6 +91,7 @@ public class Main implements StateListener {
         logger.info("Opening window");
         simulationFrame.setVisible(true);
 
+        autoCommand = commandStore.getCommand("AutoInit");
         scheduler.registerStateListener(this);
 
         scheduler.enterState(RobotState.DISABLED);
@@ -101,9 +101,6 @@ public class Main implements StateListener {
         logger.debug("Starting steppers");
         stepper.start();
         uiStepper.start();
-
-        autoModeChooser.registerOption("PickerToCheval", commandStore.getCommand("PickerToCheval"));
-        autoModeChooser.registerOption("PickerToHome", commandStore.getCommand("PickerToHome"));
     }
 
     private void stop() {
@@ -115,7 +112,7 @@ public class Main implements StateListener {
     @Override
     public void onEnterState(RobotState newState) {
         if(newState == RobotState.AUTONOMOUS) {
-            scheduler.startCommand(autoModeChooser.getSelected());
+            scheduler.startCommand(autoCommand);
         }
     }
 }
