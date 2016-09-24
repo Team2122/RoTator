@@ -1,12 +1,15 @@
 package org.teamtators.rotator.commands;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.subsystems.AbstractDrive;
 
-public class DriveZach extends CommandBase implements Configurable<DriveZach.Config> {
+/**
+ * Drive in an arc
+ * Ported from Kartoshka's DriveZach
+ */
+public class DriveArc extends CommandBase implements Configurable<DriveArc.Config> {
 
     private double angle = .02;
     private double rate = .02;
@@ -15,16 +18,13 @@ public class DriveZach extends CommandBase implements Configurable<DriveZach.Con
     private Config config;
     private AbstractDrive drive;
 
-    private double rampDistance;
-    private double rampPower;
-
     private double desiredRate = 0;
     private double startDistance = 0;
     private double currentDistance = 0;
     private double gyroAngle = 0;
 
-    public DriveZach(CoreRobot robot) {
-        super("DriveZach");
+    public DriveArc(CoreRobot robot) {
+        super("DriveArc");
         drive = robot.drive();
     }
 
@@ -33,9 +33,9 @@ public class DriveZach extends CommandBase implements Configurable<DriveZach.Con
         currentDistance = Math.abs(startDistance - drive.getAverageDistance());
         double distanceLeft = config.distance - currentDistance;
         double rampedSpeed = config.speed;
-        if (rampDistance != 0 && distanceLeft <= rampDistance) {
-            double percentage = distanceLeft / rampDistance;
-            rampedSpeed *= Math.pow(percentage, rampPower);
+        if (config.rampDistance != 0 && distanceLeft <= config.rampDistance) {
+            double percentage = distanceLeft / config.rampDistance;
+            rampedSpeed *= Math.pow(percentage, config.rampPower);
         }
 
         double desiredAngle = desiredRate * currentDistance + config.startAngle;
@@ -47,10 +47,10 @@ public class DriveZach extends CommandBase implements Configurable<DriveZach.Con
         drive.setSpeeds(rampedSpeed + offset, rampedSpeed - offset);
 
         double angleError = Math.abs(config.endAngle - gyroAngle);
-        if(angleError <= angleTolerance) {
+        if (angleError <= angleTolerance) {
             return true;
         }
-        if(currentDistance >= config.distance) {
+        if (currentDistance >= config.distance) {
             return true;
         }
         return false;
@@ -59,13 +59,6 @@ public class DriveZach extends CommandBase implements Configurable<DriveZach.Con
     @Override
     public void configure(Config config) {
         this.config = config;
-        if (config.ramp != null) {
-            rampDistance = config.ramp.get("rampDistance").asDouble();
-            rampPower = config.ramp.get("rampPower").asDouble();
-        } else {
-            rampDistance = 0;
-            rampPower = 0;
-        }
     }
 
     static class Config {
@@ -73,7 +66,8 @@ public class DriveZach extends CommandBase implements Configurable<DriveZach.Con
         public double distance;
         public double startAngle;
         public double endAngle;
-        public JsonNode ramp;
+        public double rampDistance = 0;
+        public double rampPower = 0;
     }
 
     @Override
