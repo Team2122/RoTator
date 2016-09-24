@@ -96,6 +96,9 @@ public class Robot extends IterativeRobot {
         logger.debug("Starting stepper");
         stepper.start();
 
+        logger.debug("Enabling scheduler");
+        scheduler.enable();
+
         logger.info("Robot initialized");
     }
 
@@ -119,23 +122,4 @@ public class Robot extends IterativeRobot {
         scheduler.enterState(RobotState.TEST);
     }
 
-    @Override
-    public void disabledPeriodic() {
-        scheduler.execute();
-    }
-
-    @Override
-    public void autonomousPeriodic() {
-        scheduler.execute();
-    }
-
-    @Override
-    public void teleopPeriodic() {
-        scheduler.execute();
-    }
-
-    @Override
-    public void testPeriodic() {
-        scheduler.execute();
-    }
 }

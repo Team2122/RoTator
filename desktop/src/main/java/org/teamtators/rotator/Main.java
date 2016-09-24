@@ -1,18 +1,14 @@
 package org.teamtators.rotator;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
-import org.teamtators.rotator.config.TriggerBinder;
-import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.control.Stepper;
-import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.scheduler.StateListener;
@@ -20,9 +16,6 @@ import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.ManualTester;
 import org.teamtators.rotator.ui.SimulationFrame;
-
-import javax.inject.Inject;
-import java.util.List;
 
 public class Main {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -83,7 +76,6 @@ public class Main {
 
         uiStepper.setPeriod(1.0 / 50.0);
         uiStepper.add(delta -> {
-            scheduler.execute();
             simulationFrame.repaint();
         });
 
@@ -97,6 +89,9 @@ public class Main {
         logger.debug("Starting steppers");
         stepper.start();
         uiStepper.start();
+
+        logger.debug("Start stepping scheduler");
+        stepper.add(scheduler);
     }
 
     private void stop() {

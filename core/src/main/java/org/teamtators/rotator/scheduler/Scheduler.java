@@ -3,6 +3,7 @@ package org.teamtators.rotator.scheduler;
 import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.teamtators.rotator.control.AbstractSteppable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -12,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Singleton
-public final class Scheduler implements CommandRunContext {
+public final class Scheduler extends AbstractSteppable implements CommandRunContext {
     private static Logger logger = LoggerFactory.getLogger(Scheduler.class);
 
     private Map<TriggerSource, List<TriggerScheduler>> triggerSchedulers = new HashMap<>();
@@ -62,7 +63,8 @@ public final class Scheduler implements CommandRunContext {
         return new TriggerAdder(this, triggerSource);
     }
 
-    public void execute() {
+    @Override
+    public void step(double delta) {
 //        logger.trace("Scheduler in state {}, {} triggers, {} commands", robotState, triggerSchedulers.size(),
 //                runningCommands.size());
         for (Map.Entry<TriggerSource, List<TriggerScheduler>> entry : triggerSchedulers.entrySet()) {
