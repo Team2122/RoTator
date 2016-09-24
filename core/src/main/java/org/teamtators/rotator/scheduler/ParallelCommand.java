@@ -15,7 +15,7 @@ public class ParallelCommand extends Command implements CommandRunContext, Confi
 
     public ParallelCommand(Command... commands) {
         this();
-        for(int i = 0; i < commands.length; i++) {
+        for (int i = 0; i < commands.length; i++) {
             running.add(new CommandRun(commands[i]));
         }
     }
@@ -26,13 +26,13 @@ public class ParallelCommand extends Command implements CommandRunContext, Confi
 
     }
 
-    public ParallelCommand(){
+    public ParallelCommand() {
         super("ParallelCommand");
     }
 
     @Override
     protected void initialize() {
-        for(CommandRun run : running) {
+        for (CommandRun run : running) {
             startRun(this);
             run.initialized = true;
         }
@@ -41,9 +41,9 @@ public class ParallelCommand extends Command implements CommandRunContext, Confi
     @Override
     protected boolean step() {
         Iterator<CommandRun> it = running.iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             CommandRun run = it.next();
-            if(run.cancel || run.command.step()) {
+            if (run.cancel || run.command.step()) {
                 run.command.finishRun(run.cancel);
                 it.remove();
             }
@@ -58,8 +58,8 @@ public class ParallelCommand extends Command implements CommandRunContext, Confi
 
     @Override
     public void cancelCommand(Command command) {
-        for(CommandRun run : running) {
-            if(run.command == command) {
+        for (CommandRun run : running) {
+            if (run.command == command) {
                 run.cancel = true;
             }
         }
@@ -72,7 +72,7 @@ public class ParallelCommand extends Command implements CommandRunContext, Confi
 
     @Override
     public void configure(Config config) {
-        for(JsonNode node : config.commands) {
+        for (JsonNode node : config.commands) {
             running.add(new CommandRun(commandStore.getCommandForSubcontext(getName(), node)));
         }
     }

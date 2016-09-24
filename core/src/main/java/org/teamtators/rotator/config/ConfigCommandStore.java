@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.google.common.base.Preconditions;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.scheduler.Command;
 
@@ -155,10 +154,9 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
     }
 
     public Command getCommandForSubcontext(String parentName, JsonNode node) {
-        if(node.isTextual()) {
+        if (node.isTextual()) {
             return getCommand(node.asText());
-        }
-        else {
+        } else {
             String className = node.get("class").asText();
             String commandName = findNextCommandName(parentName, className);
             Command command = constructCommandClass(commandName, className);
