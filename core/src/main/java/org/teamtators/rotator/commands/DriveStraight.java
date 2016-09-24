@@ -60,6 +60,7 @@ public class DriveStraight extends CommandBase implements Configurable<DriveStra
             logger.info(logString);
         }
         controller.disable();
+        drive.resetSpeeds();
     }
 
     static class Config {
