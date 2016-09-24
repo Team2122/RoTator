@@ -14,8 +14,8 @@ public class ADXRS453Test extends ComponentTest {
 
     @Override
     public void start() {
-        logger.info("Press A to get the rate, the angle, and the calibration offset of the gyro");
-        logger.info("B to start calibration, and Y to end calibration, X to get detailed information");
+        logger.info(">>>>Press A to get the rate, the angle, and the calibration offset of the gyro");
+        logger.info(">>>>B to start calibration, and Y to end calibration, X to get detailed information");
     }
 
     @Override
@@ -25,20 +25,20 @@ public class ADXRS453Test extends ComponentTest {
                 double angle = gyro.getAngle();
                 double rate = gyro.getRate();
                 double calibrationOffset = gyro.getCalibrationOffset();
-                logger.info("Gyro Angle: {}, Rate: {} (Offset: {})", angle, rate, calibrationOffset);
+                logger.info(">>>>Gyro Angle: {}, Rate: {} (Offset: {})", angle, rate, calibrationOffset);
                 break;
             case B:
-                logger.info("Starting gyro calibration");
+                logger.info(">>>>Starting gyro calibration");
                 gyro.startCalibration();
                 break;
             case Y:
-                logger.info("Finishing gyro calibration");
+                logger.info(">>>>Finishing gyro calibration");
                 gyro.finishCalibration();
                 break;
             case X:
                 int serial = gyro.getSerialNumber();
                 double temperature = gyro.getTemperature();
-                logger.info("Serial: 0x{}, temperature: {} C", Integer.toHexString(serial), temperature);
+                logger.info(">>>>Serial: 0x{}, temperature: {} C", Integer.toHexString(serial), temperature);
                 break;
         }
     }

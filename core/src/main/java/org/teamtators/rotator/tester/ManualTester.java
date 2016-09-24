@@ -166,7 +166,7 @@ public class ManualTester extends CommandBase {
         if (test == null) {
             logger.info("== Test group '{}' is empty! ==", getCurrentTestGroup().getName());
         } else {
-            logger.info("== Testing '{}' ==", test.getName());
+            logger.info("    == Testing '{}' ==", test.getName());
             test.start();
         }
     }

@@ -14,13 +14,13 @@ public class DistanceLaserTest extends ComponentTest {
 
     @Override
     public void start() {
-        logger.info("Press 'A' to get the Distance and Voltage of the DistanceLaser");
+        logger.info(">>>>Press 'A' to get the Distance and Voltage of the DistanceLaser");
     }
 
     @Override
     public void onButtonDown(LogitechF310.Button button) {
         if (button == LogitechF310.Button.A) {
-            logger.info("Distance Laser ballDistance: {}; voltage: {}", distanceLaser.getDistance(), distanceLaser.getVoltage());
+            logger.info(">>>>Distance Laser ballDistance: {}; voltage: {}", distanceLaser.getDistance(), distanceLaser.getVoltage());
         }
     }
 }
