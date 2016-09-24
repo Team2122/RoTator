@@ -1,6 +1,7 @@
 package org.teamtators.rotator.scheduler;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.Configurable;
 
@@ -19,9 +20,9 @@ public class ParallelCommand extends Command implements CommandRunContext, Confi
         }
     }
 
-    public ParallelCommand(ConfigCommandStore commandStore) {
+    public ParallelCommand(CoreRobot robot) {
         this();
-        this.commandStore = commandStore;
+        this.commandStore = robot.commandStore();
 
     }
 
