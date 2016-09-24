@@ -1,6 +1,7 @@
 package org.teamtators.rotator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.teamtators.rotator.commands.IChooser;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.ControllerFactory;
@@ -10,6 +11,7 @@ import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.datalogging.DataCollector;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
+import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.subsystems.AbstractDrive;
@@ -51,6 +53,8 @@ public interface CoreRobot {
 
     @ForController
     Stepper stepper();
+
+    IChooser<Command> autoChooser();
 
     DataCollector dataCollector();
 }

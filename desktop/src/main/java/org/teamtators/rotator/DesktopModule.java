@@ -2,13 +2,18 @@ package org.teamtators.rotator;
 
 import dagger.Module;
 import dagger.Provides;
+import org.teamtators.rotator.commands.IChooser;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.SystemNanoTimeTimeProvider;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.operatorInterface.SimulationOperatorInterface;
+import org.teamtators.rotator.scheduler.Command;
+import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.subsystems.*;
 import org.teamtators.rotator.subsystems.noop.NoopVision;
+import org.teamtators.rotator.ui.SimulationChooser;
+import org.teamtators.rotator.ui.SimulationControl;
 import org.teamtators.rotator.ui.WASDJoystick;
 
 import javax.inject.Named;
@@ -64,5 +69,16 @@ public class DesktopModule {
     @Singleton
     static AbstractOperatorInterface providesOperatorInterface(LogitechF310 driverJoystick, LogitechF310 gunnerJoystick) {
         return new SimulationOperatorInterface(driverJoystick, gunnerJoystick);
+    }
+
+    @Provides
+    @Singleton
+    static SimulationControl providesSimulationControl(Scheduler scheduler) {
+        return new SimulationControl(scheduler);
+    }
+
+    @Provides
+    static IChooser<Command> providesCommandChooser(SimulationControl control) {
+        return new SimulationChooser<>(control);
     }
 }

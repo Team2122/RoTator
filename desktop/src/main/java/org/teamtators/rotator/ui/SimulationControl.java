@@ -1,5 +1,6 @@
 package org.teamtators.rotator.ui;
 
+import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.scheduler.Scheduler;
 

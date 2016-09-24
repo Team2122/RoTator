@@ -2,10 +2,13 @@ package org.teamtators.rotator;
 
 import dagger.Module;
 import dagger.Provides;
+import org.teamtators.rotator.commands.IChooser;
+import org.teamtators.rotator.commands.WPILibChooser;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.WPILibTimeProvider;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.WPILibOperatorInterface;
+import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.subsystems.*;
 
 import javax.inject.Named;
@@ -53,5 +56,10 @@ public class RioModule {
     @Named("dataLogDir")
     static String providesDataLogDir() {
         return "/media/sda1/datalogs";
+    }
+
+    @Provides
+    static IChooser<Command> providesCommandChooser() {
+        return new WPILibChooser<>("Auto");
     }
 }

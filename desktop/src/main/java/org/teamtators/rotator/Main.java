@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.teamtators.rotator.commands.IChooser;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
@@ -13,22 +14,22 @@ import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
-import org.teamtators.rotator.scheduler.RobotState;
-import org.teamtators.rotator.scheduler.Scheduler;
-import org.teamtators.rotator.scheduler.StateListener;
-import org.teamtators.rotator.scheduler.Subsystem;
+import org.teamtators.rotator.scheduler.*;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.ManualTester;
+import org.teamtators.rotator.ui.SimulationChooser;
 import org.teamtators.rotator.ui.SimulationFrame;
 
 import javax.inject.Inject;
 import java.util.List;
 
-public class Main {
+public class Main implements StateListener {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
     private Stepper stepper;
     private Stepper uiStepper;
     private DesktopRobot robot;
+    private IChooser<Command> autoModeChooser;
+    private Scheduler scheduler;
 
     public static void main(String[] args) {
         try {
@@ -45,8 +46,9 @@ public class Main {
         robot = DaggerDesktopRobot.create();
         stepper = robot.stepper();
         uiStepper = robot.uiStepper();
+        autoModeChooser = robot.autoChooser();
         ConfigLoader configLoader = robot.configLoader();
-        Scheduler scheduler = robot.scheduler();
+        scheduler = robot.scheduler();
         ManualTester manualTester = robot.manualTester();
         ConfigCommandStore commandStore = robot.commandStore();
         SimulationFrame simulationFrame = robot.simulationFrame();
@@ -90,6 +92,8 @@ public class Main {
         logger.info("Opening window");
         simulationFrame.setVisible(true);
 
+        scheduler.registerStateListener(this);
+
         scheduler.enterState(RobotState.DISABLED);
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
@@ -97,11 +101,21 @@ public class Main {
         logger.debug("Starting steppers");
         stepper.start();
         uiStepper.start();
+
+        autoModeChooser.registerOption("PickerToCheval", commandStore.getCommand("PickerToCheval"));
+        autoModeChooser.registerOption("PickerToHome", commandStore.getCommand("PickerToHome"));
     }
 
     private void stop() {
         logger.info("Stopping steppers");
         stepper.stop();
         uiStepper.stop();
+    }
+
+    @Override
+    public void onEnterState(RobotState newState) {
+        if(newState == RobotState.AUTONOMOUS) {
+            scheduler.startCommand(autoModeChooser.getSelected());
+        }
     }
 }
