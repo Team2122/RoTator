@@ -20,16 +20,6 @@ public class ConfigSequentialCommand extends SequentialCommand implements Config
         this.commandStore = commandStore;
     }
 
-    private String findNextCommandName(String className) {
-        int postfix = 1;
-        String name;
-        do {
-            name = String.format("%s<%s>%d", className, getName(), postfix);
-            postfix++;
-        } while (commandStore.getCommands().containsKey(name));
-        return name;
-    }
-
     @Override
     public void configure(JsonNode config) {
         if (config.size() != 0 && !config.isArray())
@@ -38,20 +28,7 @@ public class ConfigSequentialCommand extends SequentialCommand implements Config
         ArrayList<Command> sequence = new ArrayList<>();
         while (it.hasNext()) {
             JsonNode node = it.next();
-            Command command;
-            if (node.isObject() && node.has("class")) {
-                ObjectNode commandConfig = (ObjectNode) node;
-                String className = commandConfig.get("class").asText();
-                String commandName = findNextCommandName(className);
-                command = commandStore.constructCommandClass(commandName, className);
-                commandStore.configureCommand(command, commandConfig);
-            } else if (node.isTextual()) {
-                String commandName = node.asText();
-                command = commandStore.getCommand(commandName);
-            } else {
-                throw new ConfigException("Each node in a SequentialCommand config must be an object or a string," +
-                        " not: " + node);
-            }
+            Command command = commandStore.getCommandForSubcontext(getName(), node);
             sequence.add(command);
         }
         setSequence(sequence);

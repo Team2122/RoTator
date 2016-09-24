@@ -1,17 +1,32 @@
 package org.teamtators.rotator.scheduler;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.teamtators.rotator.config.ConfigCommandStore;
+import org.teamtators.rotator.config.Configurable;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ParallelCommand extends Command implements CommandRunContext {
+public class ParallelCommand extends Command implements CommandRunContext, Configurable<ParallelCommand.Config> {
     private List<CommandRun> running = new ArrayList<>();
+    private ConfigCommandStore commandStore;
 
     public ParallelCommand(Command... commands) {
-        super("ParallelCommand");
+        this();
         for(int i = 0; i < commands.length; i++) {
             running.add(new CommandRun(commands[i]));
         }
+    }
+
+    public ParallelCommand(ConfigCommandStore commandStore) {
+        this();
+        this.commandStore = commandStore;
+
+    }
+
+    public ParallelCommand(){
+        super("ParallelCommand");
     }
 
     @Override
@@ -51,6 +66,17 @@ public class ParallelCommand extends Command implements CommandRunContext {
 
     @Override
     public void startCommand(Command command) {
-        throw new UnsupportedOperationException("The parallel command ship has sailed...");
+        getContext().startCommand(command);
+    }
+
+    @Override
+    public void configure(Config config) {
+        for(JsonNode node : config.commands) {
+            running.add(new CommandRun(commandStore.getCommandForSubcontext(getName(), node)));
+        }
+    }
+
+    static class Config {
+        JsonNode commands;
     }
 }

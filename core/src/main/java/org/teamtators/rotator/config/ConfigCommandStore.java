@@ -153,4 +153,27 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
         putCommand(commandName, command);
         return command;
     }
+
+    public Command getCommandForSubcontext(String parentName, JsonNode node) {
+        if(node.isTextual()) {
+            return getCommand(node.asText());
+        }
+        else {
+            String className = node.get("class").asText();
+            String commandName = findNextCommandName(parentName, className);
+            Command command = constructCommandClass(commandName, className);
+            configureCommand(command, node);
+            return command;
+        }
+    }
+
+    private String findNextCommandName(String parentName, String className) {
+        int postfix = 1;
+        String name;
+        do {
+            name = String.format("%s<%s>%d", className, parentName, postfix);
+            postfix++;
+        } while (getCommands().containsKey(name));
+        return name;
+    }
 }
