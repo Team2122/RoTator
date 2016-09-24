@@ -11,10 +11,6 @@ import org.teamtators.rotator.subsystems.AbstractDrive;
  */
 public class DriveArc extends CommandBase implements Configurable<DriveArc.Config> {
 
-    private double angle = .02;
-    private double rate = .02;
-    private double angleTolerance = .5;
-
     private Config config;
     private AbstractDrive drive;
 
@@ -43,11 +39,11 @@ public class DriveArc extends CommandBase implements Configurable<DriveArc.Confi
         double angleDelta = desiredAngle - gyroAngle;
 
         double gyroRate = drive.getGyroRate();
-        double offset = angleDelta * angle + desiredRate * rate * rampedSpeed;
+        double offset = angleDelta * config.angle + desiredRate * config.rate * rampedSpeed;
         drive.setSpeeds(rampedSpeed + offset, rampedSpeed - offset);
 
         double angleError = Math.abs(config.endAngle - gyroAngle);
-        if (angleError <= angleTolerance) {
+        if (angleError <= config.angleTolerance) {
             return true;
         }
         if (currentDistance >= config.distance) {
@@ -68,6 +64,9 @@ public class DriveArc extends CommandBase implements Configurable<DriveArc.Confi
         public double endAngle;
         public double rampDistance = 0;
         public double rampPower = 0;
+        public double angle = .02;
+        public double rate = .02;
+        public double angleTolerance = .5;
     }
 
     @Override
