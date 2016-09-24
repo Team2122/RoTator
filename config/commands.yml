@@ -87,3 +87,10 @@ TurretBumpRight:
 WaitTest:
   class: WaitCommand
   period: 3.0
+
+DriveStraightTest:
+  class: DriveStraight
+  targetAngle: 0.0
+  power: 0.2
+  distance: 10.0
+  angleController: { type: PID, P: 0.0375 }

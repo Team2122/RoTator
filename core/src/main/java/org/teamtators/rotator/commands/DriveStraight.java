@@ -20,8 +20,8 @@ public class DriveStraight extends CommandBase implements Configurable<DriveStra
 
     public DriveStraight(CoreRobot robot) {
         super("DriveStraight");
-        requires(drive);
         this.drive = robot.drive();
+        requires(drive);
         this.controllerFactory = robot.controllerFactory();
     }
 
@@ -52,7 +52,7 @@ public class DriveStraight extends CommandBase implements Configurable<DriveStra
 
     @Override
     protected void finish(boolean interrupted) {
-        String logString = String.format(interrupted ? "Interrupted" : "Finishing" + " at distance {} (target {}), angle {} (target {})",
+        String logString = String.format(interrupted ? "Interrupted" : "Finishing" + " at distance %s (target %s), angle %s (target %s)",
                 Math.abs(drive.getAverageDistance() - startingDistance), config.distance, drive.getGyroAngle(), config.targetAngle);
         if (interrupted) {
             logger.warn(logString);
