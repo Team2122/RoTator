@@ -3,19 +3,18 @@ package org.teamtators.rotator.commands;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.control.ITimeProvider;
+import org.teamtators.rotator.control.Timer;
 
 /**
  * A command which does nothing for a specified amount of time
  */
 public class WaitCommand extends CommandBase implements Configurable<WaitCommand.Config> {
     private Config config;
-    private ITimeProvider timeProvider;
-    private double startTime;
+    private Timer timer;
 
     public WaitCommand(CoreRobot robot) {
         super("WaitCommand");
-        timeProvider = robot.timeProvider();
+        timer = new Timer(robot.timeProvider());
     }
 
     @Override
@@ -26,12 +25,12 @@ public class WaitCommand extends CommandBase implements Configurable<WaitCommand
     @Override
     protected void initialize() {
         logger.info("Waiting for a period of {} seconds", config.period);
-        startTime = timeProvider.getTimestamp();
+        timer.start();
     }
 
     @Override
     public boolean step() {
-        return timeProvider.getTimestamp() - startTime >= config.period;
+        return timer.hasPeriodElapsed(config.period);
     }
 
     static class Config {
