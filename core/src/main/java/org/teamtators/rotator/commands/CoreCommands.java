@@ -11,6 +11,7 @@ public class CoreCommands {
 
         commandStore.registerClass(PickerPick.class);
         commandStore.registerClass(PickerSetPosition.class);
+        commandStore.registerClass(PickerCrossing.class);
 
         commandStore.registerClass(TurretBumpHoodPosition.class);
         commandStore.registerClass(TurretBumpRotation.class);

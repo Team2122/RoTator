@@ -2,12 +2,12 @@ package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
-import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.subsystems.AbstractPicker;
 import org.teamtators.rotator.subsystems.PickerPosition;
 
-public class PickerCrossing extends CommandBase implements Configurable<PickerCrossing.Config> {
-    private Config config;
+import static org.teamtators.rotator.subsystems.PickerPosition.*;
+
+public class PickerCrossing extends CommandBase {
     private AbstractPicker picker;
 
     public PickerCrossing(CoreRobot robot) {
@@ -17,16 +17,29 @@ public class PickerCrossing extends CommandBase implements Configurable<PickerCr
     }
 
     @Override
-    protected boolean step() {
-        PickerPosition targetPosition = PickerPosition.HOME;
+    protected void initialize() {
+    }
 
-        if (config.pickerPosition == PickerPosition.HOME) {
-            targetPosition = PickerPosition.CHEVAL;
-        } else if (config.pickerPosition == PickerPosition.CHEVAL) {
-            targetPosition = PickerPosition.PICK;
-        } else if (config.pickerPosition == PickerPosition.PICK) {
-            targetPosition = PickerPosition.CHEVAL;
+    @Override
+    protected boolean step() {
+
+        PickerPosition pickerPosition = picker.getPosition();
+        PickerPosition targetPosition = HOME;
+        PickerPosition originalPosition = HOME;
+
+        switch (pickerPosition) {
+            case HOME:
+                targetPosition = CHEVAL;
+                originalPosition = HOME;
+            case PICK:
+                targetPosition = CHEVAL;
+                originalPosition = PICK;
+            case CHEVAL:
+                targetPosition = PICK;
+                originalPosition = CHEVAL;
         }
+
+        logger.info("Moving picker from {} to {}", originalPosition, targetPosition);
 
         picker.setPosition(targetPosition);
 
@@ -34,11 +47,7 @@ public class PickerCrossing extends CommandBase implements Configurable<PickerCr
     }
 
     @Override
-    public void configure(Config config) {
-        this.config = config;
+    protected void finish(boolean interrupted) {
     }
 
-    static class Config {
-        public PickerPosition pickerPosition;
-    }
 }
