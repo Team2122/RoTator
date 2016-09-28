@@ -24,11 +24,11 @@ public class ControllerTest extends ComponentTest {
         switch (button) {
             case A:
                 controller.disable();
-                logger.info("Disabled controller");
+                logger.info("Disabled angleController");
                 break;
             case B:
                 controller.enable();
-                logger.info("Enabled controller");
+                logger.info("Enabled angleController");
                 break;
             case X:
                 logger.info("Input = {}, Setpoint = {}, Output = {}, On Target = {}", controller.getInput(),

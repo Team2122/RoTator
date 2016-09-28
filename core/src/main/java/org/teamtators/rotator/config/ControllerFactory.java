@@ -41,7 +41,7 @@ public class ControllerFactory {
                 controller = providerStepController.get();
                 break;
             default:
-                throw new ConfigException("Invalid controller type \"" + type + "\" in config");
+                throw new ConfigException("Invalid angleController type \"" + type + "\" in config");
         }
         Configurables.configureObject(controller, configCopy, objectMapper);
         return controller;

@@ -24,12 +24,12 @@ public class DriveRotate extends CommandBase implements Configurable<DriveRotate
     @Override
     public void configure(Config config) {
         this.config = config;
-        controller = controllerFactory.create(config.controller);
-        controller.setName("DriveRotate");
+        controller = controllerFactory.create(config.angleController);
+        controller.setName(getName());
         controller.setInputProvider(drive::getGyroAngle);
         controller.setOutputConsumer(output -> {
-            drive.setLeftSpeed(config.power + output);
-            drive.setRightSpeed(config.power - output);
+            drive.setLeftSpeed(output);
+            drive.setRightSpeed(-output);
         });
     }
 
@@ -43,24 +43,24 @@ public class DriveRotate extends CommandBase implements Configurable<DriveRotate
 
     @Override
     protected void finish(boolean interrupted) {
+        String logLine = String.format(" at angle %f (target %f)",
+                drive.getGyroAngle(), config.angle);
         if (interrupted) {
-            logger.warn("Rotation interrupted at angle {} (target {})", drive.getGyroAngle(), config.angle);
+            logger.warn("Interrupted" + logLine);
         } else {
-            logger.info("Rotation completed at angle {} (target {})", drive.getGyroAngle(), config.angle);
+            logger.info("Finished" + logLine);
         }
-        drive.resetSpeeds();
         controller.disable();
+        drive.resetSpeeds();
     }
 
     @Override
     protected boolean step() {
-        return Math.abs(config.angle - drive.getGyroAngle()) <= config.tolerance;
+        return controller.isOnTarget();
     }
 
     static class Config {
-        public JsonNode controller;
+        public JsonNode angleController;
         public double angle;
-        public double tolerance;
-        public double power;
     }
 }

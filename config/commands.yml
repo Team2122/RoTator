@@ -69,7 +69,7 @@ TurretShootPrep:
   class: TurretPrep
   target: true
   wheelSpeed: 85
-  dataLogging: true
+  dataLogging: false
 
 TurretBarfPrep:
   class: TurretPrep
@@ -88,17 +88,22 @@ TurretBumpRight:
   power: 0.2
   angleController: { type: PID, P: 0.0375 }
 
+^DriveRotate:
+  angleController:
+    type: PID
+    P: 0.02
+    I: 0.02
+    maxIError: 10.0
+    maxAbsoluteOutput: 0.4
+    target: { within: 1.0, time: .125 }
+
 $SequentialTest:
-  - class: WaitCommand
-    period: 3.0
+  - class: DriveRotate
+    angle: 90.0
   - class: DriveStraight
-    targetAngle: 0.0
-    distance: 10.0
-  - class: WaitCommand
-    period: 3.0
-  - class: DriveStraight
-    targetAngle: 0.0
-    distance: 10.0
+    power: 0.1
+    targetAngle: 90.0
+    distance: 24.0
 
 AutoInit:
   class: CommandChooser

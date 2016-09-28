@@ -31,10 +31,11 @@ public class DriveStraight extends CommandBase implements Configurable<DriveStra
     public void configure(Config config) {
         this.config = config;
         controller = controllerFactory.create(config.angleController);
+        controller.setName(getName());
         controller.setInputProvider(drive::getGyroAngle);
         controller.setOutputConsumer(output -> {
-            drive.setLeftSpeed(config.power - output);
-            drive.setRightSpeed(config.power + output);
+            drive.setLeftSpeed(config.power + output);
+            drive.setRightSpeed(config.power - output);
         });
     }
 

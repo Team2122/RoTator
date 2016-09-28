@@ -279,8 +279,8 @@ public abstract class AbstractController extends AbstractSteppable implements Da
 
     @Override
     public void onEnable() {
-        checkNotNull(inputProvider, "input must be set on a controller before using");
-        checkNotNull(outputConsumer, "output must be set on a controller before using");
+        checkNotNull(inputProvider, "input must be set on a angleController before using");
+        checkNotNull(outputConsumer, "output must be set on a angleController before using");
         if (isDataLogging()) {
             dataCollector.startProvider(getLogDataProvider());
         }
