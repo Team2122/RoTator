@@ -3,7 +3,14 @@ Drive:
   rightMotor: { channel: 1, inverted: false }
   leftEncoder: { aChannel: 2, bChannel: 3, reverse: true, distancePerPulse: .06597 }
   rightEncoder: { aChannel: 0, bChannel: 1, distancePerPulse: .06597 }
-  controller: { type: PID, P: .005, F: .00641 }
+  controller:
+    type: PID
+    P: .01
+    I: 0.01
+    F: .0075
+    minISetpoint: 1.0
+    maxIError: 24.0
+#    dataLogging: true
   driveMode: CONTROLLER
   maxSpeed: 156.0
 Picker:
@@ -33,7 +40,7 @@ Turret:
 #    inputSamplesToAverage: 16
     P: 0.025
     I: 0.025
-    maxI: 10.0
+    maxIError: 10.0
     F: 0.004
     minOutput: 0.0
     target: { within: 1.0 }

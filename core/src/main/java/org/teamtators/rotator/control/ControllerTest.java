@@ -31,8 +31,8 @@ public class ControllerTest extends ComponentTest {
                 logger.info("Enabled controller");
                 break;
             case X:
-                logger.info("Input = {}, Setpoint = {}, On Target = {}", controller.getInput(),
-                        controller.getSetpoint(), controller.isOnTarget());
+                logger.info("Input = {}, Setpoint = {}, Output = {}, On Target = {}", controller.getInput(),
+                        controller.getSetpoint(), controller.getOutput(), controller.isOnTarget());
                 break;
         }
     }

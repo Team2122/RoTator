@@ -13,6 +13,7 @@ public class PIDController extends AbstractController implements Configurable<PI
     private double kD = 0.0;
     private double kF = 0.0;
     private double maxIError = Double.POSITIVE_INFINITY;
+    private double minISetpoint = 0.0;
     private double lastInput;
     private double totalError;
 
@@ -77,6 +78,14 @@ public class PIDController extends AbstractController implements Configurable<PI
         this.maxIError = maxIError;
     }
 
+    public double getMinISetpoint() {
+        return minISetpoint;
+    }
+
+    public void setMinISetpoint(double minISetpoint) {
+        this.minISetpoint = minISetpoint;
+    }
+
     public synchronized double getF() {
         return kF;
     }
@@ -89,7 +98,7 @@ public class PIDController extends AbstractController implements Configurable<PI
     protected double computeOutput(double delta) {
         double error = getError();
         double output = error * kP;
-        if (Math.abs(error) < maxIError) {
+        if (Math.abs(error) < maxIError && Math.abs(getSetpoint()) >= minISetpoint) {
             totalError += error * delta;
         } else {
             totalError = 0;
@@ -125,11 +134,14 @@ public class PIDController extends AbstractController implements Configurable<PI
     public void configure(Config config) {
         if (config == null) return;
         setPIDF(config.P, config.I, config.D, config.F);
-        setMaxIError(config.maxI);
+        setMaxIError(config.maxIError);
+        setMinISetpoint(config.minISetpoint);
         super.configure(config);
     }
 
     public static class Config extends AbstractController.Config {
-        public double P = 0.0, I = 0.0, D = 0.0, F = 0.0, maxI = Double.POSITIVE_INFINITY;
+        public double P = 0.0, I = 0.0, D = 0.0, F = 0.0;
+        public double maxIError = Double.POSITIVE_INFINITY, minISetpoint = 0.0;
+
     }
 }

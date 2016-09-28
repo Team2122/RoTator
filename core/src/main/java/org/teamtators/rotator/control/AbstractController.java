@@ -335,6 +335,10 @@ public abstract class AbstractController extends AbstractSteppable implements Da
         }
     }
 
+    public double getOutput() {
+        return output;
+    }
+
     protected static class Config {
         public int inputSamplesToAverage = 1;
         public double maxAbsoluteSetpoint = Double.NaN;
