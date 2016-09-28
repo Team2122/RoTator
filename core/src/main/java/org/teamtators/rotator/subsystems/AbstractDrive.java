@@ -22,32 +22,42 @@ public abstract class AbstractDrive extends Subsystem {
     /**
      * It sets the power to the  drivetrain motors
      *
-     * @param leftSpeed  power for the left motor, between 0 and 1
-     * @param rightSpeed power for the right motor, btwn 0 and 1
+     * @param leftSpeed  speed for the left motor in inches per second
+     * @param rightSpeed speed for the right motor in inches per second
      */
     public void setSpeeds(double leftSpeed, double rightSpeed) {
         setLeftSpeed(leftSpeed);
         setRightSpeed(rightSpeed);
     }
 
+    /**
+     * Set the speed of the left half of the drivetrain
+     *
+     * @param leftSpeed Left motor speed in inches per second
+     */
     public void setLeftSpeed(double leftSpeed) {
         switch (driveMode) {
             case DIRECT:
-                setLeftPower(leftSpeed);
+                setLeftPower(leftSpeed / maxSpeed);
                 break;
             case CONTROLLER:
-                leftController.setSetpoint(leftSpeed * maxSpeed);
+                leftController.setSetpoint(leftSpeed);
                 break;
         }
     }
 
+    /**
+     * Set the speed of the right half of the drivetrain
+     *
+     * @param rightSpeed Right motor speed in inches per second
+     */
     public void setRightSpeed(double rightSpeed) {
         switch (driveMode) {
             case DIRECT:
-                setRightPower(rightSpeed);
+                setRightPower(rightSpeed / maxSpeed);
                 break;
             case CONTROLLER:
-                rightController.setSetpoint(rightSpeed * maxSpeed);
+                rightController.setSetpoint(rightSpeed);
                 break;
         }
     }
