@@ -30,6 +30,7 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
     private Encoder rightEncoder;
     private ADXRS453 gyro;
     private DriveMode defaultDriveMode;
+    private boolean hasCalibratedGyro;
 
     @Inject
     ControllerFactory controllerFactory;
@@ -113,6 +114,10 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
         switch (newState) {
             case TELEOP:
             case AUTONOMOUS:
+                if (!hasCalibratedGyro) {
+                    getGyro().finishCalibration();
+                    hasCalibratedGyro = true;
+                }
                 setDriveMode(defaultDriveMode);
                 break;
             case DISABLED:
