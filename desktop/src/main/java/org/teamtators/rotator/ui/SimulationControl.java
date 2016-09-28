@@ -5,10 +5,12 @@ import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.scheduler.Scheduler;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
 
+@Singleton
 public class SimulationControl extends JPanel {
     private final JComboBox<RobotState> robotStateCombo;
 

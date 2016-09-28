@@ -59,6 +59,7 @@ public class RioModule {
     }
 
     @Provides
+    @Named("autoChooser")
     static IChooser<Command> providesCommandChooser() {
         return new WPILibChooser<>("Auto");
     }

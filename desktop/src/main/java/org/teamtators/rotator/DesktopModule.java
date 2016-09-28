@@ -9,7 +9,6 @@ import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.operatorInterface.SimulationOperatorInterface;
 import org.teamtators.rotator.scheduler.Command;
-import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.subsystems.*;
 import org.teamtators.rotator.subsystems.noop.NoopVision;
 import org.teamtators.rotator.ui.SimulationChooser;
@@ -72,12 +71,7 @@ public class DesktopModule {
     }
 
     @Provides
-    @Singleton
-    static SimulationControl providesSimulationControl(Scheduler scheduler) {
-        return new SimulationControl(scheduler);
-    }
-
-    @Provides
+    @Named("autoChooser")
     static IChooser<Command> providesCommandChooser(SimulationControl control) {
         return new SimulationChooser<>(control);
     }

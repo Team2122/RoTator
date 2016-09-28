@@ -20,6 +20,7 @@ import org.teamtators.rotator.subsystems.AbstractTurret;
 import org.teamtators.rotator.subsystems.AbstractVision;
 import org.teamtators.rotator.tester.ManualTester;
 
+import javax.inject.Named;
 import java.util.List;
 
 public interface CoreRobot {
@@ -54,6 +55,7 @@ public interface CoreRobot {
     @ForController
     Stepper stepper();
 
+    @Named("autoChooser")
     IChooser<Command> autoChooser();
 
     DataCollector dataCollector();

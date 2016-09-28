@@ -16,7 +16,6 @@ public class SimulationChooser<T> extends JPanel implements IChooser<T> {
         add(new JLabel("Auto:"));
         comboBox = new JComboBox<>();
         add(comboBox);
-        System.out.println("hOI!  I'm sIMlAtiOncHusER");
         controlBar.add(this);
     }
 
