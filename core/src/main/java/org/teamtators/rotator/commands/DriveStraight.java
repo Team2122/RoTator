@@ -6,6 +6,7 @@ import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.AbstractController;
+import org.teamtators.rotator.control.PIDController;
 import org.teamtators.rotator.subsystems.AbstractDrive;
 
 /**
@@ -17,6 +18,7 @@ public class DriveStraight extends CommandBase implements Configurable<DriveStra
     private AbstractDrive drive;
     private AbstractController controller;
     private double startingDistance;
+    private double deltaDistance;
 
     public DriveStraight(CoreRobot robot) {
         super("DriveStraight");
@@ -47,17 +49,18 @@ public class DriveStraight extends CommandBase implements Configurable<DriveStra
 
     @Override
     public boolean step() {
-        return Math.abs(drive.getAverageDistance() - startingDistance) > config.distance;
+        deltaDistance = Math.abs(drive.getAverageDistance() - startingDistance);
+        return deltaDistance > config.distance;
     }
 
     @Override
     protected void finish(boolean interrupted) {
-        String logString = String.format(interrupted ? "Interrupted" : "Finishing" + " at distance %s (target %s), angle %s (target %s)",
-                Math.abs(drive.getAverageDistance() - startingDistance), config.distance, drive.getGyroAngle(), config.targetAngle);
+        String logString = String.format(" at distance %s (target %s), angle %s (target %s)",
+                deltaDistance, config.distance, drive.getGyroAngle(), config.targetAngle);
         if (interrupted) {
-            logger.warn(logString);
+            logger.warn("Interrupted" + logString);
         } else {
-            logger.info(logString);
+            logger.info("Finishing" + logString);
         }
         controller.disable();
         drive.resetSpeeds();

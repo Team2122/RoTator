@@ -84,16 +84,21 @@ TurretBumpRight:
   class: TurretBumpRotation
   angle: 10.0
 
-WaitTest:
-  class: WaitCommand
-  period: 3.0
-
-DriveStraightTest:
-  class: DriveStraight
-  targetAngle: 0.0
+^DriveStraight:
   power: 0.2
-  distance: 10.0
   angleController: { type: PID, P: 0.0375 }
+
+$SequentialTest:
+  - class: WaitCommand
+    period: 3.0
+  - class: DriveStraight
+    targetAngle: 0.0
+    distance: 10.0
+  - class: WaitCommand
+    period: 3.0
+  - class: DriveStraight
+    targetAngle: 0.0
+    distance: 10.0
 
 AutoInit:
   class: CommandChooser

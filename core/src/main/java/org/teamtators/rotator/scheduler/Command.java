@@ -3,10 +3,7 @@ package org.teamtators.rotator.scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -76,49 +73,81 @@ public abstract class Command {
         requirements.add(subsystem);
     }
 
+    protected void requiresAll(Collection<Subsystem> subsystems) {
+        checkNotNull(subsystems);
+        if (requirements == null) {
+            requirements = new HashSet<>();
+        }
+        requirements.addAll(subsystems);
+    }
+
     Set<Subsystem> getRequirements() {
         return requirements;
+    }
+
+    protected void setRequirements(Set<Subsystem> requirements) {
+        this.requirements = requirements;
     }
 
     public boolean doesRequire(Subsystem subsystem) {
         return requirements != null && requirements.contains(subsystem);
     }
 
-    public boolean checkRequirements() {
+    private boolean isRequiring(Subsystem subsystem, CommandRunContext context) {
+        Command requiringCommand = subsystem.getRequiringCommand();
+        return requiringCommand == this ||
+                context instanceof Command &&
+                        ((Command) context).isRequiring(subsystem);
+    }
+
+    public boolean isRequiring(Subsystem subsystem) {
+        return isRequiring(subsystem, getContext());
+    }
+
+    protected boolean checkRequirements(Iterable<Subsystem> requirements) {
         if (requirements == null)
             return true;
         for (Subsystem subsystem : requirements) {
             Command requiringCommand = subsystem.getRequiringCommand();
-            if (requiringCommand != null && requiringCommand != this)
-                return false;
+            if (requiringCommand == null || isRequiring(subsystem))
+                continue;
+            return false;
         }
         return true;
     }
 
-    protected boolean takeRequirements(Iterable<Subsystem> requirements) {
+    public boolean checkRequirements() {
+        return checkRequirements(getRequirements());
+    }
+
+    private boolean takeRequirements(Iterable<Subsystem> requirements, CommandRunContext context) {
+        if (requirements == null) return true;
         boolean anyRequiring = false;
         for (Subsystem subsystem : requirements) {
             Command requiringCommand = subsystem.getRequiringCommand();
-            if (requiringCommand != null && requiringCommand != this) {
-                anyRequiring = true;
-                requiringCommand.cancel();
-            } else {
+            if (requiringCommand == null) {
                 subsystem.setRequiringCommand(this);
+                continue;
             }
+            if (isRequiring(subsystem, context))
+                continue;
+            anyRequiring = true;
+            requiringCommand.cancel();
         }
         return !anyRequiring;
     }
 
     protected boolean takeRequirements(Subsystem... requirements) {
-        return takeRequirements(Arrays.asList(requirements));
+        return takeRequirements(Arrays.asList(requirements), getContext());
     }
 
-    protected boolean takeRequirements() {
-        return this.requirements == null || takeRequirements(this.requirements);
+    private boolean takeRequirements(CommandRunContext context) {
+        return takeRequirements(this.requirements, context);
     }
 
     boolean startRun(CommandRunContext context) {
-        if (isRunning() || !takeRequirements()) return false;
+        if (isRunning() || !takeRequirements(context))
+            return false;
         setContext(context);
         initialize();
         return true;
@@ -136,7 +165,8 @@ public abstract class Command {
         if (requirements == null)
             return;
         for (Subsystem subsystem : requirements) {
-            subsystem.setRequiringCommand(null);
+            if (subsystem.getRequiringCommand() == this)
+                subsystem.setRequiringCommand(null);
         }
     }
 

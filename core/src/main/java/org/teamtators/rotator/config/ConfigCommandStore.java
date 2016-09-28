@@ -111,7 +111,8 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
                 createCommandFromConfig(commandName, field.getValue());
             }
         }
-        for (Map.Entry<String, Command> commandEntry : getCommands().entrySet()) {
+        HashMap<String, Command> commandsMapCopy = new HashMap<>(getCommands());
+        for (Map.Entry<String, Command> commandEntry : commandsMapCopy.entrySet()) {
             Command command = commandEntry.getValue();
             JsonNode config = json.get(command.getName());
             configureCommand(command, config);
