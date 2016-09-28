@@ -3,6 +3,8 @@ package org.teamtators.rotator.config;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
@@ -10,15 +12,17 @@ import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.*;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public class TriggerBinder {
+public class TriggerBinder implements StateListener {
     private static final Logger logger = LoggerFactory.getLogger(TriggerBinder.class);
     private Scheduler scheduler;
     private CommandStore commandStore;
     private ObjectMapper objectMapper;
     private AbstractOperatorInterface operatorInterface;
+    private Multimap<RobotState, Command> stateCommands = HashMultimap.create();
 
     @Inject
     public TriggerBinder() {
@@ -53,6 +57,14 @@ public class TriggerBinder {
         bindButtonsToLogitechF310(triggersConfig.driver, operatorInterface.driverJoystick());
         bindButtonsToLogitechF310(triggersConfig.gunner, operatorInterface.gunnerJoystick());
         registerDefaults(triggersConfig.defaults);
+        registerStateCommands(triggersConfig.stateCommands);
+    }
+
+    private void registerStateCommands(Map<RobotState, String> newStateCommands) {
+        for (Map.Entry<RobotState, String> commandEntry : newStateCommands.entrySet()) {
+            Command stateCommand = getCommandForBinding(commandEntry.getValue());
+            stateCommands.put(commandEntry.getKey(), stateCommand);
+        }
     }
 
     private void registerDefaults(Set<String> defaults) {
@@ -153,5 +165,13 @@ public class TriggerBinder {
             throw new ConfigException("Command " + commandName + " in binding does not exist");
         }
         return command;
+    }
+
+    public void onEnterState(RobotState state) {
+        Collection<Command> thisStateCommands = stateCommands.get(state);
+        if (thisStateCommands == null) return;
+        for (Command stateCommand : thisStateCommands) {
+            scheduler.startCommand(stateCommand);
+        }
     }
 }
