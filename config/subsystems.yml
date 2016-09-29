@@ -5,9 +5,9 @@ Drive:
   rightEncoder: { aChannel: 0, bChannel: 1, distancePerPulse: .06597 }
   controller:
     type: PID
-    P: .01
+    P: .0075
     I: 0.01
-    F: .0075
+    F: .01
     minISetpoint: 1.0
     maxIError: 24.0
 #    dataLogging: true
