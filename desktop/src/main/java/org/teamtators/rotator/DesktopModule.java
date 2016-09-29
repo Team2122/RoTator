@@ -2,7 +2,7 @@ package org.teamtators.rotator;
 
 import dagger.Module;
 import dagger.Provides;
-import org.teamtators.rotator.commands.IChooser;
+import org.teamtators.rotator.components.Chooser;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.SystemNanoTimeTimeProvider;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
@@ -72,7 +72,7 @@ public class DesktopModule {
 
     @Provides
     @Named("autoChooser")
-    static IChooser<Command> providesCommandChooser(SimulationControl control) {
+    static Chooser<Command> providesCommandChooser(SimulationControl control) {
         return new SimulationChooser<>(control);
     }
 }

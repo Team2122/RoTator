@@ -1,13 +1,13 @@
 package org.teamtators.rotator.ui;
 
-import org.teamtators.rotator.commands.IChooser;
+import org.teamtators.rotator.components.Chooser;
 
 import javax.inject.Inject;
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimulationChooser<T> extends JPanel implements IChooser<T> {
+public class SimulationChooser<T> extends JPanel implements Chooser<T> {
     private JComboBox<String> comboBox;
     private Map<String, T> optionMap = new HashMap<>();
 

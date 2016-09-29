@@ -1,11 +1,16 @@
-package org.teamtators.rotator.commands;
+package org.teamtators.rotator.components;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class WPILibChooser<T> implements IChooser<T> {
+public class WPILibChooser<T> implements Chooser<T> {
     private SendableChooser chooser;
     private String name;
+
+    public WPILibChooser(String name) {
+        chooser = new SendableChooser();
+        SmartDashboard.putData(name, chooser);
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -18,8 +23,8 @@ public class WPILibChooser<T> implements IChooser<T> {
         chooser.addObject(name, option);
     }
 
-    public WPILibChooser(String name) {
-        chooser = new SendableChooser();
-        SmartDashboard.putData(name, chooser);
+    @Override
+    public void registerDefault(String name, T option) {
+        chooser.addDefault(name, option);
     }
 }

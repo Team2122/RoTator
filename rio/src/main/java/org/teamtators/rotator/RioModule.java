@@ -2,8 +2,8 @@ package org.teamtators.rotator;
 
 import dagger.Module;
 import dagger.Provides;
-import org.teamtators.rotator.commands.IChooser;
-import org.teamtators.rotator.commands.WPILibChooser;
+import org.teamtators.rotator.components.Chooser;
+import org.teamtators.rotator.components.WPILibChooser;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.WPILibTimeProvider;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
@@ -60,7 +60,7 @@ public class RioModule {
 
     @Provides
     @Named("autoChooser")
-    static IChooser<Command> providesCommandChooser() {
+    static Chooser<Command> providesCommandChooser() {
         return new WPILibChooser<>("Auto");
     }
 }

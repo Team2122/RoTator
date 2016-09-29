@@ -1,18 +1,16 @@
 package org.teamtators.rotator.commands;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
-import org.teamtators.rotator.config.ConfigException;
+import org.teamtators.rotator.components.Chooser;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.scheduler.CommandStore;
 import org.teamtators.rotator.scheduler.Scheduler;
 
 public class CommandChooser extends CommandBase implements Configurable<CommandChooser.Config> {
-
-    private IChooser<Command> chooser;
+    private Chooser<Command> chooser;
     private CommandStore commandStore;
     private Scheduler scheduler;
 
@@ -30,13 +28,12 @@ public class CommandChooser extends CommandBase implements Configurable<CommandC
 
     @Override
     public void configure(Config config) {
-        for(JsonNode node: config.commands) {
-            if(node.isTextual()) {
-                chooser.registerOption(node.asText(), commandStore.getCommand(node.asText()));
-            }
-            else {
-                throw new ConfigException("Commands are only accepted by name");
-            }
+        for (String command : config.commands) {
+            chooser.registerOption(command, commandStore.getCommand(command));
+        }
+        if (config.defaul != null) {
+            chooser.registerOption(config.defaul,
+                    commandStore.getCommand(config.defaul));
         }
     }
 
@@ -47,6 +44,8 @@ public class CommandChooser extends CommandBase implements Configurable<CommandC
     }
 
     static class Config {
-        public JsonNode commands;
+        public String[] commands;
+        @JsonProperty("default")
+        public String defaul;
     }
 }

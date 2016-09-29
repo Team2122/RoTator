@@ -1,27 +1,18 @@
 package org.teamtators.rotator;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.teamtators.rotator.commands.IChooser;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
-import org.teamtators.rotator.config.TriggerBinder;
-import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.control.Stepper;
-import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.*;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.ManualTester;
-import org.teamtators.rotator.ui.SimulationChooser;
 import org.teamtators.rotator.ui.SimulationFrame;
-
-import javax.inject.Inject;
-import java.util.List;
 
 public class Main implements StateListener {
     private static Logger logger = LoggerFactory.getLogger(Main.class);

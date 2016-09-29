@@ -1,7 +1,7 @@
 package org.teamtators.rotator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.teamtators.rotator.commands.IChooser;
+import org.teamtators.rotator.components.Chooser;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.ControllerFactory;
@@ -56,7 +56,7 @@ public interface CoreRobot {
     Stepper stepper();
 
     @Named("autoChooser")
-    IChooser<Command> autoChooser();
+    Chooser<Command> autoChooser();
 
     DataCollector dataCollector();
 }
