@@ -20,6 +20,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         this.picker = robot.picker();
         this.turret = robot.turret();
         requires(picker);
+        requires(turret);
     }
 
     @Override
@@ -32,7 +33,6 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         super.initialize();
         //Extends the picker
         picker.setPosition(PickerPosition.PICK);
-        turret.setTargetAngle(0);
     }
 
     @Override
@@ -40,6 +40,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         if (turret.getBallDistance() <= config.ballDistance) {
             return true;
         }
+        turret.setTargetAngle(0);
         //Starts the rollers
         picker.setPower(config.pickRoller);
         turret.setPinchRollerPower(config.pinchRoller);
