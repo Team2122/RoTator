@@ -14,17 +14,17 @@ public class SolenoidTest extends ComponentTest {
 
     @Override
     public void start() {
-        logger.info("Press A to activate solenoid, B to deactivate");
+        logger.info(">>>>Press A to activate solenoid, B to deactivate");
     }
 
     @Override
     public void onButtonDown(LogitechF310.Button button) {
         if (button == LogitechF310.Button.A) {
             solenoid.set(true);
-            logger.info("Solenoid activated");
+            logger.info(">>>>Solenoid activated");
         } else if (button == LogitechF310.Button.B) {
             solenoid.set(false);
-            logger.info("Solenoid deactivated");
+            logger.info(">>>>Solenoid deactivated");
         }
     }
 }
