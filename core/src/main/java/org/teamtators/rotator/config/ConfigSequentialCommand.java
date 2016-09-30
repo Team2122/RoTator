@@ -38,8 +38,8 @@ public class ConfigSequentialCommand extends SequentialCommand implements Config
         ArrayList<SequentialCommandRun> sequence = new ArrayList<>();
         while (it.hasNext()) {
             JsonNode node = it.next();
-            Command command;
             if (node.isObject()) {
+                Command command;
                 ObjectNode commandConfig = (ObjectNode) node;
                 if (node.has("class")) {
                     String className = commandConfig.get("class").asText();
@@ -52,15 +52,15 @@ public class ConfigSequentialCommand extends SequentialCommand implements Config
                     throw new ConfigException("SequentialCommand config was passed object, but didn't contain class or command name");
                 }
                 SequentialCommandRun commandRun = new SequentialCommandRun(command);
-                if(commandConfig.has("parallel")) {
-                    if(commandConfig.get("parallel").asBoolean()) {
+                if (commandConfig.has("parallel")) {
+                    if (commandConfig.get("parallel").asBoolean()) {
                         commandRun.parallel = true;
                     }
                 }
                 sequence.add(commandRun);
             } else if (node.isTextual()) {
                 String commandName = node.asText();
-                command = commandStore.getCommand(commandName);
+                Command command = commandStore.getCommand(commandName);
                 sequence.add(new SequentialCommandRun(command));
             } else {
                 throw new ConfigException("Each node in a SequentialCommand config must be an object or a string," +

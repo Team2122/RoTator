@@ -18,11 +18,10 @@ public class CancelCommand extends CommandBase implements Configurable<WaitForCo
 
     @Override
     protected boolean step() {
-        if(command.isRunning()) {
+        if (command.isRunning()) {
             command.cancel();
-        }
-        else {
-            logger.warn(command.getName()+" not running, can't cancel it");
+        } else {
+            logger.warn(command.getName() + " not running, can't cancel it");
         }
         return true;
     }
@@ -33,6 +32,6 @@ public class CancelCommand extends CommandBase implements Configurable<WaitForCo
     }
 
     public static class Config {
-        String command;
+        public String command;
     }
 }

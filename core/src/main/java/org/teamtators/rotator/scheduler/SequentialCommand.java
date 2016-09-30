@@ -30,11 +30,10 @@ public class SequentialCommand extends Command implements CommandRunContext {
         return sequence.get(currentPosition);
     }
 
-    protected void setRunSequence(Collection<SequentialCommandRun> sequence) {
+    protected void setRunSequence(List<SequentialCommandRun> sequence) {
         checkNotNull(sequence);
 
-        this.sequence = sequence.stream()
-                .collect(Collectors.toList());
+        this.sequence = sequence;
 
         updateValidStates();
         updateRequirements();
@@ -42,7 +41,9 @@ public class SequentialCommand extends Command implements CommandRunContext {
 
     protected void setSequence(Collection<Command> commands) {
         checkNotNull(commands);
-        setRunSequence(commands.stream().map(SequentialCommandRun::new).collect(Collectors.toList()));
+        setRunSequence(commands.stream()
+                .map(SequentialCommandRun::new)
+                .collect(Collectors.toList()));
     }
 
     private void updateValidStates() {
@@ -82,11 +83,11 @@ public class SequentialCommand extends Command implements CommandRunContext {
     protected boolean step() {
         if (sequence.size() == 0) return true;
         boolean finished;
-        while (currentPosition < sequence.size() && currentRun().parallel) {
-            getContext().startCommand(currentRun().command);
-            currentPosition++;
-        }
         do {
+            while (currentPosition < sequence.size() && currentRun().parallel) {
+                getContext().startCommand(currentRun().command);
+                currentPosition++;
+            }
             CommandRun run = currentRun();
             if (run.cancel) {
                 cancelRun(run);

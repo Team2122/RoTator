@@ -13,8 +13,8 @@ public class WaitForCommand extends CommandBase implements Configurable<WaitForC
 
     @Override
     protected void initialize() {
-        if(!command.isRunning()) {
-            logger.warn(command.getName()+" is not running, cannot wait for it");
+        if (!command.isRunning()) {
+            logger.debug("{} is not running", command.getName());
         }
     }
 
@@ -34,6 +34,6 @@ public class WaitForCommand extends CommandBase implements Configurable<WaitForC
     }
 
     public static class Config {
-        String command;
+        public String command;
     }
 }
