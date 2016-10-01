@@ -28,6 +28,8 @@ public interface LogitechF310 {
         return new LogitechTrigger(this, button);
     }
 
+    void setRumble(RumbleType rumbleType, float value);
+
     /**
      * Enum containing the location of all the buttons on a Logitech F310 gamepad
      */
@@ -115,4 +117,5 @@ public interface LogitechF310 {
             return joystick.getButtonValue(button);
         }
     }
+
 }

@@ -22,6 +22,18 @@ public class WPILibLogitechF310 extends Joystick implements LogitechF310 {
     }
 
     @Override
+    public void setRumble(org.teamtators.rotator.operatorInterface.RumbleType type, float value) {
+        switch (type) {
+            case LEFT:
+                setRumble(RumbleType.kLeftRumble, value);
+                break;
+            case RIGHT:
+                setRumble(RumbleType.kRightRumble, value);
+                break;
+        }
+    }
+
+    @Override
     public double getAxisValue(Axis axisKind) {
         return getRawAxis(axisKind.getAxisNumber());
     }
