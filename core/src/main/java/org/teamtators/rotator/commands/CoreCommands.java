@@ -29,6 +29,8 @@ public class CoreCommands {
         commandStore.registerClass(TurretTarget.class);
         commandStore.registerClass(TurretPrep.class);
 
+        commandStore.registerClass(OIRumble.class);
+
         commandStore.registerClass(WaitCommand.class);
         commandStore.registerClass(ChooserCommand.class);
     }

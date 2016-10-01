@@ -3,6 +3,7 @@ package org.teamtators.rotator.ui;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
+import org.teamtators.rotator.operatorInterface.RumbleType;
 import org.teamtators.rotator.scheduler.TriggerSource;
 
 import javax.inject.Inject;
@@ -27,6 +28,11 @@ public class WASDJoystick implements LogitechF310, KeyListener {
     @Inject
     public WASDJoystick() {
         reset();
+    }
+
+    @Override
+    public void setRumble(RumbleType rumbleType, float value) {
+
     }
 
     public void reset() {
