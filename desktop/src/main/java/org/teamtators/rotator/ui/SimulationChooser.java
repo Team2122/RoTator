@@ -30,4 +30,10 @@ public class SimulationChooser<T> extends JPanel implements Chooser<T> {
         comboBox.addItem(name);
         System.out.println("Registering "+name);
     }
+
+    @Override
+    public void registerDefault(String name, T option) {
+        registerOption(name, option);
+        comboBox.setSelectedItem(name);
+    }
 }
