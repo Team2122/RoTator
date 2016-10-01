@@ -50,7 +50,7 @@ public class ManualTester extends CommandBase {
         ComponentTest test = getCurrentTest();
         if (test == null) return false;
         double axisValue = -joystick.getAxisValue(TEST_AXIS);
-        axisValue = DriveUtils.applyDriveModifiers(axisValue, DEADZONE, 1.0, EXPONENT);
+        axisValue = DriveUtils.applyDriveModifiers(axisValue, DEADZONE, EXPONENT);
         test.updateAxis(axisValue);
         for (LogitechF310.Button button : LogitechF310.Button.values()) {
             boolean value = joystick.getButtonValue(button);

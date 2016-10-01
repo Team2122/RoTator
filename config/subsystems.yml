@@ -10,7 +10,7 @@ Drive:
     F: .01
     minISetpoint: 1.0
     maxIError: 24.0
-#    dataLogging: true
+    dataLogging: true
   driveMode: CONTROLLER
   maxSpeed: 120.0
 Picker:
