@@ -31,6 +31,11 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     @Override
     protected void initialize() {
         super.initialize();
+        if (!turret.isHomed()) {
+            logger.warn("Turret not at home, stopping pick");
+            cancel();
+            return;
+        }
         //Extends the picker
         picker.setPosition(PickerPosition.PICK);
     }
