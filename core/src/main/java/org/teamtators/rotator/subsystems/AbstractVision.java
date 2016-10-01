@@ -34,4 +34,6 @@ public abstract class AbstractVision extends Subsystem {
      * @return The current vision data.
      */
     public abstract VisionData getVisionData();
+
+    public abstract void setTurretAngle(double turretAngle);
 }

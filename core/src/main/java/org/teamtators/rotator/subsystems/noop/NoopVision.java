@@ -6,6 +6,11 @@ import org.teamtators.rotator.subsystems.VisionData;
 public class NoopVision extends AbstractVision {
     @Override
     public VisionData getVisionData() {
-        return new VisionData(0, 0, 0);
+        return new VisionData(0, 0, 0, 0);
+    }
+
+    @Override
+    public void setTurretAngle(double turretAngle) {
+
     }
 }

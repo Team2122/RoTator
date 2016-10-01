@@ -42,8 +42,14 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
         else
             frameNumber = (int) frameNum;
         double distance = table.getNumber("distance", Double.NaN);
-        double angle = table.getNumber("angle", Double.NaN);
-        return new VisionData(frameNumber, distance, angle);
+        double offsetAngle = table.getNumber("offsetAngle", Double.NaN);
+        double newAngle = table.getNumber("newAngle", Double.NaN);
+        return new VisionData(frameNumber, distance, offsetAngle, newAngle);
+    }
+
+    @Override
+    public void setTurretAngle(double turretAngle) {
+        table.putNumber("turretAngle", turretAngle);
     }
 
     @Override
@@ -80,11 +86,7 @@ public class WPILibVision extends AbstractVision implements Configurable<WPILibV
                     break;
                 case X:
                     VisionData visionData = getVisionData();
-                    int frameNumber = visionData.getFrameNumber();
-                    double angle = visionData.getAngle();
-                    double distance = visionData.getDistance();
-                    logger.info("Frame Number = {}, Angle = {} degrees, Distance = {} inches", frameNumber,
-                            angle, distance);
+                    logger.info(visionData.toString());
                     break;
             }
         }

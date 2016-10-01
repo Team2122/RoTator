@@ -61,24 +61,17 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
     @Override
     protected boolean step() {
         if (config.target) {
+            currentAngle = turret.getAngle();
+            vision.setTurretAngle(currentAngle);
+
             VisionData visionData = vision.getVisionData();
             int frameNumber = visionData.getFrameNumber();
-            deltaAngle = visionData.getAngle();
-            currentAngle = turret.getAngle();
+            deltaAngle = visionData.getOffsetAngle();
+            newAngle = visionData.getNewAngle();
             if (frameNumber != lastFrameNumber && !Double.isNaN(deltaAngle)) {
-                logger.trace("Received new vision frame {}", frameNumber);
                 lastFrameNumber = frameNumber;
-//                double now = timer.getTimestamp();
-//                if (turret.isAngleOnTarget() && Double.isNaN(targetStart)) {
-//                    targetStart = now;
-//                    logger.debug("Waiting for vision to stabilize for {} s", config.target);
-//                }
-//                if (!Double.isNaN(deltaAngle) && now >= targetStart + config.targetDelay) {
-                newAngle = currentAngle + deltaAngle;
                 turret.setTargetAngle(newAngle);
                 logger.info("Moving turret {} degrees. Final angle will be {}", deltaAngle, newAngle);
-//                    targetStart = Double.NaN;
-//                }
             }
         }
         return false;

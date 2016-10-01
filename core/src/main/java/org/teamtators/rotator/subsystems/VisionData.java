@@ -3,12 +3,14 @@ package org.teamtators.rotator.subsystems;
 public class VisionData {
     private int frameNumber;
     private double distance;
-    private double angle;
+    private double offsetAngle;
+    private double newAngle;
 
-    public VisionData(int frameNumber, double distance, double angle) {
+    public VisionData(int frameNumber, double distance, double angle, double newAngle) {
         this.frameNumber = frameNumber;
         this.distance = distance;
-        this.angle = angle;
+        this.offsetAngle = angle;
+        this.newAngle = newAngle;
     }
 
     /**
@@ -28,8 +30,12 @@ public class VisionData {
     /**
      * @return The current offset in angle from the target
      */
-    public double getAngle() {
-        return angle;
+    public double getOffsetAngle() {
+        return offsetAngle;
+    }
+
+    public double getNewAngle() {
+        return newAngle;
     }
 
     @Override
@@ -37,7 +43,8 @@ public class VisionData {
         return "VisionData{" +
                 "frameNumber=" + frameNumber +
                 ", distance=" + distance +
-                ", angle=" + angle +
+                ", offsetAngle=" + offsetAngle +
+                ", newAngle=" + newAngle +
                 '}';
     }
 }
