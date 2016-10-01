@@ -30,5 +30,7 @@ public class CoreCommands {
 
         commandStore.registerClass(WaitCommand.class);
         commandStore.registerClass(ChooserCommand.class);
+
+        commandStore.registerClass(VisionFlashyFlash.class);
     }
 }
