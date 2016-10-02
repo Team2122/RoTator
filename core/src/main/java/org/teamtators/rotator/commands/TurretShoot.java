@@ -7,6 +7,7 @@ import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.subsystems.AbstractTurret;
 import org.teamtators.rotator.subsystems.AbstractVision;
 import org.teamtators.rotator.subsystems.HoodPosition;
+import org.teamtators.rotator.subsystems.VisionData;
 
 /**
  * Fires a ball from the turret
@@ -57,18 +58,15 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
         }
         // check if roller isn't ready to start yet
         double wheelSpeed = turret.getWheelSpeed();
-        if (!turret.isAtTargetWheelSpeed()) {
-            logger.trace("Turret wheel speed not at target (speed: {}, target {}), not firing.",
-                    wheelSpeed, turret.getTargetWheelSpeed());
-        } else if (!turret.isAngleOnTarget()) {
-            logger.trace("Turret angle is not on target, not firing");
-        } else {
+        if (turret.isAtTargetWheelSpeed() && turret.isAngleOnTarget()) {
             // start rolling
             rollingStartTime = timestamp;
             double angle = turret.getAngle();
-            double angleOffset = vision.getVisionData().getOffsetAngle();
-            logger.info("Shooting at {} RPS, pointed at {} degrees, vision offset of {}", wheelSpeed, angle,
-                    angleOffset);
+            VisionData visionData = vision.getVisionData();
+            double angleOffset = visionData.getOffsetAngle();
+            double distance = visionData.getDistance();
+            logger.info("Shooting at {} RPS, pointed at {} degrees, vision offset of {}, distance {} in", wheelSpeed,
+                    angle, angleOffset, distance);
             turret.setKingRollerPower(config.kingRollerPower);
         }
         return false;

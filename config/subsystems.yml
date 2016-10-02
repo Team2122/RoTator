@@ -10,7 +10,7 @@ Drive:
     F: .01
     minISetpoint: 1.0
     maxIError: 24.0
-    dataLogging: true
+    dataLogging: false
   driveMode: CONTROLLER
   maxSpeed: 120.0
 Picker:
@@ -44,6 +44,7 @@ Turret:
     F: 0.004
     minOutput: 0.0
     target: { within: 1.0 }
+    dataLogging: true
   turretRotationMotor: { channel: 4, inverted: true }
   turretRotationEncoder: { aChannel: 6, bChannel: 7, reverse: true, distancePerPulse: 0.02538 }
   angleController:

@@ -24,14 +24,14 @@ public class InputDifferentiator extends AbstractSteppable implements Controller
     }
 
     @Override
-    public void step(double delta) {
+    public synchronized void step(double delta) {
         double input = inputProvider.getControllerInput();
         lastRate = Double.isNaN(lastInput) ? 0.0 : (input - lastInput) / delta;
         lastInput = input;
     }
 
     @Override
-    public double getControllerInput() {
+    public synchronized double getControllerInput() {
         return lastRate;
     }
 

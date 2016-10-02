@@ -44,7 +44,9 @@ public abstract class AbstractTurret extends Subsystem {
         setWheelPower(0);
     }
 
-    public abstract double getWheelSpeed();
+    public double getWheelSpeed() {
+        return shooterWheelInputDifferentiator.getControllerInput();
+    }
 
     public abstract double getWheelRotations();
 

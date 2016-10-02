@@ -1,6 +1,6 @@
 DriveTank:
-  deadzone: .05
-  leftMultiplier: 120.0
+  deadzone: .1
+  leftMultiplier: 130.0
   rightMultiplier: 120.0
   exponent: 2.0
 
