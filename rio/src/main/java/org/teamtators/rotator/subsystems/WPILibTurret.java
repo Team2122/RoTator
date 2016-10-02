@@ -1,6 +1,5 @@
 package org.teamtators.rotator.subsystems;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
@@ -40,6 +39,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     private DigitalSensor leftLimit;
     private DigitalSensor rightLimit;
     private DigitalSensor centerLimit;
+    private double maxBallDistance;
 
     @Inject
     public WPILibTurret() {
@@ -60,13 +60,18 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         this.leftLimit = config.leftLimit.create();
         this.rightLimit = config.rightLimit.create();
         this.centerLimit = config.centerLimit.create();
+        this.maxBallDistance = config.maxBallDistance;
 
         super.configure(config);
     }
 
     @Override
     public void setWheelPower(double power) {
-        shooterWheelMotor.set((double) power);
+        if (getBallDistance() <= maxBallDistance) {
+            shooterWheelMotor.set((double) power);
+        } else {
+            logger.warn("Ball is not within safe distance, not moving turret");
+        }
     }
 
     @Override
@@ -218,5 +223,6 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         public DigitalSensorConfig leftLimit;
         public DigitalSensorConfig rightLimit;
         public DigitalSensorConfig centerLimit;
+        public double maxBallDistance;
     }
 }
