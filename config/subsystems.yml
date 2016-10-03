@@ -5,11 +5,11 @@ Drive:
   rightEncoder: { aChannel: 0, bChannel: 1, distancePerPulse: .06597 }
   controller:
     type: PID
-    P: .0075
-#    I: 0.01
-    F: .01
+    P: .01
+    I: 0.01
+    F: .0075
     minISetpoint: 1.0
-    maxIError: 24.0
+    maxIError: 12.0
     dataLogging: false
   driveMode: CONTROLLER
   maxSpeed: 120.0
@@ -44,7 +44,7 @@ Turret:
     F: 0.004
     minOutput: 0.0
     target: { within: 1.0 }
-    dataLogging: true
+#    dataLogging: true
   turretRotationMotor: { channel: 4, inverted: true }
   turretRotationEncoder: { aChannel: 6, bChannel: 7, reverse: true, distancePerPulse: 0.02538 }
   angleController:

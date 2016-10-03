@@ -1,7 +1,7 @@
 DriveTank:
   deadzone: .1
-  leftMultiplier: 130.0
-  rightMultiplier: 120.0
+  leftMultiplier: 100.0
+  rightMultiplier: 100.0
   exponent: 2.0
 
 PickerToHome:
