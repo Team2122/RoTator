@@ -3,9 +3,8 @@ Driver:
   BUMPER_RIGHT: start whenPressed PickerToPick
   TRIGGER_LEFT: toggle whenPressed TurretShootPrep
   TRIGGER_RIGHT: toggle whenPressed PickerPick
-#  STICK_LEFT: start whenPressed $SequentialTest
   Y: start whenPressed TurretStopWheel
-  B: start whenPressed TurretSpinUp
+  B: toggle whenPressed TurretCalibrate
   X: toggle whenPressed TurretShoot
   A: start whenPressed TurretShoot
   POV_UP: start whenPressed HoodBumpUp

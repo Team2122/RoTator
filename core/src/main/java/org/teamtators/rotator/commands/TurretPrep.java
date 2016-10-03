@@ -51,7 +51,7 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
         }
         turret.setHoodPosition(HoodPosition.UP1);
         turret.setTargetWheelSpeed(config.wheelSpeed);
-        if (config.target)
+        if (config.target || config.lights)
             vision.setLedState(true);
         lastFrameNumber = Integer.MIN_VALUE;
         if (config.dataLogging)
@@ -60,10 +60,10 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
 
     @Override
     protected boolean step() {
-        if (config.target) {
-            currentAngle = turret.getAngle();
-            vision.setTurretAngle(currentAngle);
+        currentAngle = turret.getAngle();
+        vision.setTurretAngle(currentAngle);
 
+        if (config.target) {
             VisionData visionData = vision.getVisionData();
             int frameNumber = visionData.getFrameNumber();
             deltaAngle = visionData.getOffsetAngle();
@@ -109,6 +109,7 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
     }
 
     public static class Config {
+        public boolean lights = false;
         public boolean target = false;
         public double wheelSpeed;
         public boolean dataLogging = false;
