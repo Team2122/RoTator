@@ -70,20 +70,23 @@ TurretShootPrep:
   class: TurretPrep
   target: true
   wheelSpeeds:
-    0: wheelSpeed: 85
+    0: 85
   hoodPositions:
     0: UP1
+    120: UP4
   dataLogging: false
 
 TurretBarfPrep:
   class: TurretPrep
   target: false
-  wheelSpeed: 60.0
+  wheelSpeeds:
+    0: 60.0
 
 TurretCalibrate:
   class: TurretPrep
   lights: true
-  wheelSpeed: 0
+  wheelSpeeds:
+    0: 0
 
 TurretBumpLeft:
   class: TurretBumpRotation

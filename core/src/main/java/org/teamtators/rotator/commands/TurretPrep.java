@@ -15,6 +15,8 @@ import java.util.TreeMap;
 
 public class TurretPrep extends CommandBase implements Configurable<TurretPrep.Config> {
     private Config config;
+    private TreeMap<Double, Double> wheelSpeeds;
+    private TreeMap<Double, HoodPosition> hoodPositions;
     private AbstractTurret turret;
     private AbstractVision vision;
     private AbstractPicker picker;
@@ -41,6 +43,17 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
     @Override
     public void configure(Config config) {
         this.config = config;
+        hoodPositions = new TreeMap<>();
+        if (config.hoodPositions == null)
+            hoodPositions.put(0.0, HoodPosition.UP1);
+        else
+            hoodPositions.putAll(config.hoodPositions);
+
+        wheelSpeeds = new TreeMap<>();
+        if (config.wheelSpeeds == null)
+            wheelSpeeds.put(0.0, 0.0);
+        else
+            wheelSpeeds.putAll(config.wheelSpeeds);
     }
 
     @Override
@@ -51,14 +64,10 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
             cancel();
             return;
         }
-        // get correct wheel speed and hood position from distance to goal
-        double goalDistance = vision.getVisionData().getDistance();
-        TreeMap<Double, HoodPosition> hoodPositions = new TreeMap<>(config.hoodPositions);
-        TreeMap<Double, Double> wheelSpeeds = new TreeMap<>(config.wheelSpeeds);
-        HoodPosition hoodPosition = hoodPositions.ceilingEntry(goalDistance).getValue();
-        double wheelSpeed = wheelSpeeds.ceilingEntry(goalDistance).getValue();
-        turret.setHoodPosition(hoodPosition);
-        turret.setTargetWheelSpeed(wheelSpeed);
+        if (!config.target) {
+            turret.setHoodPosition(HoodPosition.UP1);
+            turret.setTargetWheelSpeed(wheelSpeeds.firstEntry().getValue());
+        }
         if (config.target || config.lights)
             vision.setLedState(true);
         lastFrameNumber = Integer.MIN_VALUE;
@@ -76,10 +85,18 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
             int frameNumber = visionData.getFrameNumber();
             deltaAngle = visionData.getOffsetAngle();
             newAngle = visionData.getNewAngle();
-            if (frameNumber != lastFrameNumber && !Double.isNaN(deltaAngle)) {
+            double goalDistance = vision.getVisionData().getDistance();
+            if (frameNumber != lastFrameNumber && !Double.isNaN(deltaAngle) &&
+                    !Double.isNaN(goalDistance) && !Double.isNaN(newAngle)) {
                 lastFrameNumber = frameNumber;
                 turret.setTargetAngle(newAngle);
                 logger.info("Moving turret {} degrees. Final angle will be {}", deltaAngle, newAngle);
+
+                // get correct wheel speed and hood position from distance to goal
+                HoodPosition hoodPosition = hoodPositions.floorEntry(goalDistance).getValue();
+                double wheelSpeed = wheelSpeeds.floorEntry(goalDistance).getValue();
+                turret.setHoodPosition(hoodPosition);
+                turret.setTargetWheelSpeed(wheelSpeed);
             }
         }
         return false;
