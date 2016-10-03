@@ -10,6 +10,8 @@ import org.teamtators.rotator.subsystems.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class TurretPrep extends CommandBase implements Configurable<TurretPrep.Config> {
     private Config config;
@@ -49,8 +51,14 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
             cancel();
             return;
         }
-        turret.setHoodPosition(HoodPosition.UP1);
-        turret.setTargetWheelSpeed(config.wheelSpeed);
+        // get correct wheel speed and hood position from distance to goal
+        double goalDistance = vision.getVisionData().getDistance();
+        TreeMap<Double, HoodPosition> hoodPositions = new TreeMap<>(config.hoodPositions);
+        TreeMap<Double, Double> wheelSpeeds = new TreeMap<>(config.wheelSpeeds);
+        HoodPosition hoodPosition = hoodPositions.ceilingEntry(goalDistance).getValue();
+        double wheelSpeed = wheelSpeeds.ceilingEntry(goalDistance).getValue();
+        turret.setHoodPosition(hoodPosition);
+        turret.setTargetWheelSpeed(wheelSpeed);
         if (config.target || config.lights)
             vision.setLedState(true);
         lastFrameNumber = Integer.MIN_VALUE;
@@ -111,7 +119,8 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
     public static class Config {
         public boolean lights = false;
         public boolean target = false;
-        public double wheelSpeed;
+        public Map<Double, Double> wheelSpeeds;
+        public Map<Double, HoodPosition> hoodPositions;
         public boolean dataLogging = false;
     }
 }

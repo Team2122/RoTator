@@ -69,7 +69,10 @@ TurretSpinUp:
 TurretShootPrep:
   class: TurretPrep
   target: true
-  wheelSpeed: 85
+  wheelSpeeds:
+    0: wheelSpeed: 85
+  hoodPositions:
+    0: UP1
   dataLogging: false
 
 TurretBarfPrep:
