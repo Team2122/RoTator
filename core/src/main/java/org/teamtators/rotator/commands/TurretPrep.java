@@ -66,7 +66,6 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
         }
         if (!config.target) {
             turret.setHoodPosition(HoodPosition.UP1);
-            turret.setTargetWheelSpeed(wheelSpeeds.firstEntry().getValue());
         }
         if (config.target || config.lights)
             vision.setLedState(true);
@@ -80,12 +79,13 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
         currentAngle = turret.getAngle();
         vision.setTurretAngle(currentAngle);
 
+        double goalDistance = 0;
         if (config.target) {
             VisionData visionData = vision.getVisionData();
             int frameNumber = visionData.getFrameNumber();
             deltaAngle = visionData.getOffsetAngle();
             newAngle = visionData.getNewAngle();
-            double goalDistance = vision.getVisionData().getDistance();
+            goalDistance = vision.getVisionData().getDistance();
             if (frameNumber != lastFrameNumber && !Double.isNaN(deltaAngle) &&
                     !Double.isNaN(goalDistance) && !Double.isNaN(newAngle)) {
                 lastFrameNumber = frameNumber;
@@ -94,11 +94,16 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
 
                 // get correct wheel speed and hood position from distance to goal
                 HoodPosition hoodPosition = hoodPositions.floorEntry(goalDistance).getValue();
-                double wheelSpeed = wheelSpeeds.floorEntry(goalDistance).getValue();
                 turret.setHoodPosition(hoodPosition);
-                turret.setTargetWheelSpeed(wheelSpeed);
             }
         }
+
+
+        double wheelSpeed = turret.getTargetWheelSpeed();
+        if (!Double.isNaN(goalDistance)) {
+            wheelSpeed = wheelSpeeds.floorEntry(goalDistance).getValue();
+        }
+        turret.setTargetWheelSpeed(wheelSpeed);
         return false;
     }
 
