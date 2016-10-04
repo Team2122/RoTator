@@ -6,7 +6,7 @@ Driver:
   Y: start whenPressed TurretStopWheel
   B: toggle whenPressed TurretCalibrate
   X: toggle whenPressed TurretShoot
-  A: start whenPressed TurretShoot
+  A: toggle whenPressed TurretShoot
   POV_UP: start whenPressed HoodBumpUp
   POV_DOWN: start whenPressed HoodBumpDown
   POV_LEFT: start whenPressed TurretBumpLeft
@@ -15,6 +15,15 @@ Driver:
   START: toggle whenPressed TurretBarfPrep
 
 Gunner:
+  BUMPER_LEFT: start whenPressed TurretBumpWheelSpeedUp
+  TRIGGER_LEFT: start whenPressed TurretBumpWheelSpeedDown
+  POV_UP: start whenPressed HoodBumpUp
+  POV_DOWN: start whenPressed HoodBumpDown
+  POV_LEFT: start whenPressed TurretBumpLeft
+  POV_RIGHT: start whenPressed TurretBumpRight
+  A: toggle whenPressed TurretShoot
+  B: toggle whenPressed PickerPick
+  Y: toggle whenPressed TurretShootPrep
 
 defaults: [ DriveTank ]
 
