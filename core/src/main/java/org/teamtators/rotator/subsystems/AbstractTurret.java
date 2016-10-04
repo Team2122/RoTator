@@ -24,6 +24,7 @@ public abstract class AbstractTurret extends Subsystem {
     private AbstractController angleController = null;
     private boolean homed = false;
     private HoodPosition hoodPosition = HoodPosition.DOWN;
+    private double wheelSpeedOffset = 0.0;
 
 
     public AbstractTurret() {
@@ -63,6 +64,10 @@ public abstract class AbstractTurret extends Subsystem {
      * @param rps New wheel speed setpoint
      */
     public void setTargetWheelSpeed(double rps) {
+        if (rps != 0)
+            rps += wheelSpeedOffset;
+        if (rps < 0)
+            rps = 0;
         shooterWheelController.setSetpoint(rps);
     }
 
@@ -117,6 +122,14 @@ public abstract class AbstractTurret extends Subsystem {
      */
     public void setHoodPosition(HoodPosition hoodPosition) {
         this.hoodPosition = hoodPosition;
+    }
+
+    public double getWheelSpeedOffset() {
+        return wheelSpeedOffset;
+    }
+
+    public void setWheelSpeedOffset(double wheelSpeedOffset) {
+        this.wheelSpeedOffset = wheelSpeedOffset;
     }
 
     /**
@@ -241,7 +254,6 @@ public abstract class AbstractTurret extends Subsystem {
         }
         return false;
     }
-
     protected class TurretTest extends ComponentTest {
         public TurretTest() {
             super("TurretTest");

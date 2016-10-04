@@ -96,6 +96,14 @@ TurretBumpRight:
   class: TurretBumpRotation
   angle: 10.0
 
+TurretBumpWheelSpeedUp:
+  class: TurretBumpWheelSpeedOffset
+  offset: 5
+
+TurretBumpWheelSpeedDown:
+  class: TurretBumpWheelSpeedOffset
+  offset: -5
+
 ^DriveStraight:
   power: 0.2
   angleController: { type: PID, P: 0.0375 }
