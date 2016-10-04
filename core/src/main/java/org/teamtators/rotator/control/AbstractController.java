@@ -284,6 +284,8 @@ public abstract class AbstractController extends AbstractSteppable implements Da
         if (isDataLogging()) {
             dataCollector.startProvider(getLogDataProvider());
         }
+        if (inputProvider instanceof AbstractSteppable)
+            ((AbstractSteppable) inputProvider).enable();
     }
 
     @Override
@@ -291,6 +293,8 @@ public abstract class AbstractController extends AbstractSteppable implements Da
         if (outputConsumer != null)
             outputConsumer.setControllerOutput(0.0);
         dataCollector.stopProvider(getLogDataProvider());
+        if (inputProvider instanceof AbstractSteppable)
+            ((AbstractSteppable) inputProvider).disable();
     }
 
     protected void configure(Config config) {

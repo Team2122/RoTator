@@ -56,9 +56,9 @@ public abstract class Command {
 
     protected void cancelCommand(Command command) {
         if (this.context == null || command.getContext() == null) {
-            throw new IllegalStateException("Tried to cancel command that is not running");
-        }
-        this.context.cancelCommand(command);
+            logger.debug("Tried to cancel command that is not running");
+        } else
+            this.context.cancelCommand(command);
     }
 
     public void cancel() {
