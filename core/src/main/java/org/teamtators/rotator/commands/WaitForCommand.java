@@ -15,6 +15,8 @@ public class WaitForCommand extends CommandBase implements Configurable<WaitForC
     protected void initialize() {
         if (!command.isRunning()) {
             logger.debug("{} is not running", command.getName());
+        } else {
+            logger.debug("Waiting for {}", command.getName());
         }
     }
 

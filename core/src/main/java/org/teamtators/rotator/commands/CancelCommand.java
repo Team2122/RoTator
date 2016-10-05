@@ -21,7 +21,7 @@ public class CancelCommand extends CommandBase implements Configurable<WaitForCo
         if (command.isRunning()) {
             command.cancel();
         } else {
-            logger.warn(command.getName() + " not running, can't cancel it");
+            logger.debug(command.getName() + " not running, can't cancel it");
         }
         return true;
     }

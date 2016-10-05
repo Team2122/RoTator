@@ -88,6 +88,9 @@ public class SequentialCommand extends Command implements CommandRunContext {
                 getContext().startCommand(currentRun().command);
                 currentPosition++;
             }
+            if (currentPosition >= sequence.size()) {
+                return true;
+            }
             CommandRun run = currentRun();
             if (run.cancel) {
                 cancelRun(run);

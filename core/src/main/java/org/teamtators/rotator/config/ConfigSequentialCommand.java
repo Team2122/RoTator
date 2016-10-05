@@ -43,7 +43,12 @@ public class ConfigSequentialCommand extends SequentialCommand implements Config
                 ObjectNode commandConfig = (ObjectNode) node;
                 if (node.has("class")) {
                     String className = commandConfig.get("class").asText();
-                    String commandName = findNextCommandName(className);
+                    String commandName;
+                    if (node.has("name")) {
+                        commandName = node.get("name").asText();
+                    } else {
+                        commandName = findNextCommandName(className);
+                    }
                     command = commandStore.constructCommandClass(commandName, className);
                     commandStore.configureCommand(command, commandConfig);
                 } else if (node.has("name")) {
@@ -53,9 +58,7 @@ public class ConfigSequentialCommand extends SequentialCommand implements Config
                 }
                 SequentialCommandRun commandRun = new SequentialCommandRun(command);
                 if (commandConfig.has("parallel")) {
-                    if (commandConfig.get("parallel").asBoolean()) {
-                        commandRun.parallel = true;
-                    }
+                    commandRun.parallel = commandConfig.get("parallel").asBoolean();
                 }
                 sequence.add(commandRun);
             } else if (node.isTextual()) {
