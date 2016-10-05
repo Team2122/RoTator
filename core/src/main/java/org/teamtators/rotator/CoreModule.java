@@ -8,6 +8,7 @@ import org.teamtators.rotator.commands.CoreCommands;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Stepper;
+import org.teamtators.rotator.control.Timer;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.CommandStore;
 import org.teamtators.rotator.scheduler.Scheduler;
@@ -47,8 +48,10 @@ public class CoreModule {
     @Provides
     @ForController
     @Singleton
-    Stepper providesStepperForController() {
-        return new Stepper(1.0 / 60.0);
+    Stepper providesStepperForController(Timer timer) {
+        Stepper stepper = new Stepper(1.0 / 60.0);
+        stepper.setTimer(timer);
+        return stepper;
     }
 
     @Provides

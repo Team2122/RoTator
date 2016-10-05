@@ -3,7 +3,7 @@ package org.teamtators.rotator.commands;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.control.ITimeProvider;
+import org.teamtators.rotator.control.Timer;
 import org.teamtators.rotator.subsystems.AbstractTurret;
 import org.teamtators.rotator.subsystems.AbstractVision;
 import org.teamtators.rotator.subsystems.HoodPosition;
@@ -16,15 +16,15 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
     private Config config;
     private AbstractTurret turret;
     private AbstractVision vision;
-    private ITimeProvider timer;
-    private double commandStartTime = Double.NaN;
-    private double rollingStartTime = Double.NaN;
+    private Timer commandTimer;
+    private Timer rollingTimer;
 
     public TurretShoot(CoreRobot robot) {
         super("PickerPick");
         this.turret = robot.turret();
         this.vision = robot.vision();
-        this.timer = robot.timeProvider();
+        this.commandTimer = robot.timer();
+        this.rollingTimer = robot.timer();
     }
 
     @Override
@@ -40,18 +40,17 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
             return;
         }
         logger.info("Waiting for shooter to be ready to shoot");
-        commandStartTime = timer.getTimestamp();
-        rollingStartTime = Double.NaN;
+        commandTimer.start();
+        rollingTimer.reset();
     }
 
     @Override
     protected boolean step() {
-        double timestamp = timer.getTimestamp();
-        if (timestamp >= rollingStartTime + config.shootTime) { // if rolling has finished, end command
+        if (rollingTimer.hasPeriodElapsed(config.shootTime)) { // if rolling has finished, end command
             return true;
-        } else if (!Double.isNaN(rollingStartTime)) { // if rolling has started, continue rolling
+        } else if (rollingTimer.isRunning()) { // if rolling has started, continue rolling
             return false;
-        } else if (timestamp >= commandStartTime + config.waitTimeout) { // if command has timed out, cancel it
+        } else if (commandTimer.hasPeriodElapsed(config.waitTimeout)) { // if command has timed out, cancel it
             logger.warn("Command timed out");
             cancel();
             return false;
@@ -60,7 +59,7 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
         double wheelSpeed = turret.getTargetWheelSpeed();
         if (turret.isAtTargetWheelSpeed() && turret.isAngleOnTarget()) {
             // start rolling
-            rollingStartTime = timestamp;
+            rollingTimer.start();
             double angle = turret.getAngle();
             VisionData visionData = vision.getVisionData();
             double angleOffset = visionData.getOffsetAngle();

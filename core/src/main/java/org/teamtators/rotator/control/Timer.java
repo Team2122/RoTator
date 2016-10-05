@@ -50,11 +50,22 @@ public class Timer {
     }
 
     /**
+     * Get whether or not the timer is currently running
+     */
+    public boolean isRunning() {
+        Double time = get();
+        return time.isInfinite() || time.isNaN();
+    }
+
+    /**
      * Check if a period has passed, and reset timer if it has
      *
      * @return Whether or not the period has passed
      */
     public boolean hasPeriodElapsed(double period) {
+        if (!isRunning()) {
+            return false;
+        }
         boolean hasPassed = false;
         if (get() > period) {
             hasPassed = true;
