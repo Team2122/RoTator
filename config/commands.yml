@@ -98,11 +98,11 @@ TurretBumpRight:
 
 TurretBumpWheelSpeedUp:
   class: TurretBumpWheelSpeedOffset
-  offset: 5
+  offset: 1.666666666666666666666666666666666
 
 TurretBumpWheelSpeedDown:
   class: TurretBumpWheelSpeedOffset
-  offset: -5
+  offset: -1.666666666666666666666666666666666
 
 ^DriveStraight:
   power: 0.2
