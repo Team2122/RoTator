@@ -21,9 +21,12 @@ Gunner:
   POV_DOWN: start whenPressed HoodBumpDown
   POV_LEFT: start whenPressed TurretBumpLeft
   POV_RIGHT: start whenPressed TurretBumpRight
+  BACK: start whenPressed PickerToHome
+  START: toggle whenPressed TurretBarfPrep
   A: toggle whenPressed TurretShoot
-  B: toggle whenPressed PickerPick
-  Y: toggle whenPressed TurretShootPrep
+  B: toggle whenPressed TurretShootPrep
+  X: toggle whenPressed PickerPick
+  Y: start whenReleased PickerToCheval
 
 defaults: [ DriveTank ]
 
