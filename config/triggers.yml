@@ -3,9 +3,8 @@ Driver:
   BUMPER_RIGHT: start whenPressed PickerToPick
   TRIGGER_LEFT: toggle whenPressed TurretShootPrep
   TRIGGER_RIGHT: toggle whenPressed PickerPick
-  Y: start whenPressed TurretStopWheel
+  Y: whilePressed PickerBarf
   B: toggle whenPressed TurretCalibrate
-  X: toggle whenPressed TurretShoot
   A: toggle whenPressed TurretShoot
   POV_UP: start whenPressed HoodBumpUp
   POV_DOWN: start whenPressed HoodBumpDown

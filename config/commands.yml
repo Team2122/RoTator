@@ -48,17 +48,16 @@ TurretHome:
   speed: .15
 
 PickerPick:
-  pickRoller: 1.0
-  pinchRoller: 0.75
-  kingRoller: 1.0
-  maxBallDistance: 50
+  pick: 1.0
+  pinch: 0.75
+  king: 1.0
+  targetBallDistance: 50
+  tolerance: 2.0
 
-PickerReverse:
-  class: PickerPick
-  pickRoller: 0
-  pinchRoller: -0.75
-  kingRoller: -1.0
-  minBallDistance: 75
+PickerBarf:
+  pick: -1.0
+  pinch: -1.0
+  king: -1.0
 
 TurretShoot:
   kingRollerPower: 1.0

@@ -10,6 +10,7 @@ public class CoreCommands {
 
         commandStore.registerClass(LogCommand.class);
 
+        commandStore.registerClass(PickerBarf.class);
         commandStore.registerClass(PickerPick.class);
         commandStore.registerClass(PickerSetPosition.class);
 

@@ -8,15 +8,15 @@ import org.teamtators.rotator.subsystems.AbstractTurret;
 import org.teamtators.rotator.subsystems.PickerPosition;
 
 /**
- * Picks up a ball
+ * Barfs a ball in either direction
  */
-public class PickerPick extends CommandBase implements Configurable<PickerPick.Config> {
+public class PickerBarf extends CommandBase implements Configurable<PickerBarf.Config> {
     private Config config;
     private AbstractPicker picker;
     private AbstractTurret turret;
 
-    public PickerPick(CoreRobot robot) {
-        super("PickerPick");
+    public PickerBarf(CoreRobot robot) {
+        super("PickerBarf");
         this.picker = robot.picker();
         this.turret = robot.turret();
         requires(picker);
@@ -31,28 +31,13 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     @Override
     protected void initialize() {
         super.initialize();
-        if (!turret.isHomed()) {
-            logger.warn("Turret not at home, stopping pick");
-            cancel();
-            return;
-        }
-        //Extends the picker
-        picker.setPosition(PickerPosition.PICK);
     }
 
     @Override
     protected boolean step() {
-        double ballDistance = turret.getBallDistance();
-        double delta = ballDistance - config.targetBallDistance;
-        if (Math.abs(delta) <= config.tolerance) {
-            return true;
-        }
-        double sign = Math.signum(delta);
-        turret.setTargetAngle(0);
-        //Starts the rollers
-        picker.setPower(config.pick * sign);
-        turret.setPinchRollerPower(config.pinch * sign);
-        turret.setKingRollerPower(config.king * sign);
+        picker.setPower(config.pick);
+        turret.setPinchRollerPower(config.pinch);
+        turret.setKingRollerPower(config.king);
         return false;
 
     }
@@ -65,9 +50,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         turret.resetKingRollerPower();
     }
 
-    public static class Config {
+    static class Config {
         public double pick, pinch, king;
-        public double targetBallDistance;
-        public double tolerance;
     }
 }
