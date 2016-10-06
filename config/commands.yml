@@ -51,7 +51,14 @@ PickerPick:
   pickRoller: 1.0
   pinchRoller: 0.75
   kingRoller: 1.0
-  ballDistance: 50
+  maxBallDistance: 50
+
+PickerReverse:
+  class: PickerPick
+  pickRoller: 0
+  pinchRoller: -0.75
+  kingRoller: -1.0
+  minBallDistance: 75
 
 TurretShoot:
   kingRollerPower: 1.0
