@@ -17,6 +17,9 @@ gradle-app.setting
 # Windows thumbnail db
 Thumbs.db
 
+# Git for Windows stack dump
+bash.exe.stackdump
+
 # OSX files
 .DS_Store
 
