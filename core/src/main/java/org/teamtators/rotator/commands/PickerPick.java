@@ -1,8 +1,11 @@
 package org.teamtators.rotator.commands;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
+import org.teamtators.rotator.config.ControllerFactory;
+import org.teamtators.rotator.control.AbstractController;
 import org.teamtators.rotator.subsystems.AbstractPicker;
 import org.teamtators.rotator.subsystems.AbstractTurret;
 import org.teamtators.rotator.subsystems.PickerPosition;
@@ -14,11 +17,14 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     private Config config;
     private AbstractPicker picker;
     private AbstractTurret turret;
+    private AbstractController controller;
+    private ControllerFactory controllerFactory;
 
     public PickerPick(CoreRobot robot) {
         super("PickerPick");
         this.picker = robot.picker();
         this.turret = robot.turret();
+        this.controllerFactory = robot.controllerFactory();
         requires(picker);
         requires(turret);
     }
@@ -26,6 +32,10 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     @Override
     public void configure(Config config) {
         this.config = config;
+        controller = controllerFactory.create(config.distanceController);
+        controller.setName(getName());
+        controller.setInputProvider(turret::getBallDistance);
+        controller.setOutputConsumer(output -> turret.setKingRollerPower(-output));
     }
 
     @Override
@@ -38,22 +48,20 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         }
         //Extends the picker
         picker.setPosition(PickerPosition.PICK);
+        controller.enable();
+        controller.setSetpoint(config.targetBallDistance);
     }
 
     @Override
     protected boolean step() {
-        double ballDistance = turret.getBallDistance();
-        double delta = ballDistance - config.targetBallDistance;
-        if (Math.abs(delta) <= config.tolerance) {
-            return true;
-        }
-        double sign = Math.signum(delta);
+        double sign = Math.signum(turret.getBallDistance() - controller.getSetpoint());
         turret.setTargetAngle(0);
         //Starts the rollers
-        picker.setPower(config.pick * sign);
-        turret.setPinchRollerPower(config.pinch * sign);
-        turret.setKingRollerPower(config.king * sign);
-        return false;
+        if (sign == -1) {
+            picker.setPower(config.pick * sign);
+            turret.setPinchRollerPower(config.pinch * sign);
+        }
+        return controller.isOnTarget();
 
     }
 
@@ -66,8 +74,8 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     }
 
     public static class Config {
-        public double pick, pinch, king;
+        public double pick, pinch;
         public double targetBallDistance;
-        public double tolerance;
+        public JsonNode distanceController;
     }
 }
