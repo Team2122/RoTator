@@ -24,6 +24,7 @@ Turret:
   pinchRollerMotor: { channel: 5, inverted: false }
   kingRollerMotor: { channel: 3, inverted: false }
   ballSensor: { channel: 4, minDistance: 300.0, maxDistance: 26.0 }
+  ballCompressionSensor: { channel: 0, scale: 1.0, offset: 0.0 }
   hoodDeploySolenoid: 0
   shortSolenoid: 1
   longSolenoid: 2
