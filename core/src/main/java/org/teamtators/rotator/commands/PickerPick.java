@@ -1,8 +1,11 @@
 package org.teamtators.rotator.commands;
 
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
+import org.teamtators.rotator.control.AbstractSteppable;
+import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.datalogging.DataCollector;
 import org.teamtators.rotator.datalogging.LogDataProvider;
 import org.teamtators.rotator.subsystems.AbstractPicker;
@@ -25,6 +28,8 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     private Config config;
     private LogDataProvider logDataProvider = null;
 
+    private CompressionCalculator compressionCalculator = new CompressionCalculator();
+
     public PickerPick(CoreRobot robot) {
         super("PickerPick");
         this.picker = robot.picker();
@@ -33,6 +38,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         executorService = robot.executorService();
         requires(picker);
         requires(turret);
+        compressionCalculator.setStepper(robot.stepper());
     }
 
     @Override
@@ -50,25 +56,58 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         }
         //Extends the picker
         picker.setPosition(PickerPosition.PICK);
+        compressionCalculator.enable();
         if (config.dataLogging)
             dataCollector.startProvider(getLogDataProvider());
+    }
+
+    private class CompressionCalculator extends AbstractSteppable {
+        private SimpleRegression regression = new SimpleRegression();
+        private boolean hasSampled = false;
+
+        @Override
+        public void onEnable() {
+            hasSampled = false;
+            regression.clear();
+        }
+
+        @Override
+        public void step(double delta) {
+            double ballDistance = turret.getBallDistance();
+            double compressionSample = turret.getBallCompression();
+            if (ballDistance <= config.compression.start && !hasSampled) {
+                if (ballDistance <= config.compression.stop) {
+                    hasSampled = true;
+                    double x = 60.0;
+                    double compression = regression.predict(x);
+                    boolean newBall = compression <= config.compression.newBallThreshold;
+                    logger.info("Compression sample at {}: {} (R^2={}). Ball is {}", x, compression,
+                            regression.getRSquare(), newBall ? "NEW" : "OLD");
+                    hasSampled = true;
+                } else {
+                    regression.addData(ballDistance, compressionSample);
+                    logger.debug("added {}: {}", ballDistance, compressionSample);
+                }
+            }
+        }
     }
 
     @Override
     protected boolean step() {
         double ballDistance = turret.getBallDistance();
+
         double delta = ballDistance - config.targetBallDistance;
         double sign = Math.signum(delta);
-        if (Math.abs(delta) <= config.stopTolerance) {
+        if (Math.abs(delta) <= config.control.stopTolerance) {
             return true;
-        } else if (Math.abs(delta) <= config.highTolerance) {
-            turret.setKingRollerPower(config.lowPower * sign);
+        } else if (Math.abs(delta) <= config.control.highTolerance) {
+            turret.setKingRollerPower(config.control.lowPower * sign);
             picker.resetPower();
             turret.resetPinchRollerPower();
         } else {
-            turret.setKingRollerPower(config.highPower * sign);
-            picker.setPower(config.pick * sign);
-            turret.setPinchRollerPower(config.pinch * sign);
+            turret.setKingRollerPower(config.control.highPower * sign);
+            picker.setPower(config.control.pick * sign);
+            turret.setPinchRollerPower(config.control.pinch * sign);
         }
         turret.setTargetAngle(0);
         return false;
@@ -85,6 +124,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         picker.resetPower();
         turret.resetPinchRollerPower();
         turret.resetKingRollerPower();
+        compressionCalculator.disable();
         executorService.schedule(() -> dataCollector.stopProvider(getLogDataProvider()),
                 1000, TimeUnit.MILLISECONDS);
     }
@@ -111,9 +151,19 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     }
 
     public static class Config {
-        public double pick, pinch;
-        public double highPower, lowPower, highTolerance, stopTolerance;
         public double targetBallDistance;
         public boolean dataLogging = false;
+        public Control control = new Control();
+        public Compression compression = new Compression();
+
+        public static class Control {
+            public double pick, pinch;
+            public double highPower, lowPower, highTolerance, stopTolerance;
+        }
+
+        public static class Compression {
+            public double start, stop;
+            public double newBallThreshold;
+        }
     }
 }

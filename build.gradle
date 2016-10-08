@@ -34,6 +34,8 @@ allprojects {
         apt group: 'com.google.dagger', name: 'dagger-compiler', version: '2.6'
 
         compile group: 'org.apache.commons', name: 'commons-csv', version: '1.4'
+        compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+
     }
 }
 

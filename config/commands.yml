@@ -48,13 +48,18 @@ TurretHome:
   speed: .15
 
 PickerPick:
-  pick: 1.0
-  pinch: 0.75
-  highPower: 1.0
-  lowPower: .25
-  highTolerance: 50.0
-  stopTolerance: 1.0
+  control:
+    pick: 1.0
+    pinch: 0.75
+    highPower: 1.0
+    lowPower: .25
+    highTolerance: 50.0
+    stopTolerance: 1.0
   targetBallDistance: 55
+  compression:
+    start: 65.0
+    stop: 57.0
+    newBallThreshold: .424
   dataLogging: true
 
 PickerBarf:

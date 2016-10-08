@@ -29,7 +29,7 @@ public abstract class AbstractSteppable implements Steppable {
     }
 
     public final void enable() {
-        checkNotNull(stepper, "A angleController must be assigned a stepper before being enabled");
+        checkNotNull(stepper, "A stepper must be assigned to the AbstractSteppable before enabling");
         stepper.add(this);
     }
 
