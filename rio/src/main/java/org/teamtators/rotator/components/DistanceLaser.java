@@ -1,20 +1,25 @@
 package org.teamtators.rotator.components;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.ControllerPower;
 
 public class DistanceLaser {
     private double minDistance;
     private double maxDistance;
     private AnalogInput distanceLaser;
 
-    public DistanceLaser(int channel, double minDistance, double maxDistance) {
-        distanceLaser = new AnalogInput(channel);
+    public DistanceLaser(AnalogInput distanceLaser, double minDistance, double maxDistance) {
+        this.distanceLaser = distanceLaser;
         this.minDistance = minDistance;
         this.maxDistance = maxDistance;
     }
 
+    public DistanceLaser(int channel, double minDistance, double maxDistance) {
+        this(new AnalogInput(channel), minDistance, maxDistance);
+    }
+
     public double getDistance() {
-        double prop = distanceLaser.getVoltage() / 5.0;
+        double prop = distanceLaser.getVoltage() / ControllerPower.getVoltage5V();
         return (prop * (maxDistance - minDistance)) + minDistance;
     }
 
