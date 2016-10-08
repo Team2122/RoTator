@@ -10,4 +10,15 @@ public abstract class AbstractOperatorInterface extends Subsystem {
     public abstract LogitechF310 driverJoystick();
 
     public abstract LogitechF310 gunnerJoystick();
+
+    public LogitechF310 getJoystick(String joystickName) {
+        switch (joystickName) {
+            case "driver":
+                return driverJoystick();
+            case "gunner":
+                return gunnerJoystick();
+            default:
+                throw new IllegalArgumentException("Invalid joystick '" + joystickName + "' requested");
+        }
+    }
 }
