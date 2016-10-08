@@ -30,13 +30,22 @@ public class Stepper implements Runnable {
     private boolean running = false;
     private double lastStepTime;
 
-    @Inject
     public Stepper() {
-        this(DEFAULT_PERIOD);
+        this(Executors.newSingleThreadScheduledExecutor());
+    }
+
+    @Inject
+    public Stepper(ScheduledExecutorService executorService) {
+        this(executorService, DEFAULT_PERIOD);
+    }
+
+    public Stepper(ScheduledExecutorService executorService, double period) {
+        this.executorService = executorService;
+        this.period = period;
     }
 
     public Stepper(double period) {
-        this.period = period;
+        this(Executors.newSingleThreadScheduledExecutor(), period);
     }
 
     public void start() {

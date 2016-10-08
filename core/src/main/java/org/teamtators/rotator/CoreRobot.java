@@ -22,6 +22,7 @@ import org.teamtators.rotator.tester.ManualTester;
 
 import javax.inject.Named;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
 
 public interface CoreRobot {
     ObjectMapper objectMapper();
@@ -51,6 +52,8 @@ public interface CoreRobot {
     TriggerBinder triggerBinder();
 
     ManualTester manualTester();
+
+    ScheduledExecutorService executorService();
 
     @ForController
     Stepper stepper();

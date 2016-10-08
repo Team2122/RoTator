@@ -12,6 +12,9 @@ import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.subsystems.*;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Module(includes = CoreModule.class)
 public class RioModule {
@@ -44,6 +47,12 @@ public class RioModule {
     @Provides
     static ITimeProvider providesTimeProvider(WPILibTimeProvider timeProvider) {
         return timeProvider;
+    }
+
+    @Provides
+    @Singleton
+    static ScheduledExecutorService providesExecutorService() {
+        return Executors.newSingleThreadScheduledExecutor();
     }
 
     @Provides

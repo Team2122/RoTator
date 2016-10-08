@@ -55,6 +55,7 @@ PickerPick:
   highTolerance: 50.0
   stopTolerance: 1.0
   targetBallDistance: 55
+  dataLogging: true
 
 PickerBarf:
   pick: -1.0
