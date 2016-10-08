@@ -44,15 +44,19 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     protected boolean step() {
         double ballDistance = turret.getBallDistance();
         double delta = ballDistance - config.targetBallDistance;
-        if (Math.abs(delta) <= config.tolerance) {
-            return true;
-        }
         double sign = Math.signum(delta);
+        if (Math.abs(delta) <= config.stopTolerance) {
+            return true;
+        } else if (Math.abs(delta) <= config.highTolerance) {
+            turret.setKingRollerPower(config.lowPower * sign);
+            picker.resetPower();
+            turret.resetPinchRollerPower();
+        } else {
+            turret.setKingRollerPower(config.highPower * sign);
+            picker.setPower(config.pick * sign);
+            turret.setPinchRollerPower(config.pinch * sign);
+        }
         turret.setTargetAngle(0);
-        //Starts the rollers
-        picker.setPower(config.pick * sign);
-        turret.setPinchRollerPower(config.pinch * sign);
-        turret.setKingRollerPower(config.king * sign);
         return false;
 
     }
@@ -66,8 +70,8 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     }
 
     public static class Config {
-        public double pick, pinch, king;
+        public double pick, pinch;
+        public double highPower, lowPower, highTolerance, stopTolerance;
         public double targetBallDistance;
-        public double tolerance;
     }
 }

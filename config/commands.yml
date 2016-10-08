@@ -50,9 +50,11 @@ TurretHome:
 PickerPick:
   pick: 1.0
   pinch: 0.75
-  king: 1.0
-  targetBallDistance: 50
-  tolerance: 2.0
+  highPower: 1.0
+  lowPower: .25
+  highTolerance: 50.0
+  stopTolerance: 1.0
+  targetBallDistance: 55
 
 PickerBarf:
   pick: -1.0
