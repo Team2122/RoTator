@@ -73,4 +73,9 @@ public class NoopTurret extends AbstractTurret {
     public double getBallDistance() {
         return 0;
     }
+
+    @Override
+    public double getBallCompression() {
+        return 0;
+    }
 }

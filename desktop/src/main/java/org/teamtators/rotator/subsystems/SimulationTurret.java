@@ -103,6 +103,11 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
         return ballDistance;
     }
 
+    @Override
+    public double getBallCompression() {
+        return 0;
+    }
+
     public void setBallDistance(double ballDistance) {
         this.ballDistance = ballDistance;
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
+import org.teamtators.rotator.components.AnalogPotentiometer;
 import org.teamtators.rotator.components.DigitalSensor;
 import org.teamtators.rotator.components.DistanceLaser;
 import org.teamtators.rotator.config.*;
@@ -30,6 +31,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     private VictorSP pinchRollerMotor;
     private VictorSP kingRollerMotor;
     private DistanceLaser ballSensor;
+    private AnalogPotentiometer ballCompressionSensor;
     private Solenoid hoodDeploySolenoid;
     private Solenoid shortSolenoid;
     private Solenoid longSolenoid;
@@ -50,6 +52,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         this.pinchRollerMotor = config.pinchRollerMotor.create();
         this.kingRollerMotor = config.kingRollerMotor.create();
         this.ballSensor = config.ballSensor.create();
+        this.ballCompressionSensor = config.ballCompressionSensor.create();
         this.hoodDeploySolenoid = new Solenoid(config.hoodDeploySolenoid);
         this.shortSolenoid = new Solenoid(config.shortSolenoid);
         this.longSolenoid = new Solenoid(config.longSolenoid);
@@ -184,11 +187,17 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         return (float) ballSensor.getDistance();
     }
 
+    @Override
+    public double getBallCompression() {
+        return ballCompressionSensor.getValue();
+    }
+
     public ComponentTestGroup getTestGroup() {
         return new ComponentTestGroup("Turret",
                 new VictorSPTest("pinchRollerMotor", pinchRollerMotor),
                 new VictorSPTest("kingRollerMotor", kingRollerMotor),
                 new DistanceLaserTest("ballSensor", ballSensor),
+                new AnalogPotentiometerTest("ballCompressionSensor", ballCompressionSensor),
                 new SolenoidTest("hoodDeploySolenoid", hoodDeploySolenoid),
                 new SolenoidTest("shortSolenoid", shortSolenoid),
                 new SolenoidTest("longSolenoid", longSolenoid),
@@ -208,6 +217,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         public VictorSPConfig pinchRollerMotor;
         public VictorSPConfig kingRollerMotor;
         public DistanceLaserConfig ballSensor;
+        public AnalogPotentiometerConfig ballCompressionSensor;
         public int hoodDeploySolenoid;
         public int shortSolenoid;
         public int longSolenoid;

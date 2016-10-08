@@ -237,6 +237,13 @@ public abstract class AbstractTurret extends Subsystem {
      */
     public abstract double getBallDistance();
 
+    /**
+     * Gets the value from the ball compression sensor.
+     * @return The value from the ball compression sensor, between 0-1. Measured
+     * in rotations of the analog encoder.
+     */
+    public abstract double getBallCompression();
+
     public boolean isHomed() {
         return homed;
     }
