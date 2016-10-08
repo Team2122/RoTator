@@ -2,6 +2,7 @@ package org.teamtators.rotator.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Multimap;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.RobotState;
 
@@ -14,5 +15,5 @@ public class TriggersConfig {
     @JsonProperty("Gunner")
     public Map<LogitechF310.Button, JsonNode> gunner;
     public Set<String> defaults;
-    public Map<RobotState, String> stateCommands;
+    public Multimap<RobotState, String> stateCommands;
 }

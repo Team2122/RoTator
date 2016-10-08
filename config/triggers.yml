@@ -30,3 +30,5 @@ Gunner:
 
 defaults: [ DriveTank ]
 
+stateCommands:
+  AUTONOMOUS: [ AutoInit ]

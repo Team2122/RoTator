@@ -26,6 +26,8 @@ allprojects {
         compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.7.5'
         compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.7.5'
         compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.5'
+        compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-guava', version: '2.7.5'
+
         compile group: 'com.google.guava', name: 'guava', version: '19.0'
 
         compile group: 'com.google.dagger', name: 'dagger', version: '2.6'

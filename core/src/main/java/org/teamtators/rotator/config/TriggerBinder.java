@@ -60,10 +60,17 @@ public class TriggerBinder implements StateListener {
         registerStateCommands(triggersConfig.stateCommands);
     }
 
-    private void registerStateCommands(Map<RobotState, String> newStateCommands) {
-        for (Map.Entry<RobotState, String> commandEntry : newStateCommands.entrySet()) {
-            Command stateCommand = getCommandForBinding(commandEntry.getValue());
-            stateCommands.put(commandEntry.getKey(), stateCommand);
+    public void registerStateCommand(RobotState state, Command command) {
+        this.stateCommands.put(state, command);
+    }
+
+    public void registerStateCommand(RobotState state, String commandName) {
+        registerStateCommand(state, getCommandForBinding(commandName));
+    }
+
+    private void registerStateCommands(Multimap<RobotState, String> newStateCommands) {
+        for (Map.Entry<RobotState, String> entry : newStateCommands.entries()) {
+            registerStateCommand(entry.getKey(), entry.getValue());
         }
     }
 
@@ -169,7 +176,6 @@ public class TriggerBinder implements StateListener {
 
     public void onEnterState(RobotState state) {
         Collection<Command> thisStateCommands = stateCommands.get(state);
-        if (thisStateCommands == null) return;
         for (Command stateCommand : thisStateCommands) {
             scheduler.startCommand(stateCommand);
         }
