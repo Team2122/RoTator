@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class SequentialCommand extends Command implements CommandRunContext {
-    private List<CommandRun> sequence;
+    private List<SequentialCommandRun> sequence;
     private int currentPosition;
 
     public SequentialCommand(String name, Collection<Command> sequence) {
@@ -26,19 +26,24 @@ public class SequentialCommand extends Command implements CommandRunContext {
         this("SequentialCommand", Arrays.asList(sequence));
     }
 
-    private CommandRun currentRun() {
+    private SequentialCommandRun currentRun() {
         return sequence.get(currentPosition);
     }
 
-    protected void setSequence(Collection<Command> sequence) {
+    protected void setRunSequence(List<SequentialCommandRun> sequence) {
         checkNotNull(sequence);
 
-        this.sequence = sequence.stream()
-                .map(CommandRun::new)
-                .collect(Collectors.toList());
+        this.sequence = sequence;
 
         updateValidStates();
         updateRequirements();
+    }
+
+    protected void setSequence(Collection<Command> commands) {
+        checkNotNull(commands);
+        setRunSequence(commands.stream()
+                .map(SequentialCommandRun::new)
+                .collect(Collectors.toList()));
     }
 
     private void updateValidStates() {
@@ -79,6 +84,13 @@ public class SequentialCommand extends Command implements CommandRunContext {
         if (sequence.size() == 0) return true;
         boolean finished;
         do {
+            while (currentPosition < sequence.size() && currentRun().parallel) {
+                getContext().startCommand(currentRun().command);
+                currentPosition++;
+            }
+            if (currentPosition >= sequence.size()) {
+                return true;
+            }
             CommandRun run = currentRun();
             if (run.cancel) {
                 cancelRun(run);
@@ -144,7 +156,7 @@ public class SequentialCommand extends Command implements CommandRunContext {
     @Override
     public void cancelCommand(Command command) {
         checkNotNull(command);
-        Optional<CommandRun> inGroup = findCommand(command);
+        Optional<SequentialCommandRun> inGroup = findCommand(command);
         if (inGroup.isPresent()) {
             inGroup.get().cancel = true;
         } else {
@@ -152,9 +164,17 @@ public class SequentialCommand extends Command implements CommandRunContext {
         }
     }
 
-    private Optional<CommandRun> findCommand(Command command) {
+    private Optional<SequentialCommandRun> findCommand(Command command) {
         return sequence.stream()
                 .filter(run -> run.command == command)
                 .findFirst();
+    }
+
+    public static class SequentialCommandRun extends CommandRun {
+        public boolean parallel = false;
+
+        public SequentialCommandRun(Command command) {
+            super(command);
+        }
     }
 }

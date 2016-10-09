@@ -35,25 +35,41 @@ public class ConfigSequentialCommand extends SequentialCommand implements Config
         if (config.size() != 0 && !config.isArray())
             throw new ConfigException("SequentialCommand config must be an array");
         Iterator<JsonNode> it = config.elements();
-        ArrayList<Command> sequence = new ArrayList<>();
+        ArrayList<SequentialCommandRun> sequence = new ArrayList<>();
         while (it.hasNext()) {
             JsonNode node = it.next();
-            Command command;
-            if (node.isObject() && node.has("class")) {
+            if (node.isObject()) {
+                Command command;
                 ObjectNode commandConfig = (ObjectNode) node;
-                String className = commandConfig.get("class").asText();
-                String commandName = findNextCommandName(className);
-                command = commandStore.constructCommandClass(commandName, className);
-                commandStore.configureCommand(command, commandConfig);
+                if (node.has("class")) {
+                    String className = commandConfig.get("class").asText();
+                    String commandName;
+                    if (node.has("name")) {
+                        commandName = node.get("name").asText();
+                    } else {
+                        commandName = findNextCommandName(className);
+                    }
+                    command = commandStore.constructCommandClass(commandName, className);
+                    commandStore.configureCommand(command, commandConfig);
+                } else if (node.has("name")) {
+                    command = commandStore.getCommand(commandConfig.get("name").asText());
+                } else {
+                    throw new ConfigException("SequentialCommand config was passed object, but didn't contain class or command name");
+                }
+                SequentialCommandRun commandRun = new SequentialCommandRun(command);
+                if (commandConfig.has("parallel")) {
+                    commandRun.parallel = commandConfig.get("parallel").asBoolean();
+                }
+                sequence.add(commandRun);
             } else if (node.isTextual()) {
                 String commandName = node.asText();
-                command = commandStore.getCommand(commandName);
+                Command command = commandStore.getCommand(commandName);
+                sequence.add(new SequentialCommandRun(command));
             } else {
                 throw new ConfigException("Each node in a SequentialCommand config must be an object or a string," +
                         " not: " + node);
             }
-            sequence.add(command);
         }
-        setSequence(sequence);
+        setRunSequence(sequence);
     }
 }
