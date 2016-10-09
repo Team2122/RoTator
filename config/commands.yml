@@ -59,7 +59,10 @@ PickerPick:
   compression:
     start: 75.0
     stop: 57.0
-    newBallThreshold: 10.31
+    ballAgeThresholds:
+      0.0: OLD
+      0.1: MIDDLE
+      10.31: NEW
   dataLogging: true
 
 PickerBarf:
@@ -80,29 +83,32 @@ TurretSpinUp:
   class: TurretSetWheelSpeed
   speed: 75.0
 
-TurretShootPrep:
-  class: TurretPrep
+TurretTarget:
   target: true
   wheelSpeeds:
-    0: 88.333
-#    120: 91.666
-    120: 90.0
+    NEW:
+    MIDDLE:
+      0: 88.333
+#      120: 91.666
+      120: 90.0
+    OLD:
   hoodPositions:
-    0: UP4
-    120: UP4
+    NEW:
+    MIDDLE:
+      0: UP4
+      120: UP4
+    OLD:
+  defaultHoodPosition: UP1
   dataLogging: false
 
 TurretBarfPrep:
   class: TurretPrep
-  target: false
-  wheelSpeeds:
-    0: 60.0
+  wheelSpeed: 60.0
 
 TurretCalibrate:
   class: TurretPrep
   lights: true
-  wheelSpeeds:
-    0: 0
+  wheelSpeed: 0.0
 
 TurretBumpLeft:
   class: TurretBumpRotation

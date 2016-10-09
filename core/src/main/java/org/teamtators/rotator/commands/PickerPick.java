@@ -8,10 +8,12 @@ import org.teamtators.rotator.datalogging.DataCollector;
 import org.teamtators.rotator.datalogging.LogDataProvider;
 import org.teamtators.rotator.subsystems.AbstractPicker;
 import org.teamtators.rotator.subsystems.AbstractTurret;
+import org.teamtators.rotator.subsystems.BallAge;
 import org.teamtators.rotator.subsystems.PickerPosition;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -70,9 +72,10 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
                 double a = regression.getSlope(), b = regression.getIntercept();
                 double x_1 = config.compression.stop, x_2 = config.compression.start;
                 double compression = a * (0.5 * x_2 * x_2 - 0.5 * x_1 * x_1) + b * (x_2 - x_1);
-                boolean newBall = compression >= config.compression.newBallThreshold;
+                BallAge ballAge = config.compression.ballAgeThresholds.ceilingEntry(compression).getValue();
                 logger.info("Compression sample: {} (R^2={}). Ball is {}", compression,
-                        regression.getRSquare(), newBall ? "NEW" : "OLD");
+                        regression.getRSquare(), ballAge);
+                turret.setBallAge(ballAge);
             } else {
                 regression.addData(ballDistance, compressionSample);
 //                logger.debug("added {}: {}", ballDistance, compressionSample);
@@ -144,7 +147,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
 
         public static class Compression {
             public double start, stop;
-            public double newBallThreshold;
+            public TreeMap<Double, BallAge> ballAgeThresholds;
         }
     }
 }

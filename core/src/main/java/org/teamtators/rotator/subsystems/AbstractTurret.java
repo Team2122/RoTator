@@ -2,7 +2,9 @@ package org.teamtators.rotator.subsystems;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.teamtators.rotator.config.ControllerFactory;
-import org.teamtators.rotator.control.*;
+import org.teamtators.rotator.control.AbstractController;
+import org.teamtators.rotator.control.InputDifferentiator;
+import org.teamtators.rotator.control.LimitPredicates;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.tester.ComponentTest;
@@ -24,6 +26,7 @@ public abstract class AbstractTurret extends Subsystem {
     private AbstractController angleController = null;
     private boolean homed = false;
     private HoodPosition hoodPosition = HoodPosition.DOWN;
+    private BallAge ballAge;
     private double wheelSpeedOffset = 0.0;
     private boolean hasShot = false;
 
@@ -245,6 +248,14 @@ public abstract class AbstractTurret extends Subsystem {
      */
     public abstract double getBallCompression();
 
+    public void setBallAge(BallAge ballAge) {
+        this.ballAge = ballAge;
+    }
+
+    public BallAge getBallAge() {
+        return ballAge;
+    }
+
     public boolean isHomed() {
         return homed;
     }
@@ -299,11 +310,13 @@ public abstract class AbstractTurret extends Subsystem {
     protected static class Config {
         public JsonNode shooterWheelController;
         public JsonNode angleController;
+        public BallAge defaultBallAge;
     }
 
     protected void configure(Config config) {
         setShooterWheelController(controllerFactory.create(config.shooterWheelController));
         setAngleController(controllerFactory.create(config.angleController));
+        ballAge = config.defaultBallAge;
     }
 
 }
