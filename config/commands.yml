@@ -55,9 +55,9 @@ PickerPick:
     lowPower: .25
     highTolerance: 50.0
     stopTolerance: 1.0
-  targetBallDistance: 55
+  targetBallDistance: 45.0
   compression:
-    start: 65.0
+    start: 75.0
     stop: 57.0
     newBallThreshold: .424
   dataLogging: true
