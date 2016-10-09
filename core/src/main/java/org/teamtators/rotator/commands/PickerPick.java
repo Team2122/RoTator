@@ -75,7 +75,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
                         regression.getRSquare(), newBall ? "NEW" : "OLD");
             } else {
                 regression.addData(ballDistance, compressionSample);
-                logger.debug("added {}: {}", ballDistance, compressionSample);
+//                logger.debug("added {}: {}", ballDistance, compressionSample);
             }
         }
         double delta = ballDistance - config.targetBallDistance;
