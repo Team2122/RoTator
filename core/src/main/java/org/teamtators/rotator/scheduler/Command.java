@@ -7,7 +7,7 @@ import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public abstract class Command {
+public abstract class Command implements CommandRunContext {
     protected Logger logger;
     private String name;
     private CommandRunContext context = null;
@@ -47,14 +47,16 @@ public abstract class Command {
         return this.context != null;
     }
 
-    protected void startCommand(Command command) {
+    @Override
+    public void startWithContext(Command command, CommandRunContext context) {
         if (this.context == null) {
             throw new IllegalStateException("Tried add command in parent context while not running");
         }
-        this.context.startCommand(command);
+        this.context.startWithContext(command, context);
     }
 
-    protected void cancelCommand(Command command) {
+    @Override
+    public void cancelCommand(Command command) {
         if (this.context == null || command.getContext() == null) {
             logger.debug("Tried to cancel command that is not running");
         } else
@@ -137,8 +139,8 @@ public abstract class Command {
         return !anyRequiring;
     }
 
-    protected boolean takeRequirements(Subsystem... requirements) {
-        return takeRequirements(Arrays.asList(requirements), getContext());
+    protected boolean cancelRequiring(Subsystem... requirements) {
+        return takeRequirements(Arrays.asList(requirements), null);
     }
 
     private boolean takeRequirements(CommandRunContext context) {

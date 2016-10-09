@@ -64,7 +64,7 @@ public class SequentialCommand extends Command implements CommandRunContext {
         sequence.forEach(run -> {
             if (run.command instanceof SequentialCommand)
                 ((SequentialCommand) run.command).updateRequirements();
-            if (run.command.getRequirements() != null)
+            if (run.command.getRequirements() != null && !run.parallel)
                 requiresAll(run.command.getRequirements());
         });
     }
@@ -84,37 +84,37 @@ public class SequentialCommand extends Command implements CommandRunContext {
         if (sequence.size() == 0) return true;
         boolean finished;
         do {
-            while (currentPosition < sequence.size() && currentRun().parallel) {
-                getContext().startCommand(currentRun().command);
-                currentPosition++;
-            }
-            if (currentPosition >= sequence.size()) {
-                return true;
-            }
-            CommandRun run = currentRun();
+            SequentialCommandRun run = currentRun();
             if (run.cancel) {
                 cancelRun(run);
                 return true;
             }
-            if (!run.initialized) {
-                if (run.command.isRunning()) {
-                    if (run.command.getContext() == this && run.command.checkRequirements()) {
+            if (run.parallel) {
+                startWithContext(run.command, this);
+                finished = true;
+            } else {
+                if (!run.initialized) {
+                    if (run.command.isRunning()) {
+                        if (run.command.getContext() == this && run.command.checkRequirements()) {
+                            run.initialized = true;
+                        } else {
+                            run.command.cancel();
+                            return false;
+                        }
+                    } else if (run.command.startRun(this)) {
                         run.initialized = true;
-                    } else {
-                        run.command.cancel();
-                        return false;
                     }
-                } else if (run.command.startRun(this)) {
-                    run.initialized = true;
                 }
+                finished = run.command.step();
             }
-            finished = run.command.step();
             if (run.cancel) {
                 cancelRun(run);
                 return true;
             }
             if (finished) {
-                run.command.finishRun(false);
+                if (!run.parallel) {
+                    run.command.finishRun(false);
+                }
                 currentPosition++;
                 if (currentPosition >= sequence.size()) {
                     logger.trace("Sequential command finished");
@@ -126,8 +126,12 @@ public class SequentialCommand extends Command implements CommandRunContext {
         return false;
     }
 
-    private void cancelRun(CommandRun run) {
-        run.command.finishRun(true);
+    private void cancelRun(SequentialCommandRun run) {
+        if (run.parallel) {
+            getContext().cancelCommand(run.command);
+        } else {
+            run.command.finishRun(true);
+        }
         getContext().cancelCommand(this);
     }
 
@@ -138,29 +142,29 @@ public class SequentialCommand extends Command implements CommandRunContext {
         } else {
             logger.debug("SequentialCommand finished");
         }
+        if (interrupted)
+            sequence.stream()
+                    .filter(r -> r.parallel)
+                    .forEach(r -> {
+                        if (r.command.isRunning())
+                            r.command.cancel();
+                    });
         if (sequence.size() == 0 || currentPosition >= sequence.size()) return;
         Command currentCommand = currentRun().command;
         if (interrupted && currentCommand.isRunning()) {
             currentCommand.finishRun(true);
         }
-    }
 
-    @Override
-    public void startCommand(Command command) {
-        checkNotNull(command);
-        if (getContext() == null)
-            logger.debug("Tried to add command in parent execution context while SequentialCommand was not running");
-        getContext().startCommand(command);
     }
 
     @Override
     public void cancelCommand(Command command) {
         checkNotNull(command);
         Optional<SequentialCommandRun> inGroup = findCommand(command);
-        if (inGroup.isPresent()) {
+        if (inGroup.isPresent() && !inGroup.get().parallel) {
             inGroup.get().cancel = true;
         } else {
-            getContext().cancelCommand(command);
+            super.cancelCommand(command);
         }
     }
 

@@ -41,11 +41,15 @@ public class ConfigSequentialCommand extends SequentialCommand implements Config
             if (node.isObject()) {
                 Command command;
                 ObjectNode commandConfig = (ObjectNode) node;
+                boolean parallel = false;
+                if (commandConfig.has("parallel")) {
+                    parallel = commandConfig.remove("parallel").asBoolean();
+                }
                 if (node.has("class")) {
                     String className = commandConfig.get("class").asText();
                     String commandName;
-                    if (node.has("name")) {
-                        commandName = node.get("name").asText();
+                    if (commandConfig.has("name")) {
+                        commandName = commandConfig.remove("name").asText();
                     } else {
                         commandName = findNextCommandName(className);
                     }
@@ -57,9 +61,7 @@ public class ConfigSequentialCommand extends SequentialCommand implements Config
                     throw new ConfigException("SequentialCommand config was passed object, but didn't contain class or command name");
                 }
                 SequentialCommandRun commandRun = new SequentialCommandRun(command);
-                if (commandConfig.has("parallel")) {
-                    commandRun.parallel = commandConfig.get("parallel").asBoolean();
-                }
+                commandRun.parallel = parallel;
                 sequence.add(commandRun);
             } else if (node.isTextual()) {
                 String commandName = node.asText();

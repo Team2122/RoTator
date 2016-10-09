@@ -72,6 +72,7 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
         lastFrameNumber = Integer.MIN_VALUE;
         if (config.dataLogging)
             dataCollector.startProvider(getLogDataProvider());
+        turret.startShooting();
     }
 
     @Override
@@ -90,7 +91,7 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
                     !Double.isNaN(goalDistance) && !Double.isNaN(newAngle)) {
                 lastFrameNumber = frameNumber;
                 turret.setTargetAngle(newAngle);
-                logger.info("Moving turret {} degrees. Final angle will be {}", deltaAngle, newAngle);
+                logger.trace("Moving turret {} degrees. Final angle will be {}", deltaAngle, newAngle);
 
                 // get correct wheel speed and hood position from distance to goal
                 HoodPosition hoodPosition = hoodPositions.floorEntry(goalDistance).getValue();
@@ -104,7 +105,7 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
             wheelSpeed = wheelSpeeds.floorEntry(goalDistance).getValue();
         }
         turret.setTargetWheelSpeed(wheelSpeed);
-        return false;
+        return turret.hasShot();
     }
 
     @Override

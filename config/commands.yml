@@ -55,12 +55,12 @@ PickerPick:
     lowPower: .25
     highTolerance: 50.0
     stopTolerance: 1.0
-  targetBallDistance: 45.0
+  targetBallDistance: 48.0
   compression:
     start: 75.0
     stop: 57.0
     newBallThreshold: .424
-  dataLogging: true
+  dataLogging: false
 
 PickerBarf:
   pick: -1.0
@@ -84,9 +84,10 @@ TurretShootPrep:
   class: TurretPrep
   target: true
   wheelSpeeds:
-    0: 85
+    0: 88.333
+    120: 91.666
   hoodPositions:
-    0: UP1
+    0: UP4
     120: UP4
   dataLogging: false
 
@@ -139,9 +140,76 @@ $SequentialTest:
     targetAngle: 90.0
     distance: 24.0
 
+$AutoShoot:
+  - name: TurretShootPrep
+    parallel: true
+  - class: WaitCommand
+    period: 2.0
+  - TurretShoot
+
+$AutoLowBarPickRotate:
+  - PickerPick
+  - class: TurretSetRotation
+    angle: 42.0
+
+$AutoLowBar:
+  - name: $AutoLowBarPickRotate
+    parallel: true
+  - class: TurretSetRotation
+    angle: 42.0
+    parallel: true
+  - class: DriveStraight
+    power: 40.0
+    targetAngle: 0.0
+    distance: 192.0
+  - $AutoShoot
+
+$Auto2Ball:
+  - name: $AutoLowBarPickRotate
+    parallel: true
+  - class: TurretSetRotation
+    angle: 42.0
+    parallel: true
+  - class: DriveStraight
+    power: 40.0
+    targetAngle: 0.0
+    distance: 192.0
+  - $AutoShoot
+  - class: DriveStraight
+    power: -40.0
+    targetAngle: 0.0
+    distance: 144.0
+  - class: DriveRotate
+    angle: -5
+  - name: PickerPick
+    parallel: true
+  - class: DriveStraight
+    power: -40.0
+    targetAngle: -5
+    distance: 60.0
+  - class: DriveStraight
+    power: 40.0
+    targetAngle: -5.0
+    distance: 60.0
+  - class: DriveRotate
+    angle: 0
+  - class: TurretSetRotation
+    angle: 42.0
+    parallel: true
+  - class: DriveStraight
+    power: 40.0
+    targetAngle: 0.0
+    distance: 192.0
+  - $AutoShoot
+  - class: DriveStraight
+    power: -40.0
+    targetAngle: 0.0
+    distance: 192.0
+
+
 AutoInit:
   class: CommandChooser
   commands:
-    - PickerToCheval
-    - PickerToHome
-    - PickerToPick
+    - $AutoShoot
+    - $Auto2Ball
+    - $AutoLowBar

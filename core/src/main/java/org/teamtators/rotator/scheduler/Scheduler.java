@@ -83,7 +83,7 @@ public final class Scheduler implements CommandRunContext {
                 finishRun(run, true);
                 continue;
             } else if (!run.initialized) {
-                if (!run.command.startRun(this)) {
+                if (!run.command.startRun(run.context)) {
                     logger.trace("Command {} not ready to run yet because of requirements", run.command.getName());
                     continue;
                 }
@@ -111,6 +111,11 @@ public final class Scheduler implements CommandRunContext {
 
     @Override
     public void startCommand(Command command) {
+        startWithContext(command, this);
+    }
+
+    @Override
+    public void startWithContext(Command command, CommandRunContext context) throws CommandException {
         checkNotNull(command);
         CommandRun run = runningCommands.get(command.getName());
         if (run != null || !command.isValidInState(robotState))
@@ -118,7 +123,9 @@ public final class Scheduler implements CommandRunContext {
         if (command.getContext() != null) {
             command.cancel();
         }
-        runningCommands.put(command.getName(), new CommandRun(command));
+        CommandRun commandRun = new CommandRun(command);
+        commandRun.context = context;
+        runningCommands.put(command.getName(), commandRun);
     }
 
     public void cancelCommand(String commandName) {

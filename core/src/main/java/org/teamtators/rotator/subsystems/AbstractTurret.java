@@ -25,6 +25,7 @@ public abstract class AbstractTurret extends Subsystem {
     private boolean homed = false;
     private HoodPosition hoodPosition = HoodPosition.DOWN;
     private double wheelSpeedOffset = 0.0;
+    private boolean hasShot = false;
 
 
     public AbstractTurret() {
@@ -261,6 +262,19 @@ public abstract class AbstractTurret extends Subsystem {
         }
         return false;
     }
+
+    public void startShooting() {
+        hasShot = false;
+    }
+
+    public void shot() {
+        hasShot = true;
+    }
+
+    public boolean hasShot() {
+        return hasShot;
+    }
+
     protected class TurretTest extends ComponentTest {
         public TurretTest() {
             super("TurretTest");

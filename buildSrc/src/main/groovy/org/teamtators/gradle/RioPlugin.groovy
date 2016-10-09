@@ -62,24 +62,29 @@ class RioPlugin implements Plugin<Project> {
         project.task('deploy', group: 'rio', dependsOn: ['deployConfig', 'deployJar'],
                 description: 'Deploys configs, robot code and restarts the robot code on the roboRIO') << {
             rioProfileRun()
-            rioRestart()
+//            rioRestart()
         }
 
-        project.task('rioDebug', group: 'rio', dependsOn: ['deployConfig', 'deployJar'],
-                description: 'Sets up the roboRIO for remote debugging the robot code') << {
-            rioProfileDebug()
-            rioRestart()
-        }
-
-        project.task('rioDebugSuspend', group: 'rio', dependsOn: ['deployConfig', 'deployJar'],
-                description: 'Sets up the roboRIO for remote debugging the robot code and suspending') << {
-            rioProfileDebugSuspend()
-            rioRestart()
-        }
-
-        project.task('rioRun', group: 'rio', dependsOn: ['deployConfig', 'deployJar'],
+        project.task('rioRun', group: 'rio',
                 description: 'Deploys configs, robot code and restarts the robot code on the roboRIO') << {
             rioProfileRun()
+        }
+
+        project.task('rioDebug', group: 'rio', dependsOn: [/*'deployConfig', 'deployJar'*/],
+                description: 'Sets up the roboRIO for remote debugging the robot code') << {
+            rioProfileDebug()
+//            rioRestart()
+        }
+
+        project.task('rioDebugSuspend', group: 'rio', dependsOn: [/*'deployConfig', 'deployJar'*/],
+                description: 'Sets up the roboRIO for remote debugging the robot code and suspending') << {
+            rioProfileDebugSuspend()
+//            rioRestart()
+        }
+
+        project.task('rioExecute', group: 'rio', dependsOn: [/*'deployConfig', 'deployJar'*/],
+                description: 'Deploys configs, robot code and restarts the robot code on the roboRIO') << {
+//            rioProfileRun()
             rioRun()
         }
     }

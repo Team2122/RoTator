@@ -74,12 +74,14 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
 
     @Override
     protected void finish(boolean interrupted) {
-        super.finish(interrupted);
-        turret.resetKingRollerPower();
-        if (!interrupted) { // if we successfully shot
-            takeRequirements(turret); // cancel everything else using turret (TurretPrep)
+        if (interrupted) {
+            logger.warn("TurretShoot interrupted");
+        } else { // if we successfully shot
+            logger.info("TurretShoot ended. Stopping targetting");
+            turret.shot();
             turret.setTargetAngle(0);
         }
+        turret.resetKingRollerPower();
     }
 
     static class Config {
