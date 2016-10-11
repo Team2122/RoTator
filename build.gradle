@@ -69,14 +69,14 @@ project(':rio') {
 
     def robotClass = 'org.teamtators.rotator.Robot'
 
-    def robotManifest = {
-        attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
-        attributes 'Robot-Class': robotClass
-    }
-
     jar {
         from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-        manifest robotManifest
+        manifest {
+            attributes(
+                    'Main-Class': 'edu.wpi.first.wpilibj.RobotBase',
+                    'Robot-Class': robotClass
+            )
+        }
     }
 }
 
