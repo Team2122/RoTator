@@ -1,5 +1,3 @@
-import org.teamtators.gradle.RioPlugin
-
 buildscript {
     repositories {
         maven {
@@ -45,8 +43,6 @@ project(':core') {
 
 
 project(':rio') {
-    apply plugin: RioPlugin
-
     repositories {
         maven {
             it.name = "WPI"
@@ -70,10 +66,6 @@ project(':rio') {
     }
 
     evaluationDependsOn(':core')
-
-    rio {
-        teamNumber = 212
-    }
 
     def robotClass = 'org.teamtators.rotator.Robot'
 

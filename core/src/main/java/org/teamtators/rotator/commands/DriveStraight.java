@@ -6,7 +6,6 @@ import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.AbstractController;
-import org.teamtators.rotator.control.PIDController;
 import org.teamtators.rotator.subsystems.AbstractDrive;
 
 /**
@@ -34,18 +33,18 @@ public class DriveStraight extends CommandBase implements Configurable<DriveStra
         controller.setName(getName());
         controller.setInputProvider(drive::getGyroAngle);
         controller.setOutputConsumer(output -> {
-            drive.setLeftSpeed(config.power + output);
-            drive.setRightSpeed(config.power - output);
+            drive.setLeftSpeed(config.speed + output);
+            drive.setRightSpeed(config.speed - output);
         });
     }
 
     @Override
     protected void initialize() {
         logger.info("Driving at angle {} (currently at {}) for distance of {}",
-                config.targetAngle, drive.getGyroAngle(), config.distance);
+                config.angle, drive.getGyroAngle(), config.distance);
         startingDistance = drive.getAverageDistance();
         controller.enable();
-        controller.setSetpoint(config.targetAngle);
+        controller.setSetpoint(config.angle);
     }
 
     @Override
@@ -57,7 +56,7 @@ public class DriveStraight extends CommandBase implements Configurable<DriveStra
     @Override
     protected void finish(boolean interrupted) {
         String logString = String.format(" at distance %s (target %s), angle %s (target %s)",
-                deltaDistance, config.distance, drive.getGyroAngle(), config.targetAngle);
+                deltaDistance, config.distance, drive.getGyroAngle(), config.angle);
         if (interrupted) {
             logger.warn("Interrupted" + logString);
         } else {
@@ -68,8 +67,8 @@ public class DriveStraight extends CommandBase implements Configurable<DriveStra
     }
 
     static class Config {
-        public double targetAngle;
-        public double power;
+        public double angle;
+        public double speed;
         public double distance;
         public JsonNode angleController;
     }

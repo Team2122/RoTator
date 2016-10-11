@@ -14,14 +14,14 @@ public abstract class AbstractPicker extends Subsystem {
     }
 
     /**
-     * Sets the power for the roller on the picker
+     * Sets the speed for the roller on the picker
      *
      * @param power Power for the motor
      */
     public abstract void setPower(double power);
 
     /**
-     * Resets the power for the roller on the picker
+     * Resets the speed for the roller on the picker
      */
     public void resetPower() {
         setPower(0f);

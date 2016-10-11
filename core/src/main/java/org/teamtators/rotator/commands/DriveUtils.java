@@ -9,7 +9,7 @@ public class DriveUtils {
      *
      * @param input      Original input
      * @param deadzone   Zone in which to ignore input
-     * @param exponent   Value to raise input to the power of
+     * @param exponent   Value to raise input to the speed of
      * @return Modified input
      */
     public static double applyDriveModifiers(double input, double deadzone, double exponent) {

@@ -6,7 +6,7 @@ package org.teamtators.rotator.subsystems;
 public enum DriveMode {
     DISABLED,
     /**
-     * Direct is when the power value directly corresponds to the motor
+     * Direct is when the speed value directly corresponds to the motor
      */
     DIRECT,
     /**

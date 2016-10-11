@@ -20,7 +20,7 @@ public abstract class AbstractDrive extends Subsystem {
     }
 
     /**
-     * It sets the power to the  drivetrain motors
+     * It sets the speed to the  drivetrain motors
      *
      * @param leftSpeed  speed for the left motor in inches per second
      * @param rightSpeed speed for the right motor in inches per second
@@ -63,21 +63,21 @@ public abstract class AbstractDrive extends Subsystem {
     }
 
     /**
-     * It sets the power to the left drivetrain motor
+     * It sets the speed to the left drivetrain motor
      *
-     * @param leftPower power for the left motor, between 0 and 1
+     * @param leftPower speed for the left motor, between 0 and 1
      */
     protected abstract void setLeftPower(double leftPower);
 
     /**
-     * It sets the power to the right drivetrain motors
+     * It sets the speed to the right drivetrain motors
      *
-     * @param rightPower power for the right drivetrain motor, between 0 and 1
+     * @param rightPower speed for the right drivetrain motor, between 0 and 1
      */
     protected abstract void setRightPower(double rightPower);
 
     /**
-     * resets the power for the motors to 0
+     * resets the speed for the motors to 0
      */
     public void resetSpeeds() {
         setSpeeds(0f, 0f);

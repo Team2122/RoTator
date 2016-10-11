@@ -33,14 +33,14 @@ public abstract class AbstractTurret extends Subsystem {
     }
 
     /**
-     * Sets the power for the roller that shoots the ball
+     * Sets the speed for the roller that shoots the ball
      *
-     * @param power The power of the roller that shoots
+     * @param power The speed of the roller that shoots
      */
     protected abstract void setWheelPower(double power);
 
     /**
-     * Resets the power for the roller that shoots
+     * Resets the speed for the roller that shoots
      */
     protected void resetPower() {
         setWheelPower(0);
@@ -134,42 +134,42 @@ public abstract class AbstractTurret extends Subsystem {
     }
 
     /**
-     * Sets the pinch roller's power
+     * Sets the pinch roller's speed
      *
-     * @param power the power of the pinch roller
+     * @param power the speed of the pinch roller
      */
     public abstract void setPinchRollerPower(double power);
 
     /**
-     * Resets the pinch roller's power
+     * Resets the pinch roller's speed
      */
     public void resetPinchRollerPower() {
         setPinchRollerPower(0);
     }
 
     /**
-     * Sets the king roller's power
+     * Sets the king roller's speed
      *
-     * @param power the king roller's power
+     * @param power the king roller's speed
      */
     public abstract void setKingRollerPower(double power);
 
     /**
-     * Resets the king roller's power
+     * Resets the king roller's speed
      */
     public void resetKingRollerPower() {
         setKingRollerPower(0);
     }
 
     /**
-     * Sets the power to the turret rotation motor
+     * Sets the speed to the turret rotation motor
      *
-     * @param power power for the turret's rotation motor from -1 to 1
+     * @param power speed for the turret's rotation motor from -1 to 1
      */
     public abstract void setRotationPower(double power);
 
     /**
-     * Resets the turret's rotation motor power
+     * Resets the turret's rotation motor speed
      */
     public void resetRotationPower() {
         setRotationPower(0);

@@ -60,7 +60,7 @@ PickerPick:
     start: 75.0
     stop: 57.0
     newBallThreshold: .424
-  dataLogging: false
+  dataLogging: true
 
 PickerBarf:
   pick: -1.0
@@ -85,7 +85,8 @@ TurretShootPrep:
   target: true
   wheelSpeeds:
     0: 88.333
-    120: 91.666
+#    120: 91.666
+    120: 90.0
   hoodPositions:
     0: UP4
     120: UP4
@@ -121,24 +122,42 @@ TurretBumpWheelSpeedDown:
 
 ^DriveStraight:
   power: 0.2
-  angleController: { type: PID, P: 0.0375 }
+  angleController: { type: PID, P: 4.8 }
 
 ^DriveRotate:
   angleController:
     type: PID
-    P: 0.02
-    I: 0.02
+    P: 2.4
+    I: 2.4
     maxIError: 10.0
-    maxAbsoluteOutput: 0.4
+    maxAbsoluteOutput: 48.0
     target: { within: 1.0, time: .125 }
 
 $SequentialTest:
+  - class: DriveStraight
+    power: 40.0
+    targetAngle: 0.0
+    distance: 36.0
   - class: DriveRotate
     angle: 90.0
   - class: DriveStraight
-    power: 0.1
+    power: 40.0
     targetAngle: 90.0
-    distance: 24.0
+    distance: 36.0
+  - class: DriveRotate
+    angle: 180.0
+  - class: DriveStraight
+    power: 40.0
+    targetAngle: 180.0
+    distance: 36.0
+  - class: DriveRotate
+    angle: 270.0
+  - class: DriveStraight
+    power: 40.0
+    targetAngle: 270.0
+    distance: 36.0
+  - class: DriveRotate
+    angle: 360.0
 
 $AutoShoot:
   - name: TurretShootPrep
@@ -179,27 +198,20 @@ $Auto2Ball:
     power: -40.0
     targetAngle: 0.0
     distance: 144.0
-  - class: DriveRotate
-    angle: -5
-  - name: PickerPick
+  - name: $AutoLowBarPickRotate
     parallel: true
   - class: DriveStraight
     power: -40.0
-    targetAngle: -5
+    targetAngle: -10.0
     distance: 60.0
   - class: DriveStraight
     power: 40.0
-    targetAngle: -5.0
+    targetAngle: -10.0
     distance: 60.0
-  - class: DriveRotate
-    angle: 0
-  - class: TurretSetRotation
-    angle: 42.0
-    parallel: true
   - class: DriveStraight
     power: 40.0
     targetAngle: 0.0
-    distance: 192.0
+    distance: 144.0
   - $AutoShoot
   - class: DriveStraight
     power: -40.0
@@ -213,3 +225,4 @@ AutoInit:
     - $AutoShoot
     - $Auto2Ball
     - $AutoLowBar
+    - $SequentialTest

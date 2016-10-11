@@ -14,7 +14,7 @@ err() {
 : ${RIO_HOST:=roboRIO-${TEAM_NUMBER}-FRC.local}
 : ${RIO_USER:=lvuser}
 : ${RIO_PORT:=22}
-: ${RIO:=${RIO_USER}@${RIO_HOST}:${RIO_PORT}}
+RIO=${RIO_USER}@${RIO_HOST}
 
 PROJECT_NAME=RoTator
 RIO_JAVA=/usr/local/frc/JRE/bin/java
@@ -26,16 +26,16 @@ RIO_DEBUG_PORT=8348
 
 : ${SSH:=$(which ssh)}
 : ${SCP:=$(which scp)}
-SSHFLAGS="-o ControlMaster=yes -o ControlPath=~/.ssh/controlmasters/$RIO $SSHFLAGS"
+#SSHFLAGS="-o ControlMaster=yes -o ControlPath=~/.ssh/controlmasters/$RIO $SSHFLAGS"
 : ${GRADLE:=./gradlew}
 GRADLEFLAGS="--offline $GRADLEFLAGS"
 
 run_ssh() {
-    $SSH $SSHFLAGS $RIO "$@"
+    $SSH $SSHFLAGS $RIO -p $RIO_PORT "$@"
 }
 
 run_scp() {
-    $SCP $SSHFLAGS "$@" || { err "Error copying file over ssh. Is the RIO connected?"; exit 1; }
+    $SCP $SSHFLAGS -P $RIO_PORT "$@" || { err "Error copying file over ssh. Is the RIO connected?"; exit 1; }
 }
 
 run_gradle() {
