@@ -70,7 +70,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
                 double a = regression.getSlope(), b = regression.getIntercept();
                 double x_1 = config.compression.stop, x_2 = config.compression.start;
                 double compression = a * (0.5 * x_2 * x_2 - 0.5 * x_1 * x_1) + b * (x_2 - x_1);
-                boolean newBall = compression <= config.compression.newBallThreshold;
+                boolean newBall = compression >= config.compression.newBallThreshold;
                 logger.info("Compression sample: {} (R^2={}). Ball is {}", compression,
                         regression.getRSquare(), newBall ? "NEW" : "OLD");
             } else {
