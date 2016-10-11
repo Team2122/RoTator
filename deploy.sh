@@ -66,7 +66,7 @@ deploy_jar() {
     log "Building JAR file with gradle"
     run_gradle :rio:jar
     log "Deploying build JAR to $RIO:$RIO_JAR_PATH"
-    run_scp build/libs/RoTator.jar $RIO:$RIO_JAR_PATH
+    run_scp rio/build/libs/rio.jar $RIO:$RIO_JAR_PATH
     log "Deployed JAR file"
 }
 
@@ -115,6 +115,10 @@ execute() {
     run_ssh "sh robotCommand"
 }
 
+shell() {
+    run_ssh
+}
+
 help() {
     cat <<EOF
 $0 - deploy script for $PROJECT_NAME
@@ -142,6 +146,7 @@ while [[ $# > 0 ]]; do
         reboot) reboot ;;
         restart) restart ;;
         execute) execute ;;
+        shell) shell ;;
         help) help ;;
         *) err "Invalid command $1"; help ;;
     esac
