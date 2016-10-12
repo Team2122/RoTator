@@ -14,12 +14,12 @@ err() {
 : ${RIO_HOST:=roboRIO-${TEAM_NUMBER}-FRC.local}
 : ${RIO_USER:=lvuser}
 : ${RIO_PORT:=22}
+: ${RIO_DEPLOY_PATH:=/home/lvuser}
 RIO=${RIO_USER}@${RIO_HOST}
 
 PROJECT_NAME=RoTator
 RIO_JAVA=/usr/local/frc/JRE/bin/java
-RIO_JAR_PATH=/home/lvuser/FRCUserProgram.jar
-RIO_CONFIG_PATH=/home/lvuser/
+RIO_JAR_PATH=$RIO_DEPLOY_PATH/FRCUserProgram.jar
 RIO_CLEAN_FILES="/home/lvuser/config $RIO_JAR_PATH"
 RIO_NETCONSOLE_COMMAND="env LD_LIBRARY_PATH=/usr/local/frc/rpath-lib/ /usr/local/frc/bin/netconsole-host"
 RIO_DEBUG_PORT=8348
@@ -77,7 +77,7 @@ deploy_config() {
 }
 
 deploy_robotCommand() {
-    run_ssh echo "$@" > /home/lvuser/robotCommand
+    run_ssh "echo \"$@\" > $RIO_DEPLOY_PATH/robotCommand"
 }
 
 netconsole_command() {
@@ -125,7 +125,41 @@ $0 - deploy script for $PROJECT_NAME
 Usage: $0 [command ...]
 
 Commands:
-    
+	clean) clean ;;
+	java_check) java_check ;;
+	deploy_jar) deploy_jar ;;
+	deploy_config) deploy_config ;;
+	profile_run) profile_run ;;
+	profile_debug) profile_debug ;;
+	profile_debugSuspend) profile_debugSuspend ;;
+	reboot) reboot ;;
+	restart) restart ;;
+	execute) execute ;;
+	shell) shell ;;
+	help) help ;;
+	completion) completion ;;
+EOF
+}
+
+cmds="check_java c clean dj deploy_jar dc deploy_config d deploy pr profile_run pd profile_debug \
+pds profile_debugSuspend rb reboot r restart e exucute s shell h help completion"
+
+completion() {
+	cat <<EOF
+_deploy() {
+	if command -v emulate 1>/dev/null; then
+		emulate ksh
+	fi
+
+	local cur
+	COMPREPLY=()
+	cur="\${COMP_WORDS[COMP_CWORD]}"
+
+	COMPREPLY=( \$(compgen -W "${cmds}" -- \${cur}) )
+	return 0
+}
+
+complete -F _deploy $0
 EOF
 }
 
@@ -148,6 +182,7 @@ while [[ $# > 0 ]]; do
         execute) execute ;;
         shell) shell ;;
         help) help ;;
+        completion) completion ;;
         *) err "Invalid command $1"; help ;;
     esac
     shift
