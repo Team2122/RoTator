@@ -63,11 +63,12 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
         vision.setTurretAngle(currentAngle);
 
         double goalDistance = 0;
+        double wheelSpeed = turret.getTargetWheelSpeed();
         VisionData visionData = vision.getVisionData();
         int frameNumber = visionData.getFrameNumber();
         deltaAngle = visionData.getOffsetAngle();
         newAngle = visionData.getNewAngle();
-        goalDistance = vision.getVisionData().getDistance();
+        goalDistance = visionData.getDistance();
         if (frameNumber != lastFrameNumber && !Double.isNaN(deltaAngle) &&
                 !Double.isNaN(goalDistance) && !Double.isNaN(newAngle)) {
             lastFrameNumber = frameNumber;
@@ -77,25 +78,23 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
             // look up hood position based on distance to goal and ball age
             HoodPosition hoodPosition = config.defaultHoodPosition;
             TreeMap<Double, HoodPosition> hoodPositionsMap = config.hoodPositions.get(ballAge);
-            if (hoodPositionsMap.isEmpty()) {
+            if (hoodPositionsMap == null || hoodPositionsMap.isEmpty()) {
                 logger.warn("No hood position specified for ball age of {}", ballAge);
             } else {
                 hoodPosition = hoodPositionsMap.floorEntry(goalDistance).getValue();
             }
             turret.setHoodPosition(hoodPosition);
-        }
 
-        // look up wheel speed based on goal distance and ball age
-        double wheelSpeed = turret.getTargetWheelSpeed();
-        TreeMap<Double, Double> wheelSpeedsMap = config.wheelSpeeds.get(ballAge);
-        if (!Double.isNaN(goalDistance)) {
+            TreeMap<Double, Double> wheelSpeedsMap = config.wheelSpeeds.get(ballAge);
             if (wheelSpeedsMap.isEmpty()) {
                 logger.warn("No wheel speed specified for ball age of {}", ballAge);
             } else {
                 wheelSpeed = wheelSpeedsMap.floorEntry(goalDistance).getValue();
             }
         }
+
         turret.setTargetWheelSpeed(wheelSpeed);
+        
         return turret.hasShot();
     }
 
