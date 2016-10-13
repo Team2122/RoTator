@@ -84,7 +84,6 @@ TurretSpinUp:
   speed: 75.0
 
 TurretTarget:
-  target: true
   wheelSpeeds:
     NEW:
     MIDDLE:
@@ -166,7 +165,7 @@ $SequentialTest:
     angle: 360.0
 
 $AutoShoot:
-  - name: TurretShootPrep
+  - name: TurretTarget
     parallel: true
   - class: WaitCommand
     period: 2.0

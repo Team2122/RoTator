@@ -22,6 +22,7 @@ public class CoreCommands {
         commandStore.registerClass(TurretSetRotation.class);
         commandStore.registerClass(TurretSetWheelSpeed.class);
         commandStore.registerClass(TurretShoot.class);
+        commandStore.registerClass(TurretTarget.class);
         commandStore.registerClass(TurretPrep.class);
 
         commandStore.registerClass(WaitCommand.class);
