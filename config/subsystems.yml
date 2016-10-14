@@ -17,6 +17,7 @@ Picker:
   pickMotor: { channel: 6, inverted: false }
   longCylinder: 4
   shortCylinder: 3
+  chevalSensor: { channel: 13, inverted: false }
 OperatorInterface:
   driverJoystick: 0
   gunnerJoystick: 1
@@ -38,7 +39,7 @@ Turret:
 #    samplesToAverage: 100
   shooterWheelController:
     type: PID
-#    inputSamplesToAverage: 16
+#    inputSamplesToAverage 16
     P: 0.025
     I: 0.025
     maxIError: 10.0

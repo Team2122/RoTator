@@ -42,4 +42,6 @@ public abstract class AbstractPicker extends Subsystem {
     public void setPosition(PickerPosition position) {
         this.position = position;
     }
+
+    public abstract boolean isAtCheval();
 }

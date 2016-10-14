@@ -8,4 +8,9 @@ public class NoopPicker extends AbstractPicker {
     public void setPower(double power) {
 
     }
+
+    @Override
+    public boolean isAtCheval() {
+        return false;
+    }
 }
