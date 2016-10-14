@@ -17,6 +17,8 @@ import org.teamtators.rotator.ui.WASDJoystick;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Module(includes = CoreModule.class)
 public class DesktopModule {
@@ -50,6 +52,12 @@ public class DesktopModule {
     @Provides
     static ITimeProvider providesTimeProvider(SystemNanoTimeTimeProvider timeProvider) {
         return timeProvider;
+    }
+
+    @Provides
+    @Singleton
+    static ScheduledExecutorService providesExecutorService() {
+        return Executors.newSingleThreadScheduledExecutor();
     }
 
     @Provides
