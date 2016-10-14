@@ -17,7 +17,7 @@ Picker:
   pickMotor: { channel: 6, inverted: false }
   longCylinder: 4
   shortCylinder: 3
-  chevalSensor: { channel: 13, inverted: false }
+  chevalSensor: { channel: 13, type: NPN }
 OperatorInterface:
   driverJoystick: 0
   gunnerJoystick: 1

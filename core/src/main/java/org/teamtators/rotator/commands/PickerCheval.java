@@ -5,7 +5,7 @@ import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.subsystems.AbstractPicker;
 import org.teamtators.rotator.subsystems.PickerPosition;
 
-public class PickerCheval extends CommandBase{
+public class PickerCheval extends CommandBase {
     AbstractPicker picker;
 
     public PickerCheval(CoreRobot robot) {
@@ -21,11 +21,17 @@ public class PickerCheval extends CommandBase{
 
     @Override
     protected boolean step() {
-        if(picker.isAtCheval()) {
+        if (picker.isAtCheval()) {
             picker.setPosition(PickerPosition.PICK);
             return true;
         } else {
             return false;
         }
+    }
+
+    @Override
+    protected void finish(boolean interrupted) {
+        super.finish(interrupted);
+        picker.setPosition(PickerPosition.PICK);
     }
 }

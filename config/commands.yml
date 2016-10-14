@@ -4,6 +4,12 @@ DriveTank:
   rightMultiplier: 100.0
   exponent: 2.0
 
+DriveArcade:
+  deadzone: .1
+  speedMultiplier: 120.0
+  rotateMultiplier: 120.0
+  exponent: 2.0
+
 PickerToHome:
   class: PickerSetPosition
   pickerPosition: HOME

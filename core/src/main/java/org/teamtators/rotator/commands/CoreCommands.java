@@ -4,6 +4,7 @@ import org.teamtators.rotator.config.ConfigCommandStore;
 
 public class CoreCommands {
     public static void register(ConfigCommandStore commandStore) {
+        commandStore.registerClass(DriveArcade.class);
         commandStore.registerClass(DriveTank.class);
         commandStore.registerClass(DriveRotate.class);
         commandStore.registerClass(DriveStraight.class);

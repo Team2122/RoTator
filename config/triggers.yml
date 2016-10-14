@@ -3,6 +3,7 @@ Driver:
   BUMPER_RIGHT: start whenPressed PickerToPick
   TRIGGER_LEFT: toggle whenPressed TurretTarget
   TRIGGER_RIGHT: toggle whenPressed PickerPick
+  X: toggle whenPressed PickerCheval
   Y: whilePressed PickerBarf
   B: toggle whenPressed TurretCalibrate
   A: toggle whenPressed TurretShoot
@@ -25,7 +26,7 @@ Gunner:
   A: toggle whenPressed TurretShoot
   B: toggle whenPressed TurretTarget
   X: toggle whenPressed PickerPick
-  Y: start whenReleased PickerToCheval
+  Y: toggle whenReleased PickerCheval
 
 defaults: [ DriveTank ]
 
