@@ -6,71 +6,56 @@ import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.AbstractController;
+import org.teamtators.rotator.control.AbstractSteppable;
+import org.teamtators.rotator.control.PIDController;
+import org.teamtators.rotator.control.Stepper;
+import org.teamtators.rotator.datalogging.LogDataProvider;
 import org.teamtators.rotator.subsystems.AbstractDrive;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 /**
  * Drive in an arc
  * Ported from Kartoshka's DriveZach
  */
 public class DriveArc extends CommandBase implements Configurable<DriveArc.Config> {
-
     private Config config;
     private AbstractDrive drive;
 
-    private double desiredRate = 0;
-    private double startDistance = 0;
-    private double currentDistance = 0;
-    private double gyroAngle = 0;
-    private ControllerFactory controllerFactory;
-    private AbstractController angleController;
-    private AbstractController rateController;
-    private double rampedSpeed;
-    private double angleDelta;
+    private Stepper stepper;
+    private AbstractSteppable angleController;
 
     public DriveArc(CoreRobot robot) {
         super("DriveArc");
         drive = robot.drive();
-        this.controllerFactory = robot.controllerFactory();
-        angleController = controllerFactory.create(config.angleController);
-        angleController.setName("DriveArcAngle");
-        angleController.setInputProvider(drive::getGyroAngle);
-        angleController.setOutputConsumer(output -> {
-            angleDelta = (desiredRate * currentDistance + config.startAngle) - output;
-        });
-
-        rateController = controllerFactory.create(config.rateController);
-        rateController.setName("DriveArcRate");
-        rateController.setInputProvider(drive::getGyroRate);
-        rateController.setOutputConsumer(output -> {
-            drive.setSpeeds(rampedSpeed + (angleDelta * config.angle + desiredRate * config.rate * rampedSpeed
-                    ), rampedSpeed - (angleDelta * config.angle + desiredRate * config.rate * rampedSpeed)
-            );
-        });
+        stepper = robot.stepper();
     }
 
     @Override
     protected boolean step() {
-        currentDistance = Math.abs(startDistance - drive.getAverageDistance());
-        double distanceLeft = config.distance - currentDistance;
-        rampedSpeed = config.speed;
-        if (config.rampDistance != 0 && distanceLeft <= config.rampDistance) {
-            double percentage = distanceLeft / config.rampDistance;
-            rampedSpeed *= Math.pow(percentage, config.rampPower);
-        }
-
-        double angleError = Math.abs(config.endAngle - gyroAngle);
-        if (angleError <= config.angleTolerance) {
-            return true;
-        }
-        if (currentDistance >= config.distance) {
-            return true;
-        }
         return false;
     }
 
     @Override
     public void configure(Config config) {
         this.config = config;
+        this.angleController = new DriveArcController();
+        angleController.setStepper(stepper);
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        angleController.enable();
+    }
+
+    @Override
+    protected void finish(boolean interrupted) {
+        super.finish(interrupted);
+        angleController.disable();
     }
 
     static class Config {
@@ -78,25 +63,79 @@ public class DriveArc extends CommandBase implements Configurable<DriveArc.Confi
         public double distance;
         public double startAngle;
         public double endAngle;
-        public double rampDistance = 0;
-        public double rampPower = 0;
-        public double angle = .02;
-        public double rate = .02;
+        public double kAngle = .02;
+        public double kRate = .02;
         public double angleTolerance = .5;
-        public JsonNode angleController;
-        public JsonNode rateController;
     }
 
-    @Override
-    protected void initialize() {
-        super.initialize();
-        startDistance = drive.getAverageDistance();
-        desiredRate = (config.endAngle - config.startAngle) / config.distance;
-    }
+    private class DriveArcController extends AbstractSteppable {
+        private double startDistance;
+        private double desiredRate;
+        private double currentDistance;
+        private double lastGyroAngle;
+        private double gyroAngle;
+        private double angleError;
+        private double rampedSpeed;
+        private double gyroRate;
+        private double desiredAngle;
 
-    @Override
-    protected void finish(boolean interrupted) {
-        super.finish(interrupted);
-        drive.resetSpeeds();
+        public DriveArcController() {
+        }
+
+        public synchronized boolean isOnTarget() {
+            return this.angleError <= config.angleTolerance || currentDistance >= config.distance;
+        }
+
+        @Override
+        public void onEnable() {
+            super.onEnable();
+            lastGyroAngle = gyroAngle = drive.getGyroAngle();
+            currentDistance = startDistance = drive.getAverageDistance();
+            double angleDelta = config.endAngle - config.startAngle;
+            desiredRate = angleDelta / config.distance;
+            angleError = angleDelta;
+        }
+
+        @Override
+        public void step(double delta) {
+            currentDistance = Math.abs(startDistance - drive.getAverageDistance());
+
+            rampedSpeed = config.speed; // TODO: should use a trapezoidal controller
+
+            desiredAngle = desiredRate * currentDistance + config.startAngle;
+            gyroAngle = drive.getGyroAngle();
+            double angleDelta = desiredAngle - gyroAngle;
+
+            gyroRate = (gyroAngle - lastGyroAngle) / delta;
+            lastGyroAngle = gyroAngle;
+
+            double offset = angleDelta * config.kAngle + desiredRate * config.kRate * rampedSpeed;
+            drive.setSpeeds(rampedSpeed + offset, rampedSpeed - offset);
+        }
+
+        protected LogDataProvider getLogDataProvider() {
+            return new LogDataProvider() {
+                @Override
+                public String getName() {
+                    return DriveArc.this.getName();
+                }
+
+                @Override
+                public List<Object> getKeys() {
+                    return Arrays.asList("gyroAngle", "desiredAngle", "gyroRate", "desiredRate", "currentDistance");
+                }
+
+                @Override
+                public List<Object> getValues() {
+                    return Arrays.asList(gyroAngle, desiredAngle, gyroRate, desiredRate, currentDistance);
+                }
+            }
+        }
+
+        @Override
+        public void onDisable() {
+            super.onDisable();
+            drive.resetSpeeds();
+        }
     }
 }
