@@ -31,6 +31,11 @@ public class SimulationPicker extends AbstractPicker implements Steppable, Confi
         pickerMotor.setPower(power);
     }
 
+    @Override
+    public boolean isAtCheval() {
+        return false;
+    }
+
     public double getPickerRate() {
         return pickerEncoder.getRate();
     }
