@@ -3,10 +3,13 @@ package org.teamtators.rotator.subsystems;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
+import org.teamtators.rotator.components.DigitalSensor;
 import org.teamtators.rotator.config.Configurable;
+import org.teamtators.rotator.config.DigitalSensorConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
 import org.teamtators.rotator.tester.ComponentTestGroup;
 import org.teamtators.rotator.tester.ITestable;
+import org.teamtators.rotator.tester.components.DigitalSensorTest;
 import org.teamtators.rotator.tester.components.SolenoidTest;
 import org.teamtators.rotator.tester.components.VictorSPTest;
 
@@ -22,6 +25,7 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
     private Solenoid shortCylinder;
     private Solenoid longCylinder;
     private PickerPosition pickerPosition;
+    private DigitalSensor chevalSensor;
 
     @Inject
     public WPILibPicker() {
@@ -32,6 +36,7 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
         this.pickMotor = config.pickMotor.create();
         this.shortCylinder = new Solenoid(config.shortCylinder);
         this.longCylinder = new Solenoid(config.longCylinder);
+        this.chevalSensor = config.chevalSensor.create();
     }
 
     @Override
@@ -65,16 +70,23 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
     }
 
     @Override
+    public boolean isAtCheval() {
+        return chevalSensor.get();
+    }
+
+    @Override
     public ComponentTestGroup getTestGroup() {
         return new ComponentTestGroup("Picker",
                 new VictorSPTest("pickMotor", pickMotor),
                 new SolenoidTest("shortCylinder", shortCylinder),
-                new SolenoidTest("longCylinder", longCylinder));
+                new SolenoidTest("longCylinder", longCylinder),
+                new DigitalSensorTest("chevalSensor", chevalSensor));
     }
 
     public static class Config {
         public VictorSPConfig pickMotor;
         public int shortCylinder;
         public int longCylinder;
+        public DigitalSensorConfig chevalSensor;
     }
 }
