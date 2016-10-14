@@ -26,6 +26,6 @@ public class CoreCommands {
         commandStore.registerClass(TurretPrep.class);
 
         commandStore.registerClass(WaitCommand.class);
-        commandStore.registerClass(CommandChooser.class);
+        commandStore.registerClass(ChooserCommand.class);
     }
 }

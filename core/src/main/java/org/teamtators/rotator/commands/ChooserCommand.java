@@ -9,21 +9,16 @@ import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.scheduler.CommandStore;
 import org.teamtators.rotator.scheduler.Scheduler;
 
-public class CommandChooser extends CommandBase implements Configurable<CommandChooser.Config> {
+public class ChooserCommand extends CommandBase implements Configurable<ChooserCommand.Config> {
     private Chooser<Command> chooser;
     private CommandStore commandStore;
-    private Scheduler scheduler;
+    private Command selectedCommand;
+    private boolean started;
 
-    public CommandChooser(CoreRobot robot) {
-        super("CommandChooser");
+    public ChooserCommand(CoreRobot robot) {
+        super("ChooserCommand");
         chooser = robot.autoChooser();
         commandStore = robot.commandStore();
-        scheduler = robot.scheduler();
-    }
-
-    @Override
-    protected boolean step() {
-        return true;
     }
 
     @Override
@@ -32,7 +27,7 @@ public class CommandChooser extends CommandBase implements Configurable<CommandC
             chooser.registerOption(command, commandStore.getCommand(command));
         }
         if (config.defaul != null) {
-            chooser.registerOption(config.defaul,
+            chooser.registerDefault(config.defaul,
                     commandStore.getCommand(config.defaul));
         }
     }
@@ -40,7 +35,25 @@ public class CommandChooser extends CommandBase implements Configurable<CommandC
     @Override
     protected void initialize() {
         super.initialize();
-        scheduler.startCommand(chooser.getSelected());
+        started = false;
+        selectedCommand = chooser.getSelected();
+        logger.info("{} chosen command: {}", getName(), selectedCommand.getName());
+        startWithContext(selectedCommand, this);
+    }
+
+    @Override
+    protected boolean step() {
+        return selectedCommand.isRunning();
+    }
+
+    @Override
+    protected void finish(boolean interrupted) {
+        if (interrupted) {
+            logger.warn("{} was interrupted. Interrupting chosen command {}", getName(), selectedCommand.getName());
+            selectedCommand.cancel();
+        } else {
+            super.finish(false);
+        }
     }
 
     static class Config {

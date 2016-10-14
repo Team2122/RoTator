@@ -224,8 +224,8 @@ $Auto2Ball:
     distance: 192.0
 
 
-AutoInit:
-  class: CommandChooser
+AutoChooser:
+  class: ChooserCommand
   commands:
     - $AutoShoot
     - $Auto2Ball
