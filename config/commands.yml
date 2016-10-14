@@ -70,6 +70,8 @@ PickerBarf:
   pinch: -1.0
   king: -1.0
 
+PickerCheval:
+
 TurretShoot:
   kingRollerPower: 1.0
   waitTimeout: 2.0
