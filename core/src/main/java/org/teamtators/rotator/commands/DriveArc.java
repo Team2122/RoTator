@@ -1,21 +1,16 @@
 package org.teamtators.rotator.commands;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.config.ControllerFactory;
-import org.teamtators.rotator.control.AbstractController;
 import org.teamtators.rotator.control.AbstractSteppable;
-import org.teamtators.rotator.control.PIDController;
 import org.teamtators.rotator.control.Stepper;
+import org.teamtators.rotator.datalogging.DataCollector;
 import org.teamtators.rotator.datalogging.LogDataProvider;
 import org.teamtators.rotator.subsystems.AbstractDrive;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 /**
  * Drive in an arc
@@ -27,11 +22,13 @@ public class DriveArc extends CommandBase implements Configurable<DriveArc.Confi
 
     private Stepper stepper;
     private AbstractSteppable angleController;
+    private DataCollector dataCollector;
 
     public DriveArc(CoreRobot robot) {
         super("DriveArc");
         drive = robot.drive();
         stepper = robot.stepper();
+        dataCollector = robot.dataCollector();
     }
 
     @Override
@@ -66,6 +63,7 @@ public class DriveArc extends CommandBase implements Configurable<DriveArc.Confi
         public double kAngle = .02;
         public double kRate = .02;
         public double angleTolerance = .5;
+        public boolean dataLogging = false;
     }
 
     private class DriveArcController extends AbstractSteppable {
@@ -78,6 +76,7 @@ public class DriveArc extends CommandBase implements Configurable<DriveArc.Confi
         private double rampedSpeed;
         private double gyroRate;
         private double desiredAngle;
+        private LogDataProvider logDataProvider;
 
         public DriveArcController() {
         }
@@ -88,12 +87,13 @@ public class DriveArc extends CommandBase implements Configurable<DriveArc.Confi
 
         @Override
         public void onEnable() {
-            super.onEnable();
             lastGyroAngle = gyroAngle = drive.getGyroAngle();
             currentDistance = startDistance = drive.getAverageDistance();
             double angleDelta = config.endAngle - config.startAngle;
             desiredRate = angleDelta / config.distance;
             angleError = angleDelta;
+            if (config.dataLogging)
+                dataCollector.startProvider(getLogDataProvider());
         }
 
         @Override
@@ -114,28 +114,30 @@ public class DriveArc extends CommandBase implements Configurable<DriveArc.Confi
         }
 
         protected LogDataProvider getLogDataProvider() {
-            return new LogDataProvider() {
-                @Override
-                public String getName() {
-                    return DriveArc.this.getName();
-                }
+            if (logDataProvider == null)
+                logDataProvider = new LogDataProvider() {
+                    @Override
+                    public String getName() {
+                        return DriveArc.this.getName();
+                    }
 
-                @Override
-                public List<Object> getKeys() {
-                    return Arrays.asList("gyroAngle", "desiredAngle", "gyroRate", "desiredRate", "currentDistance");
-                }
+                    @Override
+                    public List<Object> getKeys() {
+                        return Arrays.asList("gyroAngle", "desiredAngle", "gyroRate", "desiredRate", "currentDistance");
+                    }
 
-                @Override
-                public List<Object> getValues() {
-                    return Arrays.asList(gyroAngle, desiredAngle, gyroRate, desiredRate, currentDistance);
-                }
-            }
+                    @Override
+                    public List<Object> getValues() {
+                        return Arrays.asList(gyroAngle, desiredAngle, gyroRate, desiredRate, currentDistance);
+                    }
+                };
+            return logDataProvider;
         }
 
         @Override
         public void onDisable() {
-            super.onDisable();
             drive.resetSpeeds();
+            dataCollector.stopProvider(getLogDataProvider());
         }
     }
 }
