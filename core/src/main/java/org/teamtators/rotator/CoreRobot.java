@@ -9,7 +9,6 @@ import org.teamtators.rotator.config.TriggerBinder;
 import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.Stepper;
-import org.teamtators.rotator.control.Timer;
 import org.teamtators.rotator.datalogging.DataCollector;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.Command;
@@ -39,8 +38,6 @@ public interface CoreRobot {
     AbstractOperatorInterface operatorInterface();
 
     ITimeProvider timeProvider();
-
-    Timer timer();
 
     Scheduler scheduler();
 

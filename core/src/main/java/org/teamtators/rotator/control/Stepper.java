@@ -20,7 +20,7 @@ public class Stepper implements Runnable {
 
     private ScheduledExecutorService executorService;
     private double period;
-    private Timer timer;
+    private ITimeProvider timeProvider = new SystemNanoTimeTimeProvider();
 
     private ReadWriteLock lock = new ReentrantReadWriteLock();
     private Lock readLock = lock.readLock();
@@ -53,8 +53,7 @@ public class Stepper implements Runnable {
         writeLock.lock();
         try {
             running = true;
-            this.executorService = Executors.newSingleThreadScheduledExecutor();
-            timer.start();
+            lastStepTime = timeProvider.getTimestamp();
             executorService.scheduleAtFixedRate(this, 0, (long) (S_TO_NS * this.period), TimeUnit.NANOSECONDS);
         } finally {
             writeLock.unlock();
@@ -110,7 +109,9 @@ public class Stepper implements Runnable {
     public void run() {
         readLock.lock();
         try {
-            double delta = timer.restart();
+            double time = timeProvider.getTimestamp();
+            double delta = time - lastStepTime;
+            lastStepTime = time;
             for (Steppable steppable : steppables) {
                 try {
                     steppable.step(delta);
@@ -132,8 +133,8 @@ public class Stepper implements Runnable {
     }
 
     @Inject
-    public void setTimer(Timer timer) {
-        this.timer = timer;
+    public void setTimeProvider(ITimeProvider timeProvider) {
+        this.timeProvider = timeProvider;
     }
 
 }
