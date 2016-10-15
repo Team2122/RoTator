@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
+import org.teamtators.rotator.config.TriggerBinder;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.control.Stepper;
 import org.teamtators.rotator.scheduler.*;
@@ -14,13 +15,13 @@ import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.ManualTester;
 import org.teamtators.rotator.ui.SimulationFrame;
 
-public class Main implements StateListener {
+public class Main {
     private static Logger logger = LoggerFactory.getLogger(Main.class);
     private Stepper stepper;
     private Stepper uiStepper;
     private DesktopRobot robot;
-    private Command autoCommand;
     private Scheduler scheduler;
+    private TriggerBinder triggerBinder;
 
     public static void main(String[] args) {
         try {
@@ -39,6 +40,7 @@ public class Main implements StateListener {
         uiStepper = robot.uiStepper();
         ConfigLoader configLoader = robot.configLoader();
         scheduler = robot.scheduler();
+        triggerBinder = robot.triggerBinder();
         ManualTester manualTester = robot.manualTester();
         ConfigCommandStore commandStore = robot.commandStore();
         SimulationFrame simulationFrame = robot.simulationFrame();
@@ -71,7 +73,7 @@ public class Main implements StateListener {
         commandStore.createCommandsFromConfig(commandsConfig);
 
         logger.debug("Configuring triggers");
-        robot.triggerBinder().bindTriggers(triggersConfig);
+        triggerBinder.bindTriggers(triggersConfig);
 
         uiStepper.setPeriod(1.0 / 50.0);
         uiStepper.add(delta -> {
@@ -82,9 +84,7 @@ public class Main implements StateListener {
         logger.info("Opening window");
         simulationFrame.setVisible(true);
 
-        autoCommand = commandStore.getCommand("AutoInit");
-        scheduler.registerStateListener(this);
-
+        scheduler.registerStateListener(triggerBinder);
         scheduler.enterState(RobotState.DISABLED);
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
@@ -100,10 +100,4 @@ public class Main implements StateListener {
         uiStepper.stop();
     }
 
-    @Override
-    public void onEnterState(RobotState newState) {
-        if(newState == RobotState.AUTONOMOUS) {
-            scheduler.startCommand(autoCommand);
-        }
-    }
 }
