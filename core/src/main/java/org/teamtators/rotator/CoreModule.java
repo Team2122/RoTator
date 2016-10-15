@@ -2,6 +2,7 @@ package org.teamtators.rotator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import dagger.Module;
 import dagger.Provides;
 import org.teamtators.rotator.commands.CoreCommands;
@@ -33,7 +34,7 @@ public class CoreModule {
     @Provides
     @Singleton
     static ObjectMapper providesObjectMapper() {
-        return new YAMLMapper();
+        return new YAMLMapper().registerModule(new GuavaModule());
     }
 
     @Provides
