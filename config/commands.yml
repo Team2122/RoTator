@@ -1,5 +1,5 @@
 DriveTank:
-  deadzone: .1
+  deadzone: .15
   leftMultiplier: 120.0
   rightMultiplier: 120.0
   exponent: 2.0
@@ -183,9 +183,6 @@ $AutoLowBarPickRotate:
 $AutoLowBar:
   - name: $AutoLowBarPickRotate
     parallel: true
-  - class: TurretSetRotation
-    angle: 42.0
-    parallel: true
   - class: DriveStraight
     speed: 40.0
     angle: 0.0
@@ -227,6 +224,19 @@ $Auto2Ball:
     angle: 0.0
     distance: 192.0
 
+$AutoMoat3PickRotate:
+  - PickerPick
+  - class: TurretSetRotation
+    angle: 25.0
+
+$AutoMoat3:
+  - name: $AutoMoat3PickRotate
+    parallel: true
+  - class: DriveStraight
+    speed: 80.0
+    angle: 0.0
+    distance: 144.0
+  - $AutoShoot
 
 AutoChooser:
   class: ChooserCommand
@@ -234,4 +244,5 @@ AutoChooser:
     - $AutoShoot
     - $Auto2Ball
     - $AutoLowBar
+    - $AutoMoat3
     - $SequentialTest

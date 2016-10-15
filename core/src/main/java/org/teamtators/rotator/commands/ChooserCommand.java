@@ -43,7 +43,10 @@ public class ChooserCommand extends CommandBase implements Configurable<ChooserC
 
     @Override
     protected boolean step() {
-        return selectedCommand.isRunning();
+        boolean running = selectedCommand.isRunning();
+        if (!running && started) return true;
+        if (running && !started) started = true;
+        return false;
     }
 
     @Override

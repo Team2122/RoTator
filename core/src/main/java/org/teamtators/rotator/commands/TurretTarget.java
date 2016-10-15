@@ -63,7 +63,8 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
         vision.setTurretAngle(currentAngle);
 
         double wheelSpeed = turret.getTargetWheelSpeed();
-        HoodPosition hoodPosition = HoodPosition.UP1;
+        HoodPosition hoodPosition = turret.getHoodPosition();
+        if (hoodPosition == HoodPosition.DOWN) hoodPosition = HoodPosition.UP1;
 
         VisionData visionData = vision.getVisionData();
         int frameNumber = visionData.getFrameNumber();

@@ -50,9 +50,9 @@ public abstract class Command implements CommandRunContext {
     @Override
     public void startWithContext(Command command, CommandRunContext context) {
         if (this.context == null) {
-            throw new IllegalStateException("Tried add command in parent context while not running");
-        }
-        this.context.startWithContext(command, context);
+            logger.error("Tried add command {} in parent context while not running", command.getName());
+        } else
+            this.context.startWithContext(command, context);
     }
 
     @Override
