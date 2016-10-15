@@ -17,7 +17,7 @@ public class TurretBumpWheelSpeedOffset extends CommandBase implements Configura
     @Override
     protected void initialize() {
         double newOffset = turret.getWheelSpeedOffset() + offset;
-        logger.info("Bumping wheel speed offset by {} to {}", offset, newOffset);
+        logger.info("Bumping wheel speed offset by {} RPM to {} RPM", offset, newOffset);
         turret.setWheelSpeedOffset(newOffset);
     }
 

@@ -26,18 +26,19 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
 
     @Override
     protected void initialize() {
-        super.initialize();
         if (picker.getPosition() == PickerPosition.HOME) {
             logger.warn("Picker is in the way, canceling");
             cancel();
+            return;
         }
         turret.startShooting();
+        turret.setHoodPosition(config.hoodPosition);
+        logger.info("Spinning shooter wheel up to {} at hood {}", config.wheelSpeed, config.hoodPosition);
     }
 
     @Override
     protected boolean step() {
         if (config.lights) vision.setLedState(true);
-        turret.setHoodPosition(config.hoodPosition);
         turret.setTargetWheelSpeed(config.wheelSpeed);
         return turret.hasShot();
     }

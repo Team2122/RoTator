@@ -57,7 +57,7 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
             return false;
         }
         // check if roller isn't ready to start yet
-        double wheelSpeed = turret.getWheelSpeed();
+        double wheelSpeed = turret.getTargetWheelSpeed();
         if (turret.isAtTargetWheelSpeed() && turret.isAngleOnTarget()) {
             // start rolling
             rollingStartTime = timestamp;
@@ -65,7 +65,7 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
             VisionData visionData = vision.getVisionData();
             double angleOffset = visionData.getOffsetAngle();
             double distance = visionData.getDistance();
-            logger.info("Shooting at {} RPS, pointed at {} degrees, vision offset of {}, distance {} in", wheelSpeed,
+            logger.info("Shooting at {} RPM, pointed at {} degrees, vision offset of {}, distance {} in", wheelSpeed,
                     angle, angleOffset, distance);
             turret.setKingRollerPower(config.kingRollerPower);
         }

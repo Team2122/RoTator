@@ -95,9 +95,9 @@ TurretTarget:
   wheelSpeeds:
     NEW:
     MIDDLE:
-      0: 88.333
+      0: 53000
 #      120: 91.666
-      120: 90.0
+      120: 5400
     OLD:
   hoodPositions:
     NEW:
@@ -110,12 +110,12 @@ TurretTarget:
 
 TurretBarfPrep:
   class: TurretPrep
-  wheelSpeed: 60.0
+  wheelSpeed: 3600.0
 
 TurretCalibrate:
   class: TurretPrep
   lights: true
-  wheelSpeed: 0.0
+  wheelSpeed: 5100
 
 TurretBumpLeft:
   class: TurretBumpRotation
@@ -127,11 +127,11 @@ TurretBumpRight:
 
 TurretBumpWheelSpeedUp:
   class: TurretBumpWheelSpeedOffset
-  offset: 1.666666666666666666666666666666666
+  offset: 50 # 100
 
 TurretBumpWheelSpeedDown:
   class: TurretBumpWheelSpeedOffset
-  offset: -1.666666666666666666666666666666666
+  offset: -50 # -100
 
 ^DriveStraight:
   speed: 40.0
