@@ -80,6 +80,12 @@ deploy_robotCommand() {
     run_ssh "echo \"$@\" > $RIO_DEPLOY_PATH/robotCommand"
 }
 
+deploy_all() {
+    deploy_jar
+    deploy_config
+    restart
+}
+
 netconsole_command() {
     echo $RIO_NETCONSOLE_COMMAND $@
 }
@@ -125,24 +131,23 @@ $0 - deploy script for $PROJECT_NAME
 Usage: $0 [command ...]
 
 Commands:
-	clean) clean ;;
-	java_check) java_check ;;
-	deploy_jar) deploy_jar ;;
-	deploy_config) deploy_config ;;
-	profile_run) profile_run ;;
-	profile_debug) profile_debug ;;
-	profile_debugSuspend) profile_debugSuspend ;;
-	reboot) reboot ;;
-	restart) restart ;;
-	execute) execute ;;
-	shell) shell ;;
-	help) help ;;
-	completion) completion ;;
+    clean|cl - remove deployed files from robot
+    java_check|jc - check the robot's java installation
+    deploy_jar|j - build and deploy the robot code
+    deploy_config|c - deploy the configs
+    deploy_all|a - alias for deploy_jar deploy_config restart
+    profile_run|r - switch to run profile
+    profile_debug|d - switch to debug profile
+    profile_debugSuspend|s - switch to debugSuspend profile
+    reboot|rb - reboot the robot
+    restart|rs - restart the robot code
+    execute|x - start the robot code
+    shell|s - open an SSH connection to the robot
+    help|h - display this message
 EOF
 }
 
-cmds="check_java c clean dj deploy_jar dc deploy_config d deploy pr profile_run pd profile_debug \
-pds profile_debugSuspend rb reboot r restart e exucute s shell h help completion"
+cmds="clean cl java_check jc deploy_jar j deploy_config c profile_run r profile_debug d profile_debugSuspend s reboot rb restart rs execute x shell s help h completion comp"
 
 completion() {
 	cat <<EOF
@@ -170,19 +175,20 @@ fi
 
 while [[ $# > 0 ]]; do
     case $1 in
-        clean) clean ;;
-        java_check) java_check ;;
-        deploy_jar) deploy_jar ;;
-        deploy_config) deploy_config ;;
-        profile_run) profile_run ;;
-        profile_debug) profile_debug ;;
-        profile_debugSuspend) profile_debugSuspend ;;
-        reboot) reboot ;;
-        restart) restart ;;
-        execute) execute ;;
-        shell) shell ;;
-        help) help ;;
-        completion) completion ;;
+        clean|cl) clean ;;
+        java_check|jc) java_check ;;
+        deploy_jar|j) deploy_jar ;;
+        deploy_config|c) deploy_config ;;
+        deploy_all|a) deploy_all ;;
+        profile_run|r) profile_run ;;
+        profile_debug|d) profile_debug ;;
+        profile_debugSuspend|s) profile_debugSuspend ;;
+        reboot|rb) reboot ;;
+        restart|rs) restart ;;
+        execute|x) execute ;;
+        shell|s) shell ;;
+        help|h) help ;;
+        completion|comp) completion ;;
         *) err "Invalid command $1"; help ;;
     esac
     shift
