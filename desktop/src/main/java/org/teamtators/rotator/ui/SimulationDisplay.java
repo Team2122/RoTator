@@ -2,6 +2,7 @@ package org.teamtators.rotator.ui;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.teamtators.rotator.subsystems.AbstractVision;
 import org.teamtators.rotator.subsystems.SimulationDrive;
 import org.teamtators.rotator.subsystems.SimulationPicker;
 
@@ -25,6 +26,7 @@ public class SimulationDisplay extends JPanel {
 
     private SimulationDrive drive;
     private SimulationPicker picker;
+    private AbstractVision vision;
 
     @Inject
     public SimulationDisplay() throws HeadlessException {
@@ -61,6 +63,11 @@ public class SimulationDisplay extends JPanel {
     @Inject
     public void setPicker(SimulationPicker picker) {
         this.picker = picker;
+    }
+
+    @Inject
+    public void setVision(AbstractVision vision) {
+        this.vision = vision;
     }
 
     @Inject
@@ -128,6 +135,11 @@ public class SimulationDisplay extends JPanel {
         g2d.setColor(PICKER_COLOR);
         g2d.setStroke(new BasicStroke(2));
         g2d.draw(pickerRect);
+
+        if(vision.getLedState()) {
+            g2d.setColor(Color.GREEN);
+            g2d.fillOval((int)-width/2+20, -10, 20, 20);
+        }
 
         g2d.dispose();
     }

@@ -39,9 +39,10 @@ public class DesktopModule {
     }
 
     @Provides
+    @Singleton
     static AbstractVision providesVision(/*SimulationVision vision*/) {
 //        return vision;
-        return new NoopVision();
+        return new SimulationVision();
     }
 
     @Provides
