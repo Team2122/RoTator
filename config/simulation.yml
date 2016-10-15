@@ -35,7 +35,7 @@ Turret:
     inputSamplesToAverage: 16
     P: 0.025
     I: 0.025
-    maxI: 10.0
+    maxIError: 10.0
     F: 0.004
     minOutput: 0.0
     target: { within: 1.0 }

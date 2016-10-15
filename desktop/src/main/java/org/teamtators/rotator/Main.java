@@ -82,7 +82,7 @@ public class Main implements StateListener {
         logger.info("Opening window");
         simulationFrame.setVisible(true);
 
-        autoCommand = commandStore.getCommand("AutoInit");
+        autoCommand = commandStore.getCommand("AutoChooser");
         scheduler.registerStateListener(this);
 
         scheduler.enterState(RobotState.DISABLED);
