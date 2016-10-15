@@ -43,13 +43,13 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
 
     @Override
     protected void initialize() {
-        super.initialize();
         if (picker.getPosition() == PickerPosition.HOME) {
             logger.warn("Picker is not out, not targeting");
             cancel();
             return;
         }
-        if (config.lights) vision.setLedState(true);
+        logger.info("Starting targeting with a {} ball", turret.getBallAge());
+        vision.setLedState(true);
         lastFrameNumber = Integer.MIN_VALUE;
         if (config.dataLogging)
             dataCollector.startProvider(getLogDataProvider());
@@ -62,38 +62,30 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
         currentAngle = turret.getAngle();
         vision.setTurretAngle(currentAngle);
 
-        double goalDistance = 0;
         double wheelSpeed = turret.getTargetWheelSpeed();
+        HoodPosition hoodPosition = HoodPosition.UP1;
+
         VisionData visionData = vision.getVisionData();
         int frameNumber = visionData.getFrameNumber();
         deltaAngle = visionData.getOffsetAngle();
         newAngle = visionData.getNewAngle();
-        goalDistance = visionData.getDistance();
-        if (frameNumber != lastFrameNumber && !Double.isNaN(deltaAngle) &&
-                !Double.isNaN(goalDistance) && !Double.isNaN(newAngle)) {
+        double goalDistance = visionData.getDistance();
+
+        if (frameNumber != lastFrameNumber
+                && !Double.isNaN(deltaAngle)
+                && !Double.isNaN(goalDistance)
+                && !Double.isNaN(newAngle)) {
             lastFrameNumber = frameNumber;
             turret.setTargetAngle(newAngle);
             logger.trace("Moving turret {} degrees. Final angle will be {}", deltaAngle, newAngle);
 
             // look up hood position based on distance to goal and ball age
-            HoodPosition hoodPosition = config.defaultHoodPosition;
-            TreeMap<Double, HoodPosition> hoodPositionsMap = config.hoodPositions.get(ballAge);
-            if (hoodPositionsMap == null || hoodPositionsMap.isEmpty()) {
-                logger.warn("No hood position specified for ball age of {}", ballAge);
-            } else {
-                hoodPosition = hoodPositionsMap.floorEntry(goalDistance).getValue();
-            }
-            turret.setHoodPosition(hoodPosition);
-
-            TreeMap<Double, Double> wheelSpeedsMap = config.wheelSpeeds.get(ballAge);
-            if (wheelSpeedsMap.isEmpty()) {
-                logger.warn("No wheel speed specified for ball age of {}", ballAge);
-            } else {
-                wheelSpeed = wheelSpeedsMap.floorEntry(goalDistance).getValue();
-            }
+            hoodPosition = lookupBallEntry(config.hoodPositions, ballAge, goalDistance, hoodPosition);
+            wheelSpeed = lookupBallEntry(config.wheelSpeeds, ballAge, goalDistance, wheelSpeed);
         }
 
         turret.setTargetWheelSpeed(wheelSpeed);
+        turret.setHoodPosition(hoodPosition);
         
         return turret.hasShot();
     }
@@ -129,11 +121,23 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
         return logDataProvider;
     }
 
+    private static <T> T lookupBallEntry(Map<BallAge, TreeMap<Double, T>> map, BallAge ballAge, double goalDistance,
+                                         T def) {
+        TreeMap<Double, T> subMap = map.get(ballAge);
+        if (subMap != null && !subMap.isEmpty()) {
+            Map.Entry<Double, T> subEntry = subMap.floorEntry(goalDistance);
+            if (subEntry != null) {
+                return subEntry.getValue();
+            } else {
+                return subMap.firstEntry().getValue();
+            }
+        }
+        return def;
+    }
+
     public static class Config {
-        public boolean lights = false;
         public Map<BallAge, TreeMap<Double, Double>> wheelSpeeds;
         public Map<BallAge, TreeMap<Double, HoodPosition>> hoodPositions;
-        public HoodPosition defaultHoodPosition;
         public boolean dataLogging = false;
     }
 }

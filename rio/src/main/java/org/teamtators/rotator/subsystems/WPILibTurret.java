@@ -184,12 +184,13 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
 
     @Override
     public double getBallDistance() {
-        return (float) ballSensor.getDistance();
+        return ballSensor.getDistance();
     }
 
     @Override
     public double getBallCompression() {
-        return ballCompressionSensor.getValue();
+        // subtract from 1 because it starts at 1 and decreases as the sensor gets compressed
+        return 1.0 - ballCompressionSensor.getValue();
     }
 
     public ComponentTestGroup getTestGroup() {

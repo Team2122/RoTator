@@ -1,7 +1,7 @@
 DriveTank:
   deadzone: .1
-  leftMultiplier: 100.0
-  rightMultiplier: 100.0
+  leftMultiplier: 120.0
+  rightMultiplier: 120.0
   exponent: 2.0
 
 DriveArcade:
@@ -62,14 +62,12 @@ PickerPick:
     highTolerance: 50.0
     stopTolerance: 1.0
   targetBallDistance: 48.0
-  compression:
-    start: 75.0
-    stop: 57.0
-    ballAgeThresholds:
-      0.0: OLD
-      0.1: MIDDLE
-      10.31: NEW
-  dataLogging: true
+  ballAgeThresholds:
+#    0.0: OLD
+#    0.4: AGED
+#    0.5: NEW
+    0.0: AGED
+  dataLogging: false
 
 PickerBarf:
   pick: -1.0
@@ -94,18 +92,16 @@ TurretSpinUp:
 TurretTarget:
   wheelSpeeds:
     NEW:
-    MIDDLE:
-      0: 53000
-#      120: 91.666
+    AGED:
+      0: 5300
       120: 5400
     OLD:
   hoodPositions:
     NEW:
-    MIDDLE:
+    AGED:
       0: UP4
       120: UP4
     OLD:
-  defaultHoodPosition: UP1
   dataLogging: false
 
 TurretBarfPrep:

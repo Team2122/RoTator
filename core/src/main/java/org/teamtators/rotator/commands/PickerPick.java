@@ -1,6 +1,5 @@
 package org.teamtators.rotator.commands;
 
-import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
@@ -15,8 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Picks up a ball
@@ -25,19 +22,16 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     private final DataCollector dataCollector;
     private final AbstractPicker picker;
     private final AbstractTurret turret;
-    private final ScheduledExecutorService executorService;
     private Config config;
     private LogDataProvider logDataProvider = null;
 
-    private SimpleRegression regression = new SimpleRegression();
-    private boolean hasSampled = false;
+    private double maxCompression = 0;
 
     public PickerPick(CoreRobot robot) {
         super("PickerPick");
         this.picker = robot.picker();
         this.turret = robot.turret();
         dataCollector = robot.dataCollector();
-        executorService = robot.executorService();
         requires(picker);
         requires(turret);
     }
@@ -57,8 +51,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         }
         //Extends the picker
         picker.setPosition(PickerPosition.PICK);
-        hasSampled = false;
-        regression.clear();
+        maxCompression = 0.0;
         if (config.dataLogging)
             dataCollector.startProvider(getLogDataProvider());
     }
@@ -67,24 +60,7 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     protected boolean step() {
         double ballDistance = turret.getBallDistance();
         double compressionSample = turret.getBallCompression();
-        if (ballDistance <= config.compression.start && !hasSampled) {
-            if (ballDistance <= config.compression.stop) {
-                hasSampled = true;
-                double a = regression.getSlope(), b = regression.getIntercept();
-                double x_1 = config.compression.stop, x_2 = config.compression.start;
-                double compression = a * (0.5 * x_2 * x_2 - 0.5 * x_1 * x_1) + b * (x_2 - x_1);
-                Map.Entry<Double, BallAge> ballAgeEntry = config.compression.ballAgeThresholds.floorEntry(compression);
-                if (ballAgeEntry != null) {
-                    BallAge ballAge = ballAgeEntry.getValue();
-                    logger.info("Compression sample: {} (R^2={}). Ball is {}", compression,
-                            regression.getRSquare(), ballAge);
-                    turret.setBallAge(ballAge);
-                }
-            } else {
-                regression.addData(ballDistance, compressionSample);
-//                logger.debug("added {}: {}", ballDistance, compressionSample);
-            }
-        }
+        maxCompression = Math.max(maxCompression, compressionSample);
         double delta = ballDistance - config.targetBallDistance;
         double sign = Math.signum(delta);
         if (Math.abs(delta) <= config.control.stopTolerance) {
@@ -107,14 +83,23 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
     protected void finish(boolean interrupted) {
         if (interrupted)
             super.finish(true);
-        else
-            logger.info("Finished picking at distance {}, compression value of {}", turret.getBallDistance(),
-                    turret.getBallCompression());
+        else {
+            double compression = maxCompression;
+            Map.Entry<Double, BallAge> ballAgeEntry = config.ballAgeThresholds.floorEntry(compression);
+            BallAge ballAge = turret.getBallAge();
+            if (ballAgeEntry != null) {
+                ballAge = ballAgeEntry.getValue();
+            } else {
+                logger.warn("No ball age entry found for compression {}", compression);
+            }
+            turret.setBallAge(ballAge);
+            logger.info("Finished picking at distance {}, compression value of {}, ball age {}",
+                    turret.getBallDistance(), compression, ballAge);
+        }
         picker.resetPower();
         turret.resetPinchRollerPower();
         turret.resetKingRollerPower();
-        executorService.schedule(() -> dataCollector.stopProvider(getLogDataProvider()),
-                1000, TimeUnit.MILLISECONDS);
+        dataCollector.stopProvider(getLogDataProvider());
     }
 
     public LogDataProvider getLogDataProvider() {
@@ -142,16 +127,11 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         public double targetBallDistance;
         public boolean dataLogging = false;
         public Control control = new Control();
-        public Compression compression = new Compression();
+        public TreeMap<Double, BallAge> ballAgeThresholds;
 
         public static class Control {
             public double pick, pinch;
             public double highPower, lowPower, highTolerance, stopTolerance;
-        }
-
-        public static class Compression {
-            public double start, stop;
-            public TreeMap<Double, BallAge> ballAgeThresholds;
         }
     }
 }
