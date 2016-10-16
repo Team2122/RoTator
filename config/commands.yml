@@ -69,6 +69,22 @@ PickerPick:
 #    0.0: AGED
   dataLogging: false
 
+PickerShortPick:
+  control:
+    pick: 1.0
+    pinch: 0.75
+    highPower: 1.0
+    lowPower: .25
+    highTolerance: 50.0
+    stopTolerance: 1.0
+  targetBallDistance: 48.0
+  ballAgeThresholds:
+    0.0: OLD
+    0.4: AGED
+    0.5: NEW
+#    0.0: AGED
+  dataLogging: false
+
 PickerBarf:
   pick: -1.0
   pinch: -1.0
