@@ -63,10 +63,10 @@ PickerPick:
     stopTolerance: 1.0
   targetBallDistance: 48.0
   ballAgeThresholds:
-#    0.0: OLD
-#    0.4: AGED
-#    0.5: NEW
-    0.0: AGED
+    0.0: OLD
+    0.4: AGED
+    0.5: NEW
+#    0.0: AGED
   dataLogging: false
 
 PickerBarf:
@@ -92,16 +92,27 @@ TurretSpinUp:
 TurretTarget:
   wheelSpeeds:
     NEW:
+      0: 5400
+      60: 5400
+      72: 5300
+      84: 5200
     AGED:
       0: 5300
-      120: 5400
+      60: 5300
+      72: 5200
+      84: 5200
     OLD:
+      0: 5200
+      60: 5200
+      72: 5100
+      84: 5200
   hoodPositions:
     NEW:
+      0: UP4
     AGED:
       0: UP4
-      120: UP4
     OLD:
+      0: UP4
   dataLogging: false
 
 TurretBarfPrep:

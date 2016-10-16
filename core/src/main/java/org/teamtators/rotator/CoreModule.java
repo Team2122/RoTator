@@ -48,7 +48,7 @@ public class CoreModule {
     @ForController
     @Singleton
     Stepper providesStepperForController() {
-        return new Stepper(1.0 / 120.0);
+        return new Stepper(1.0 / 60.0);
     }
 
     @Provides

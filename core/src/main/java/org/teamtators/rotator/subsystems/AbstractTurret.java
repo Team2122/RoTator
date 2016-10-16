@@ -59,7 +59,7 @@ public abstract class AbstractTurret extends Subsystem {
      * @return The wheel speed setpoint in rpm
      */
     public double getTargetWheelSpeed() {
-        return getShooterWheelController().getSetpoint() * 60.0;
+        return (getShooterWheelController().getSetpoint() * 60.0) - wheelSpeedOffset;
     }
 
     /**

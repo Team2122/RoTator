@@ -38,7 +38,10 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
 
     @Override
     protected boolean step() {
-        if (config.lights) vision.setLedState(true);
+        if (config.lights) {
+            vision.setLedState(true);
+            vision.setTurretAngle(turret.getAngle());
+        }
         turret.setTargetWheelSpeed(config.wheelSpeed);
         return turret.hasShot();
     }
