@@ -53,7 +53,6 @@ public class Stepper implements Runnable {
         writeLock.lock();
         try {
             running = true;
-            this.executorService = Executors.newSingleThreadScheduledExecutor();
             timer.start();
             executorService.scheduleAtFixedRate(this, 0, (long) (S_TO_NS * this.period), TimeUnit.NANOSECONDS);
         } finally {

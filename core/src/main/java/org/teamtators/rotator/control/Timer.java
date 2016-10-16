@@ -63,6 +63,9 @@ public class Timer {
      * @return Whether or not the period has passed
      */
     public boolean hasPeriodElapsed(double period) {
+        if (!isRunning()) {
+            return false;
+        }
         boolean hasPassed = false;
         if (get() > period) {
             hasPassed = true;
