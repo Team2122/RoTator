@@ -17,10 +17,10 @@ Driver:
 Gunner:
   BUMPER_LEFT: start whenPressed TurretBumpWheelSpeedUp
   TRIGGER_LEFT: start whenPressed TurretBumpWheelSpeedDown
-  POV_UP: start whenPressed HoodBumpUp
-  POV_DOWN: start whenPressed HoodBumpDown
-  POV_LEFT: start whenPressed TurretBumpLeft
-  POV_RIGHT: start whenPressed TurretBumpRight
+  POV_DOWN: whilePressed PickerBarf
+  POV_UP: start whenPressed TurretStraight
+  POV_LEFT: start whenPressed TurretLeft
+  POV_RIGHT: start whenPressed TurretRight
   BACK: start whenPressed PickerToHome
   START: toggle whenPressed TurretBarfPrep
   A: toggle whenPressed TurretShoot

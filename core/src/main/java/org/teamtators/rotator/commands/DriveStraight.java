@@ -11,50 +11,35 @@ import org.teamtators.rotator.subsystems.AbstractDrive;
 /**
  * Drive in a straight line for a certain distance
  */
-public class DriveStraight extends CommandBase implements Configurable<DriveStraight.Config> {
+public class DriveStraight extends DriveStraightBase implements Configurable<DriveStraight.Config> {
     private Config config;
-    private ControllerFactory controllerFactory;
-    private AbstractDrive drive;
-    private AbstractController controller;
-    private double startingDistance;
-    private double deltaDistance;
 
     public DriveStraight(CoreRobot robot) {
-        super("DriveStraight");
-        this.drive = robot.drive();
+        super("DriveStraight", robot);
         requires(drive);
-        this.controllerFactory = robot.controllerFactory();
     }
 
     @Override
     public void configure(Config config) {
         this.config = config;
-        controller = controllerFactory.create(config.angleController);
-        controller.setName(getName());
-        controller.setInputProvider(drive::getGyroAngle);
-        controller.setOutputConsumer(output -> {
-            drive.setLeftSpeed(config.speed + output);
-            drive.setRightSpeed(config.speed - output);
-        });
+        super.configure(config);
     }
-
     @Override
     protected void initialize() {
+        super.initialize();
         logger.info("Driving at angle {} (currently at {}) for distance of {}",
                 config.angle, drive.getGyroAngle(), config.distance);
-        startingDistance = drive.getAverageDistance();
-        controller.enable();
-        controller.setSetpoint(config.angle);
     }
 
     @Override
     public boolean step() {
-        deltaDistance = Math.abs(drive.getAverageDistance() - startingDistance);
-        return deltaDistance > config.distance;
+        super.step();
+        return Math.abs(deltaDistance) >= config.distance;
     }
 
     @Override
-    protected void finish(boolean interrupted) {
+    public void finish(boolean interrupted) {
+        super.finish(interrupted);
         String logString = String.format(" at distance %s (target %s), angle %s (target %s)",
                 deltaDistance, config.distance, drive.getGyroAngle(), config.angle);
         if (interrupted) {
@@ -62,14 +47,10 @@ public class DriveStraight extends CommandBase implements Configurable<DriveStra
         } else {
             logger.info("Finishing" + logString);
         }
-        controller.disable();
-        drive.resetSpeeds();
     }
 
-    static class Config {
-        public double angle;
-        public double speed;
+    public class Config extends DriveStraightBase.Config {
         public double distance;
-        public JsonNode angleController;
     }
+
 }

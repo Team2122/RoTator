@@ -8,6 +8,7 @@ public class CoreCommands {
         commandStore.registerClass(DriveTank.class);
         commandStore.registerClass(DriveRotate.class);
         commandStore.registerClass(DriveStraight.class);
+        commandStore.registerClass(DriveStraightCheval.class);
 
         commandStore.registerClass(LogCommand.class);
 

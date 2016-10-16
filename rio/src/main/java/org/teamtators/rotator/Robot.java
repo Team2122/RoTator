@@ -94,7 +94,7 @@ public class Robot extends IterativeRobot {
         logger.debug("Starting stepper");
         stepper.start();
 
-        autoCommand = commandStore.getCommand("AutoChooser");
+        autoCommand = commandStore.getCommand("$AutoInit");
 
         logger.info("Robot initialized");
     }

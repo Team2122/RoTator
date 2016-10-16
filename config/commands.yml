@@ -1,3 +1,6 @@
+#
+# DRIVE
+#
 DriveTank:
   deadzone: .15
   leftMultiplier: 120.0
@@ -10,6 +13,9 @@ DriveArcade:
   rotateMultiplier: 120.0
   exponent: 2.0
 
+#
+# PICKER
+#
 PickerToHome:
   class: PickerSetPosition
   pickerPosition: HOME
@@ -22,6 +28,32 @@ PickerToPick:
   class: PickerSetPosition
   pickerPosition: PICK
 
+PickerPick:
+  control:
+    pick: 1.0
+    pinch: 0.75
+    highPower: 1.0
+    lowPower: .25
+    highTolerance: 50.0
+    stopTolerance: 1.0
+  targetBallDistance: 48.0
+  ballAgeThresholds:
+#    0.0: OLD
+    0.0: AGED
+    0.5: NEW
+#    0.0: AGED
+  dataLogging: false
+
+PickerBarf:
+  pick: -1.0
+  pinch: -1.0
+  king: -1.0
+
+PickerCheval:
+
+#
+# TURRET
+#
 HoodDown:
   class: TurretSetHoodPosition
   hoodPosition: DOWN
@@ -53,29 +85,6 @@ HoodBumpDown:
 TurretHome:
   speed: .15
 
-PickerPick:
-  control:
-    pick: 1.0
-    pinch: 0.75
-    highPower: 1.0
-    lowPower: .25
-    highTolerance: 50.0
-    stopTolerance: 1.0
-  targetBallDistance: 48.0
-  ballAgeThresholds:
-    0.0: OLD
-    0.4: AGED
-    0.5: NEW
-#    0.0: AGED
-  dataLogging: false
-
-PickerBarf:
-  pick: -1.0
-  pinch: -1.0
-  king: -1.0
-
-PickerCheval:
-
 TurretShoot:
   kingRollerPower: 1.0
   waitTimeout: 2.0
@@ -92,20 +101,20 @@ TurretSpinUp:
 TurretTarget:
   wheelSpeeds:
     NEW:
-      0: 5400
-      60: 5400
-      72: 5300
-      84: 5200
+      0: 5100
+      60: 5100
+      72: 5000
+      84: 4900
     AGED:
-      0: 5300
-      60: 5300
-      72: 5200
-      84: 5200
+      0: 5000
+      60: 5000
+      72: 5900
+      84: 4800
     OLD:
-      0: 5200
-      60: 5200
-      72: 5100
-      84: 5200
+      0: 5000
+      60: 5000
+      72: 5900
+      84: 4800
   hoodPositions:
     NEW:
       0: UP4
@@ -115,14 +124,14 @@ TurretTarget:
       0: UP4
   dataLogging: false
 
-TurretBarfPrep:
-  class: TurretPrep
-  wheelSpeed: 3600.0
-
 TurretCalibrate:
   class: TurretPrep
   lights: true
-  wheelSpeed: 5100
+  wheelSpeed: 4800
+
+TurretBarfPrep:
+  class: TurretPrep
+  wheelSpeed: 3600.0
 
 TurretBumpLeft:
   class: TurretBumpRotation
@@ -132,6 +141,18 @@ TurretBumpRight:
   class: TurretBumpRotation
   angle: 10.0
 
+TurretStraight:
+  class: TurretSetRotation
+  angle: 0.0
+
+TurretRight:
+  class: TurretSetRotation
+  angle: 75.0
+
+TurretLeft:
+  class: TurretSetRotation
+  angle: -75.0
+
 TurretBumpWheelSpeedUp:
   class: TurretBumpWheelSpeedOffset
   offset: 50 # 100
@@ -140,6 +161,9 @@ TurretBumpWheelSpeedDown:
   class: TurretBumpWheelSpeedOffset
   offset: -50 # -100
 
+#
+# AUTON
+#
 ^DriveStraight:
   speed: 40.0
   angleController: { type: PID, P: 4.8 }
@@ -246,7 +270,28 @@ $AutoMoat3:
   - class: DriveStraight
     speed: 80.0
     angle: 0.0
-    distance: 144.0
+    distance: 168.0
+  - $AutoShoot
+
+$AutoCheval4:
+  - PickerPick
+  - name: TurretSetRotation
+    angle: -20.0
+    parallel: true
+  - PickerToCheval
+  - class: DriveStraightCheval
+    speed: 30.0
+    angle: 0.0
+  - PickerToPick
+  - class: DriveStraight
+    speed: 30.0
+    angle: 0.0
+    distance: 48.0
+  - PickerToCheval
+  - class: DriveStraight
+    speed: 40.0
+    angle: 0.0
+    distance: 72.0
   - $AutoShoot
 
 AutoChooser:
@@ -256,4 +301,9 @@ AutoChooser:
     - $Auto2Ball
     - $AutoLowBar
     - $AutoMoat3
+    - $AutoCheval4
     - $SequentialTest
+
+$AutoInit:
+  - TurretHome
+  - AutoChooser
