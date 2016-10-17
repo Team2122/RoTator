@@ -3,6 +3,7 @@ package org.teamtators.rotator.commands;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
+import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.datalogging.DataCollector;
 import org.teamtators.rotator.datalogging.LogDataProvider;
 import org.teamtators.rotator.subsystems.*;
@@ -14,10 +15,12 @@ import java.util.TreeMap;
 
 public class TurretTarget extends CommandBase implements Configurable<TurretTarget.Config> {
     private Config config;
+    private ITimeProvider timeProvider;
     private AbstractTurret turret;
     private AbstractVision vision;
     private AbstractPicker picker;
 
+    private double startTime;
     private int lastFrameNumber;
     private double deltaAngle;
     private double newAngle;
@@ -28,6 +31,7 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
 
     public TurretTarget(CoreRobot robot) {
         super("TurretPrep");
+        this.timeProvider = robot.timeProvider();
         this.turret = robot.turret();
         this.vision = robot.vision();
         this.picker = robot.picker();
@@ -54,6 +58,7 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
         if (config.dataLogging)
             dataCollector.startProvider(getLogDataProvider());
         turret.startShooting();
+        startTime = timeProvider.getTimestamp();
     }
 
     @Override
@@ -77,8 +82,11 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
                 && !Double.isNaN(goalDistance)
                 && !Double.isNaN(newAngle)) {
             lastFrameNumber = frameNumber;
-            turret.setTargetAngle(newAngle);
-            logger.trace("Moving turret {} degrees. Final angle will be {}", deltaAngle, newAngle);
+
+            if (timeProvider.getTimestamp() >= startTime + config.startDelay) {
+                turret.setTargetAngle(newAngle);
+                logger.trace("Moving turret {} degrees. Final angle will be {}", deltaAngle, newAngle);
+            }
 
             // look up hood position based on distance to goal and ball age
             hoodPosition = lookupBallEntry(config.hoodPositions, ballAge, goalDistance, hoodPosition);
@@ -137,6 +145,7 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
     }
 
     public static class Config {
+        public double startDelay = 0.5;
         public Map<BallAge, TreeMap<Double, Double>> wheelSpeeds;
         public Map<BallAge, TreeMap<Double, HoodPosition>> hoodPositions;
         public boolean dataLogging = false;

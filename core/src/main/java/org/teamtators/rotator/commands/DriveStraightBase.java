@@ -54,7 +54,7 @@ public abstract class DriveStraightBase extends CommandBase {
         drive.resetSpeeds();
     }
 
-    static class Config {
+    public static class Config {
         public double angle;
         public double speed;
         public JsonNode angleController;

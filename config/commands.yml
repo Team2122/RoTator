@@ -101,28 +101,39 @@ TurretSpinUp:
 TurretTarget:
   wheelSpeeds:
     NEW:
-      0: 5100
-      60: 5100
-      72: 5000
+      0: 5200
+      72: 4800
       84: 4900
+      144: 5000
     AGED:
       0: 5000
-      60: 5000
-      72: 5900
+      72: 4800
       84: 4800
+      144: 5000
     OLD:
       0: 5000
-      60: 5000
-      72: 5900
+      72: 4800
       84: 4800
+      144: 5000
   hoodPositions:
     NEW:
-      0: UP4
+      0: UP1
+      72: UP4
     AGED:
-      0: UP4
+      0: UP1
+      72: UP4
     OLD:
-      0: UP4
+      0: UP1
+      72: UP4
   dataLogging: false
+  startDelay: .25
+
+TurretBatter:
+  class: TurretPrep
+  lights: false
+  wheelSpeed: 5000
+  hoodPosition: UP1
+  turretAngle: 0.0
 
 TurretCalibrate:
   class: TurretPrep
@@ -132,6 +143,10 @@ TurretCalibrate:
 TurretBarfPrep:
   class: TurretPrep
   wheelSpeed: 3600.0
+
+TurretBatter:
+  class: TurretPrep
+  wheelSpeed: 4800
 
 TurretBumpLeft:
   class: TurretBumpRotation
@@ -168,14 +183,18 @@ TurretBumpWheelSpeedDown:
   speed: 40.0
   angleController: { type: PID, P: 4.8 }
 
+DriveStraightCheval:
+  speed: -30.0
+  angleController: { type: PID, P: 4.8 }
+
 ^DriveRotate:
   angleController:
     type: PID
-    P: 2.4
-    I: 2.4
+    P: 3.5
+    I: 3.5
     maxIError: 10.0
     maxAbsoluteOutput: 48.0
-    target: { within: 1.0, time: .125 }
+    target: { within: 1.5, time: .125 }
 
 $SequentialTest:
   - class: DriveStraight
@@ -219,45 +238,66 @@ $AutoLowBar:
   - name: $AutoLowBarPickRotate
     parallel: true
   - class: DriveStraight
-    speed: 40.0
+    speed: 80.0
     angle: 0.0
     distance: 192.0
   - $AutoShoot
 
-$Auto2Ball:
+$AutoLowBar2Ball:
   - name: $AutoLowBarPickRotate
     parallel: true
   - class: TurretSetRotation
     angle: 42.0
     parallel: true
   - class: DriveStraight
-    speed: 40.0
+    speed: 60.0
     angle: 0.0
-    distance: 192.0
+    distance: 60.0
+  - class: DriveStraight
+    speed: 100.0
+    angle: 0.0
+    distance: 120.0
   - $AutoShoot
   - class: DriveStraight
-    speed: -40.0
+    speed: -100.0
     angle: 0.0
     distance: 144.0
   - name: $AutoLowBarPickRotate
     parallel: true
   - class: DriveStraight
-    speed: -40.0
-    angle: -10.0
+    speed: -80.0
+    angle: -15.0
     distance: 60.0
   - class: DriveStraight
-    speed: 40.0
-    angle: -10.0
-    distance: 60.0
+    speed: 80.0
+    angle: -15.0
+    distance: 48.0
   - class: DriveStraight
-    speed: 40.0
+    speed: 60.0
     angle: 0.0
-    distance: 144.0
+    distance: 60.0
+  - class: DriveStraight
+    speed: 100.0
+    angle: 0.0
+    distance: 84.0
   - $AutoShoot
+#  - class: DriveStraight
+#    speed: -80.0
+#    angle: 0.0
+#    distance: 192.0
+
+$AutoRockWall2:
+  - PickerPick
+  - PickerToCheval
+  - class: TurretSetRotation
+    angle: 45.0
+    parallel: true
   - class: DriveStraight
-    speed: -40.0
+    speed: 80.0
     angle: 0.0
-    distance: 192.0
+    distance: 240.0
+  - PickerToPick
+  - $AutoShoot
 
 $AutoMoat3PickRotate:
   - PickerPick
@@ -265,43 +305,63 @@ $AutoMoat3PickRotate:
     angle: 25.0
 
 $AutoMoat3:
-  - name: $AutoMoat3PickRotate
+  - PickerPick
+  - PickerToCheval
+  - class: TurretSetRotation
+    angle: 10.0
     parallel: true
   - class: DriveStraight
     speed: 80.0
     angle: 0.0
     distance: 168.0
+  - PickerToPick
   - $AutoShoot
 
 $AutoCheval4:
   - PickerPick
-  - name: TurretSetRotation
-    angle: -20.0
+  - class: TurretSetRotation
+    angle: 90.0
     parallel: true
   - PickerToCheval
-  - class: DriveStraightCheval
-    speed: 30.0
-    angle: 0.0
+  - DriveStraightCheval
   - PickerToPick
   - class: DriveStraight
-    speed: 30.0
+    speed: -40.0
     angle: 0.0
-    distance: 48.0
+    distance: 36.0
   - PickerToCheval
   - class: DriveStraight
-    speed: 40.0
+    speed: -40.0
     angle: 0.0
     distance: 72.0
+  - class: DriveRotate
+    angle: 90.0
+  - PickerToPick
+  - $AutoShoot
+
+$AutoRamparts5:
+  - PickerPick
+  - PickerToCheval
+  - class: TurretSetRotation
+    angle: -45.0
+    parallel: true
+  - class: DriveStraight
+    speed: 80.0
+    angle: 0.0
+    distance: 264.0
+  - PickerToPick
   - $AutoShoot
 
 AutoChooser:
   class: ChooserCommand
   commands:
     - $AutoShoot
-    - $Auto2Ball
     - $AutoLowBar
+    - $AutoLowBar2Ball
+    - $AutoRockWall2
     - $AutoMoat3
     - $AutoCheval4
+    - $AutoRamparts5
     - $SequentialTest
 
 $AutoInit:

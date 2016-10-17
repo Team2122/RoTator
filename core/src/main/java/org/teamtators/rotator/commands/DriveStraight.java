@@ -49,8 +49,7 @@ public class DriveStraight extends DriveStraightBase implements Configurable<Dri
         }
     }
 
-    public class Config extends DriveStraightBase.Config {
+    public static class Config extends DriveStraightBase.Config {
         public double distance;
     }
-
 }

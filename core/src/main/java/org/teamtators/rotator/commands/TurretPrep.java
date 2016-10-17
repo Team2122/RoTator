@@ -33,6 +33,9 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
         }
         turret.startShooting();
         turret.setHoodPosition(config.hoodPosition);
+        if (!Double.isNaN(config.turretAngle)) {
+            turret.setTargetAngle(config.turretAngle);
+        }
         logger.info("Spinning shooter wheel up to {} at hood {}", config.wheelSpeed, config.hoodPosition);
     }
 
@@ -58,5 +61,6 @@ public class TurretPrep extends CommandBase implements Configurable<TurretPrep.C
         public boolean lights = false;
         public double wheelSpeed;
         public HoodPosition hoodPosition = HoodPosition.UP1;
+        public double turretAngle = Double.NaN;
     }
 }
