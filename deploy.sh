@@ -3,11 +3,11 @@
 set -e
 
 log() {
-	echo -e "\e[32m$@\e[0m"
+    echo -e "\e[32m$@\e[0m"
 }
 
 err() {
-	echo -e "\e[31m$@\e[0m"
+    echo -e "\e[31m$@\e[0m"
 }
 
 : ${TEAM_NUMBER:=212}
@@ -26,7 +26,7 @@ RIO_DEBUG_PORT=8348
 
 : ${SSH:=$(which ssh)}
 : ${SCP:=$(which scp)}
-#SSHFLAGS="-o ControlMaster=yes -o ControlPath=~/.ssh/controlmasters/$RIO $SSHFLAGS"
+SSHFLAGS="-oControlMaster=auto -oControlPath=/tmp/controlmaster-$RIO -oControlPersist=10m $SSHFLAGS"
 : ${GRADLE:=./gradlew}
 GRADLEFLAGS="--offline $GRADLEFLAGS"
 
@@ -39,7 +39,7 @@ run_scp() {
 }
 
 run_gradle() {
-	$GRADLE $GRADLEFLAGS $@
+    $GRADLE $GRADLEFLAGS $@
 }
 
 #
@@ -47,19 +47,19 @@ run_gradle() {
 # @arg $1 Whether the program should suspend before debugging (y or n). No by default
 #
 rio_debug_flags() {
-	echo "-XX:+UsePerfData -agentlib:jdwp=transport=dt_socket,address=$RIO_DEBUG_PORT,server=y,suspend=${1:-n}"
+    echo "-XX:+UsePerfData -agentlib:jdwp=transport=dt_socket,address=$RIO_DEBUG_PORT,server=y,suspend=${1:-n}"
 }
 
 clean() {
-	log "Removing deployed files from roboRIO"
+    log "Removing deployed files from roboRIO"
     run_ssh "rm -rf $RIO_CLEAN_FILES"
 }
 
 java_check() {
-	if ! run_ssh "$RIO_JAVA -version > /dev/null"; then
+    if ! run_ssh "$RIO_JAVA -version > /dev/null"; then
         err "No java appears to be present on the roboRIO at $RIO_JAVA"
         exit 1
-	fi
+    fi
 }
 
 deploy_jar() {
@@ -131,37 +131,39 @@ $0 - deploy script for $PROJECT_NAME
 Usage: $0 [command ...]
 
 Commands:
-    clean|cl - remove deployed files from robot
-    java_check|jc - check the robot's java installation
-    deploy_jar|j - build and deploy the robot code
-    deploy_config|c - deploy the configs
-    deploy_all|a - alias for deploy_jar deploy_config restart
-    profile_run|r - switch to run profile
-    profile_debug|d - switch to debug profile
-    profile_debugSuspend|s - switch to debugSuspend profile
-    reboot|rb - reboot the robot
-    restart|rs - restart the robot code
-    execute|x - start the robot code
-    shell|s - open an SSH connection to the robot
-    help|h - display this message
+    clean               - remove deployed files from robot
+    java_check          - check the robot's java installation
+    j|deploy_jar        - build and deploy the robot code
+    c|deploy_config     - deploy the configs
+    a|deploy_all        - alias for deploy_jar deploy_config restart
+    run|profile_run     - switch to run profile (no debugging)
+    debug|profile_debug - switch to debug profile (debugger on port $RIO_DEBUG_PORT)
+    suspend|profile_debugSuspend
+                    - switch to debugSuspend profile (debugger on port $RIO_DEBUG_PORT) and suspend code
+    reboot              - reboot the roboRIO
+    r|restart           - restart the robot code
+    x|execute           - runs the robot code in this shell
+    s|shell             - open an SSH connection to the robot
+    h|help              - display this message
+    completion|comp     - prints out a script that enables completion when sourced
 EOF
 }
 
-cmds="clean cl java_check jc deploy_jar j deploy_config c profile_run r profile_debug d profile_debugSuspend s reboot rb restart rs execute x shell s help h completion comp"
+cmds="clean java_check j deploy_jar c deploy_config run profile_run debug profile_debug suspend profile_debugSuspend reboot r restart x execute s shell h help completion comp"
 
 completion() {
-	cat <<EOF
+    cat <<EOF
 _deploy() {
-	if command -v emulate 1>/dev/null; then
-		emulate ksh
-	fi
+    if command -v emulate 1>/dev/null; then
+        emulate ksh
+    fi
 
-	local cur
-	COMPREPLY=()
-	cur="\${COMP_WORDS[COMP_CWORD]}"
+    local cur
+    COMPREPLY=()
+    cur="\${COMP_WORDS[COMP_CWORD]}"
 
-	COMPREPLY=( \$(compgen -W "${cmds}" -- \${cur}) )
-	return 0
+    COMPREPLY=( \$(compgen -W "${cmds}" -- \${cur}) )
+    return 0
 }
 
 complete -F _deploy $0
@@ -175,19 +177,19 @@ fi
 
 while [[ $# > 0 ]]; do
     case $1 in
-        clean|cl) clean ;;
-        java_check|jc) java_check ;;
-        deploy_jar|j) deploy_jar ;;
-        deploy_config|c) deploy_config ;;
-        deploy_all|a) deploy_all ;;
-        profile_run|r) profile_run ;;
-        profile_debug|d) profile_debug ;;
-        profile_debugSuspend|s) profile_debugSuspend ;;
-        reboot|rb) reboot ;;
-        restart|rs) restart ;;
-        execute|x) execute ;;
-        shell|s) shell ;;
-        help|h) help ;;
+        clean) clean ;;
+        java_check) java_check ;;
+        j|deploy_jar) deploy_jar ;;
+        c|deploy_config) deploy_config ;;
+        a|deploy_all) deploy_all ;;
+        run|profile_run) profile_run ;;
+        debug|profile_debug) profile_debug ;;
+        suspend|profile_debugSuspend) profile_debugSuspend ;;
+        reboot) reboot ;;
+        r|restart) restart ;;
+        x|execute) execute ;;
+        s|shell) shell ;;
+        h|help) help ;;
         completion|comp) completion ;;
         *) err "Invalid command $1"; help ;;
     esac
