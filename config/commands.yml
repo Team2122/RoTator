@@ -28,7 +28,7 @@ PickerToPick:
   class: PickerSetPosition
   pickerPosition: PICK
 
-PickerPick:
+^PickerPick:
   control:
     pick: 1.0
     pinch: 0.75
@@ -36,13 +36,18 @@ PickerPick:
     lowPower: .25
     highTolerance: 50.0
     stopTolerance: 1.0
-  targetBallDistance: 48.0
   ballAgeThresholds:
 #    0.0: OLD
     0.0: AGED
     0.5: NEW
 #    0.0: AGED
   dataLogging: false
+
+PickerPick:
+  targetBallDistance: 48.0
+
+PickerShortPick:
+  targetBallDistance: 200.0
 
 PickerBarf:
   pick: -1.0
