@@ -47,6 +47,7 @@ PickerPick:
   targetBallDistance: 48.0
 
 PickerShortPick:
+  class: PickerPick
   targetBallDistance: 200.0
 
 PickerBarf:
@@ -187,6 +188,8 @@ TurretBumpWheelSpeedDown:
 ^DriveStraight:
   speed: 40.0
   angleController: { type: PID, P: 4.8 }
+  speedController:
+    maxAcceleration: 100.0
 
 DriveStraightCheval:
   speed: -30.0
@@ -258,6 +261,7 @@ $AutoLowBar2Ball:
     speed: 60.0
     angle: 0.0
     distance: 60.0
+    speedController: { endVelocity: 60.0 }
   - class: DriveStraight
     speed: 100.0
     angle: 0.0
@@ -267,6 +271,7 @@ $AutoLowBar2Ball:
     speed: -100.0
     angle: 0.0
     distance: 144.0
+    speedController: { endVelocity: -80.0 }
   - name: $AutoLowBarPickRotate
     parallel: true
   - class: DriveStraight
@@ -277,10 +282,12 @@ $AutoLowBar2Ball:
     speed: 80.0
     angle: -15.0
     distance: 48.0
+    speedController: { endVelocity: 60.0 }
   - class: DriveStraight
     speed: 60.0
     angle: 0.0
     distance: 60.0
+    speedController: { endVelocity: 100.0 }
   - class: DriveStraight
     speed: 100.0
     angle: 0.0

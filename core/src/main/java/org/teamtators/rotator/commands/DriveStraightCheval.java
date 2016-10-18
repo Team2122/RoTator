@@ -4,7 +4,7 @@ import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.subsystems.AbstractPicker;
 
-public class DriveStraightCheval extends DriveStraightBase implements Configurable<DriveStraightBase.Config> {
+public class DriveStraightCheval extends DriveStraightBase implements Configurable<DriveStraightCheval.Config> {
     private AbstractPicker picker;
 
     public DriveStraightCheval(CoreRobot robot) {
@@ -31,5 +31,15 @@ public class DriveStraightCheval extends DriveStraightBase implements Configurab
             logger.warn("DriveStraightCheval interrupted");
         else
             logger.info("Drove until hit cheval sensor");
+    }
+
+    @Override
+    public void configure(Config config) {
+        super.configure(config);
+        this.speed = config.speed;
+    }
+
+    public static class Config extends DriveStraightBase.Config {
+        public double speed;
     }
 }

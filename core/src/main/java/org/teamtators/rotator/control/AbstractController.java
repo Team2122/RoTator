@@ -353,7 +353,7 @@ public abstract class AbstractController extends AbstractSteppable implements Da
         public boolean dataLogging = false;
     }
 
-    private class ControllerLogDataProvider implements LogDataProvider {
+    protected class ControllerLogDataProvider implements LogDataProvider {
         @Override
         public String getName() {
             return AbstractController.this.getName();

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.google.common.base.Preconditions;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.scheduler.Command;
 
@@ -29,7 +28,11 @@ public class ConfigCommandStore extends org.teamtators.rotator.scheduler.Command
         Iterator<Map.Entry<String, JsonNode>> it = object.fields();
         while (it.hasNext()) {
             Map.Entry<String, JsonNode> field = it.next();
-            result.set(field.getKey(), field.getValue());
+            if (field.getValue().isObject()) {
+                applyDefaults((ObjectNode) result.get(field.getKey()), (ObjectNode) field.getValue());
+            } else {
+                result.set(field.getKey(), field.getValue());
+            }
         }
         return result;
     }

@@ -1,11 +1,15 @@
 package org.teamtators.rotator.subsystems;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.AbstractController;
 import org.teamtators.rotator.control.InputDifferentiator;
 import org.teamtators.rotator.control.LimitPredicates;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
+import org.teamtators.rotator.scheduler.RobotState;
+import org.teamtators.rotator.scheduler.Scheduler;
+import org.teamtators.rotator.scheduler.StateListener;
 import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.tester.ComponentTest;
 
@@ -15,12 +19,15 @@ import javax.inject.Inject;
  * Interface for turret
  * Shoots the ball
  */
-public abstract class AbstractTurret extends Subsystem {
+public abstract class AbstractTurret extends Subsystem implements StateListener {
     @Inject
     ControllerFactory controllerFactory;
-
     @Inject
     InputDifferentiator shooterWheelInputDifferentiator;
+    @Inject
+    Scheduler scheduler;
+    @Inject
+    ConfigCommandStore commandStore;
 
     private AbstractController shooterWheelController = null;
     private AbstractController angleController = null;
@@ -269,9 +276,29 @@ public abstract class AbstractTurret extends Subsystem {
             resetAngleEncoder();
             homed = true;
             logger.info("Turret at center limit, successfully homed");
+            enableAngleController();
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onEnterState(RobotState newState) {
+        switch (newState) {
+            case AUTONOMOUS:
+            case TELEOP:
+                enableShooterWheelController();
+                if (isHomed()) {
+                    enableAngleController();
+                } else {
+                    scheduler.startCommand(commandStore.getCommand("TurretHome"));
+                }
+                break;
+            default:
+                disableShooterWheelController();
+                disableAngleController();
+                break;
+        }
     }
 
     public void startShooting() {

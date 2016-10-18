@@ -20,14 +20,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class WPILibTurret extends AbstractTurret implements Configurable<WPILibTurret.Config>, ITestable, StateListener {
+public class WPILibTurret extends AbstractTurret implements Configurable<WPILibTurret.Config>, ITestable {
 
     @Inject
     ControllerFactory controllerFactory;
-    @Inject
-    Scheduler scheduler;
-    @Inject
-    ConfigCommandStore commandStore;
     private VictorSP pinchRollerMotor;
     private VictorSP kingRollerMotor;
     private DistanceLaser ballSensor;
@@ -80,34 +76,6 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     @Override
     public double getWheelRotations() {
         return shooterWheelEncoder.getDistance();
-    }
-
-    @Override
-    public void onEnterState(RobotState newState) {
-        switch (newState) {
-            case AUTONOMOUS:
-            case TELEOP:
-                enableShooterWheelController();
-                if (isHomed()) {
-                    enableAngleController();
-                } else {
-                    scheduler.startCommand(commandStore.getCommand("TurretHome"));
-                }
-                break;
-            default:
-                disableShooterWheelController();
-                disableAngleController();
-                break;
-        }
-    }
-
-    @Override
-    public boolean homeTurret() {
-        if (super.homeTurret()) {
-            enableAngleController();
-            return true;
-        }
-        return false;
     }
 
     @Override

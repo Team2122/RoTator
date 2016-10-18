@@ -14,9 +14,9 @@ public abstract class DriveStraightBase extends CommandBase {
     protected ControllerFactory controllerFactory;
     protected AbstractDrive drive;
     protected double startingDistance;
-    protected double deltaDistance;
     protected Config config;
     protected AbstractController controller;
+    protected double speed;
 
     public DriveStraightBase(String name, CoreRobot robot) {
         super(name);
@@ -30,8 +30,8 @@ public abstract class DriveStraightBase extends CommandBase {
         controller.setName(getName());
         controller.setInputProvider(drive::getGyroAngle);
         controller.setOutputConsumer(output -> {
-            drive.setLeftSpeed(config.speed + output);
-            drive.setRightSpeed(config.speed - output);
+            drive.setLeftSpeed(speed + output);
+            drive.setRightSpeed(speed - output);
         });
     }
 
@@ -44,8 +44,11 @@ public abstract class DriveStraightBase extends CommandBase {
 
     @Override
     public boolean step() {
-        deltaDistance = Math.abs(drive.getAverageDistance() - startingDistance);
         return false;
+    }
+
+    protected double getDeltaDistance() {
+        return Math.abs(drive.getAverageDistance() - startingDistance);
     }
 
     @Override
@@ -56,7 +59,6 @@ public abstract class DriveStraightBase extends CommandBase {
 
     public static class Config {
         public double angle;
-        public double speed;
         public JsonNode angleController;
     }
 }

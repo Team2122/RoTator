@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.teamtators.rotator.control.AbstractController;
 import org.teamtators.rotator.control.PIDController;
 import org.teamtators.rotator.control.StepController;
+import org.teamtators.rotator.control.TrapezoidController;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -20,9 +21,23 @@ public class ControllerFactory {
     Provider<PIDController> providerPIDController;
     @Inject
     Provider<StepController> providerStepController;
+    @Inject
+    Provider<TrapezoidController> providerTrapezoidController;
 
     @Inject
     public ControllerFactory() {
+    }
+
+    public PIDController createPIDController() {
+        return providerPIDController.get();
+    }
+
+    public StepController createStepController() {
+        return providerStepController.get();
+    }
+
+    public TrapezoidController createTrapezoidController() {
+        return providerTrapezoidController.get();
     }
 
     public AbstractController create(JsonNode config) {
