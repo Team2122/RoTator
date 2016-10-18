@@ -14,6 +14,7 @@ public class CoreCommands {
 
         commandStore.registerClass(PickerBarf.class);
         commandStore.registerClass(PickerPick.class);
+        commandStore.registerClass(PickerShortPick.class);
         commandStore.registerClass(PickerSetPosition.class);
         commandStore.registerClass(PickerCheval.class);
 

@@ -28,7 +28,7 @@ PickerToPick:
   class: PickerSetPosition
   pickerPosition: PICK
 
-^PickerPick:
+PickerPick:
   control:
     pick: 1.0
     pinch: 0.75
@@ -42,12 +42,12 @@ PickerToPick:
     0.5: NEW
 #    0.0: AGED
   dataLogging: false
-
-PickerPick:
   targetBallDistance: 48.0
 
 PickerShortPick:
-  targetBallDistance: 200.0
+  pick: 1.0
+  pinch: 1.0
+  minBallDistance: 250.0
 
 PickerBarf:
   pick: -1.0
@@ -107,7 +107,7 @@ TurretTarget:
   wheelSpeeds:
     NEW:
       0: 5200
-      72: 4800
+      72: 4900
       84: 4900
       144: 5200
     AGED:
@@ -123,13 +123,16 @@ TurretTarget:
   hoodPositions:
     NEW:
       0: UP1
-      72: UP4
+      72: UP2
+      82: UP4
     AGED:
       0: UP1
-      72: UP4
+      72: UP2
+      82: UP4
     OLD:
       0: UP1
-      72: UP4
+      72: UP2
+      82: UP4
   dataLogging: false
   startDelay: .25
 
