@@ -360,6 +360,14 @@ $AutoRamparts5:
   - PickerToPick
   - $AutoShoot
 
+RumblyRumble:
+  class: OIRumble
+  maxTimes: 50
+  onTime: 1
+  offTime: 1
+  type: RIGHT
+  value: 1
+
 AutoChooser:
   class: ChooserCommand
   commands:
@@ -371,6 +379,7 @@ AutoChooser:
     - $AutoCheval4
     - $AutoRamparts5
     - $SequentialTest
+    - RumblyRumble
 
 $AutoInit:
   - TurretHome

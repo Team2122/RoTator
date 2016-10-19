@@ -19,7 +19,7 @@ public class OIRumble extends CommandBase implements Configurable<OIRumble.Confi
 
     public OIRumble(CoreRobot robot) {
         super("OIRumble");
-        timer = robot.timer();
+        timer = new Timer(robot.timeProvider());
         this.operatorInterface = robot.operatorInterface();
     }
 
@@ -35,7 +35,7 @@ public class OIRumble extends CommandBase implements Configurable<OIRumble.Confi
 
     @Override
     protected void initialize() {
-        logger.info("Rumbling {} times", config.maxTimes);
+        logger.info("Rumbling {} {} times", config.type, config.maxTimes);
         times = 0;
         joystick.setRumble(config.type, (float) config.value);
         rumbling = true;

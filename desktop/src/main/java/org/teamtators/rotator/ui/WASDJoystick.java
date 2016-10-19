@@ -24,6 +24,7 @@ public class WASDJoystick implements LogitechF310, KeyListener {
     private double rightTrigger;
 
     private EnumMap<Button, Boolean> buttonValues = new EnumMap<Button, Boolean>(Button.class);
+    private EnumMap<RumbleType, Float> rumbleValues = new EnumMap<>(RumbleType.class);
 
     @Inject
     public WASDJoystick() {
@@ -32,7 +33,14 @@ public class WASDJoystick implements LogitechF310, KeyListener {
 
     @Override
     public void setRumble(RumbleType rumbleType, float value) {
+        rumbleValues.put(rumbleType, value);
+    }
 
+    public float getRumble(RumbleType rumbleType) {
+        if(rumbleValues.containsKey(rumbleType)) {
+            return rumbleValues.get(rumbleType);
+        }
+        return 0;
     }
 
     public void reset() {

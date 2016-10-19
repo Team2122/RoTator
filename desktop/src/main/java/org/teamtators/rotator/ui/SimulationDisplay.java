@@ -2,6 +2,7 @@ package org.teamtators.rotator.ui;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.teamtators.rotator.operatorInterface.RumbleType;
 import org.teamtators.rotator.subsystems.SimulationDrive;
 import org.teamtators.rotator.subsystems.SimulationPicker;
 
@@ -12,9 +13,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 public class SimulationDisplay extends JPanel {
     public static final Color ROBOT_COLOR = new Color(183, 183, 183);
@@ -25,6 +26,7 @@ public class SimulationDisplay extends JPanel {
 
     private SimulationDrive drive;
     private SimulationPicker picker;
+    private WASDJoystick driverJoystick;
 
     @Inject
     public SimulationDisplay() throws HeadlessException {
@@ -66,6 +68,18 @@ public class SimulationDisplay extends JPanel {
     @Inject
     public void setDriverJoystick(WASDJoystick driverJoystick) {
         this.addKeyListener(driverJoystick);
+        this.driverJoystick = driverJoystick;
+    }
+
+    public void rumble(Graphics g, RumbleType rumbleType) {
+        float value = driverJoystick.getRumble(rumbleType);
+        int width = getWidth();
+        int height = getHeight();
+        int x = (rumbleType==RumbleType.LEFT)?0:(width/2);
+        int factor = 20;
+        if(value > 1/factor) {
+            g.copyArea(x, 0, width / 2, height, (int) (new Random().nextInt((int) (value * factor * 2)) - factor * value), (int) (new Random().nextInt((int) (value * factor * 2)) - value * factor));
+        }
     }
 
     @Override
@@ -130,6 +144,11 @@ public class SimulationDisplay extends JPanel {
         g2d.draw(pickerRect);
 
         g2d.dispose();
+
+        g2d = (Graphics2D) g.create();
+
+        rumble(g2d, RumbleType.LEFT);
+        rumble(g2d, RumbleType.RIGHT);
     }
 
     public static class Config {
