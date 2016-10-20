@@ -32,23 +32,7 @@ public class TriggerAdder {
     }
 
     public void whilePressed(Command command) {
-        scheduler.addTrigger(triggerSource, (active) -> {
-            if (active && !command.isRunning()) {
-                scheduler.startCommand(command);
-            } else if (!active && command.isRunning()) {
-                scheduler.cancelCommand(command);
-            }
-        });
-    }
-
-    public void whileReleased(Command command) {
-        scheduler.addTrigger(triggerSource, (active) -> {
-            if (!active && !command.isRunning()) {
-                scheduler.startCommand(command);
-            } else if (active && command.isRunning()) {
-                scheduler.cancelCommand(command);
-            }
-        });
+        scheduler.addTrigger(triggerSource, new WhilePressedScheduler(command));
     }
 
     public class TriggerBinder {
@@ -80,6 +64,27 @@ public class TriggerAdder {
         public TriggerAdder whileReleased() {
             putScheduler(TriggerSchedulers.whileInactive(runnable));
             return TriggerAdder.this;
+        }
+    }
+
+    private class WhilePressedScheduler implements TriggerScheduler {
+        private final Command command;
+        private boolean iStarted = false;
+
+        public WhilePressedScheduler(Command command) {
+            this.command = command;
+        }
+
+        @Override
+        public void processTrigger(boolean active) {
+            boolean running = command.isRunning();
+            if (active && !running) {
+                scheduler.startCommand(command);
+                iStarted = true;
+            } else if (!active && running && iStarted) {
+                scheduler.cancelCommand(command);
+                iStarted = false;
+            }
         }
     }
 }

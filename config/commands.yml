@@ -39,7 +39,7 @@ PickerPick:
   ballAgeThresholds:
 #    0.0: OLD
     0.0: AGED
-    0.5: NEW
+    0.75: NEW
 #    0.0: AGED
   dataLogging: false
   targetBallDistance: 48.0
@@ -304,7 +304,7 @@ $AutoRockWall2:
     speed: 80.0
     angle: 0.0
     distance: 240.0
-  - PickerToPick
+#  - PickerToPick
   - $AutoShoot
 
 $AutoMoat3PickRotate:
@@ -322,7 +322,7 @@ $AutoMoat3:
     speed: 80.0
     angle: 0.0
     distance: 168.0
-  - PickerToPick
+#  - PickerToPick
   - $AutoShoot
 
 $AutoCheval4:
@@ -357,20 +357,58 @@ $AutoRamparts5:
     speed: 80.0
     angle: 0.0
     distance: 264.0
-  - PickerToPick
+#  - PickerToPick
   - $AutoShoot
+
+$BackupLowbar:
+  - class: DriveStraight
+    speed: -80.0
+    angle: 0.0
+    distance: 192.0
+
+$Backup2:
+  - class: DriveStraight
+    speed: -80.0
+    angle: 0.0
+    distance: 240.0
+
+$Backup3:
+  - class: DriveStraight
+    speed: -80.0
+    angle: 0.0
+    distance: 168.0
+
+$Backup5:
+  - class: DriveStraight
+    speed: -80.0
+    angle: 0.0
+    distance: 264.0
+
+$Nothing:
 
 AutoChooser:
   class: ChooserCommand
+  chooser: Auto
   commands:
-    - $AutoShoot
+    - $Nothing
     - $AutoLowBar
     - $AutoLowBar2Ball
     - $AutoRockWall2
     - $AutoMoat3
     - $AutoCheval4
     - $AutoRamparts5
+    - $AutoShoot
     - $SequentialTest
+
+BackupChooser:
+  class: ChooserCommand
+  chooser: Backup
+  commands:
+    - $Nothing
+    - $BackupLowbar
+    - $Backup2
+    - $Backup3
+    - $Backup5
 
 $AutoInit:
   - TurretHome

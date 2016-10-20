@@ -118,6 +118,7 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
                     getGyro().finishCalibration();
                     hasCalibratedGyro = true;
                 }
+                resetGyroAngle();
                 setDriveMode(defaultDriveMode);
                 break;
             case DISABLED:

@@ -113,9 +113,6 @@ public class TriggerBinder {
                 case "whilePressed":
                     triggerAdder.whilePressed(command);
                     return;
-                case "whileReleased":
-                    triggerAdder.whileReleased(command);
-                    return;
             }
         } else if (binding.length == 3) {
             Command command = getCommandForBinding(binding[2]);

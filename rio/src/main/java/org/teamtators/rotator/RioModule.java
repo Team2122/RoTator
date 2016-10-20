@@ -13,6 +13,8 @@ import org.teamtators.rotator.subsystems.*;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -68,8 +70,11 @@ public class RioModule {
     }
 
     @Provides
-    @Named("autoChooser")
-    static Chooser<Command> providesCommandChooser() {
-        return new WPILibChooser<>("Auto");
+    @Singleton
+    static Map<String, Chooser<Command>> providesCommandChoosers() {
+        HashMap<String, Chooser<Command>> choosers = new HashMap<>();
+        choosers.put("Auto", new WPILibChooser<>("Auto"));
+        choosers.put("Backup", new WPILibChooser<>("Backup"));
+        return choosers;
     }
 }

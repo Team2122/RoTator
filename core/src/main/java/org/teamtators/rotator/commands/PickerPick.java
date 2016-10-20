@@ -92,9 +92,13 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
             } else {
                 logger.warn("No ball age entry found for compression {}", compression);
             }
-            turret.setBallAge(ballAge);
             logger.info("Finished picking at distance {}, compression value of {}, ball age {}",
                     turret.getBallDistance(), compression, ballAge);
+            if (compression < 0.2) {
+                logger.info("Very little compression, not setting ball type");
+            } else {
+                turret.setBallAge(ballAge);
+            }
         }
         picker.resetPower();
         turret.resetPinchRollerPower();

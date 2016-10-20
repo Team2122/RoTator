@@ -26,7 +26,7 @@ RIO_DEBUG_PORT=8348
 
 : ${SSH:=$(which ssh)}
 : ${SCP:=$(which scp)}
-SSHFLAGS="-oControlMaster=auto -oControlPath=/tmp/controlmaster-$RIO -oControlPersist=10m $SSHFLAGS"
+#SSHFLAGS="-oControlMaster=auto -oControlPath=/tmp/controlmaster-$RIO -oControlPersist=10m $SSHFLAGS"
 : ${GRADLE:=./gradlew}
 GRADLEFLAGS="--offline $GRADLEFLAGS"
 

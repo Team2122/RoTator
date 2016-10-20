@@ -22,6 +22,7 @@ import org.teamtators.rotator.tester.ManualTester;
 
 import javax.inject.Named;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
 public interface CoreRobot {
@@ -58,8 +59,7 @@ public interface CoreRobot {
     @ForController
     Stepper stepper();
 
-    @Named("autoChooser")
-    Chooser<Command> autoChooser();
+    Map<String, Chooser<Command>> commandChoosers();
 
     DataCollector dataCollector();
 }
