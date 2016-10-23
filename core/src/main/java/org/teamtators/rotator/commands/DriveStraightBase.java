@@ -5,14 +5,14 @@ import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.AbstractController;
-import org.teamtators.rotator.subsystems.AbstractDrive;
+import org.teamtators.rotator.subsystems.Drive;
 
 /**
- * Created by TatorsDriverStation on 10/16/2016.
+ * Created by TatorsDr iverStation on 10/16/2016.
  */
 public abstract class DriveStraightBase extends CommandBase {
     protected ControllerFactory controllerFactory;
-    protected AbstractDrive drive;
+    protected Drive drive;
     protected double startingDistance;
     protected double deltaDistance;
     protected Config config;
@@ -30,8 +30,7 @@ public abstract class DriveStraightBase extends CommandBase {
         controller.setName(getName());
         controller.setInputProvider(drive::getGyroAngle);
         controller.setOutputConsumer(output -> {
-            drive.setLeftSpeed(config.speed + output);
-            drive.setRightSpeed(config.speed - output);
+            drive.setSpeeds(config.speed + output, config.speed - output);
         });
     }
 
@@ -51,7 +50,7 @@ public abstract class DriveStraightBase extends CommandBase {
     @Override
     protected void finish(boolean interrupted) {
         controller.disable();
-        drive.resetSpeeds();
+        drive.resetPowers();
     }
 
     public static class Config {

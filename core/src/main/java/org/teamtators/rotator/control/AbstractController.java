@@ -286,6 +286,7 @@ public abstract class AbstractController extends AbstractSteppable implements Da
         }
         if (inputProvider instanceof AbstractSteppable)
             ((AbstractSteppable) inputProvider).enable();
+        reset();
     }
 
     @Override

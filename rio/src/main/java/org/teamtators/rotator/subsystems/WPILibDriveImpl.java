@@ -1,18 +1,14 @@
 package org.teamtators.rotator.subsystems;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.VictorSP;
 import org.teamtators.rotator.components.ADXRS453;
 import org.teamtators.rotator.components.Gyro;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.config.EncoderConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
-import org.teamtators.rotator.control.ControllerTest;
-import org.teamtators.rotator.scheduler.RobotState;
-import org.teamtators.rotator.scheduler.StateListener;
+import org.teamtators.rotator.subsystems.impl.AbstractDrive;
 import org.teamtators.rotator.tester.ComponentTestGroup;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.components.ADXRS453Test;
@@ -23,20 +19,15 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDrive.Config>, ITestable, StateListener {
+public class WPILibDriveImpl extends AbstractDrive implements Configurable<WPILibDriveImpl.Config>, ITestable {
     private VictorSP leftMotor;
     private VictorSP rightMotor;
     private Encoder leftEncoder;
     private Encoder rightEncoder;
     private ADXRS453 gyro;
-    private DriveMode defaultDriveMode;
-    private boolean hasCalibratedGyro;
 
     @Inject
-    ControllerFactory controllerFactory;
-
-    @Inject
-    public WPILibDrive() {
+    public WPILibDriveImpl() {
     }
 
     @Override
@@ -48,12 +39,6 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
         this.gyro = new ADXRS453(SPI.Port.kOnboardCS0);
 
         gyro.start();
-        gyro.startCalibration();
-
-        setLeftController(controllerFactory.create(config.controller));
-        setRightController(controllerFactory.create(config.controller));
-        setMaxSpeed(config.maxSpeed);
-        this.defaultDriveMode = config.driveMode;
     }
 
     @Override
@@ -104,28 +89,7 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
                 new VictorSPTest("rightMotor", rightMotor),
                 new EncoderTest("leftEncoder", leftEncoder),
                 new EncoderTest("rightEncoder", rightEncoder),
-                new ControllerTest(getLeftController(), getMaxSpeed()),
-                new ControllerTest(getRightController(), getMaxSpeed()),
                 new ADXRS453Test("gyro", gyro));
-    }
-
-    @Override
-    public void onEnterState(RobotState newState) {
-        switch (newState) {
-            case TELEOP:
-            case AUTONOMOUS:
-                if (!hasCalibratedGyro) {
-                    getGyro().finishCalibration();
-                    hasCalibratedGyro = true;
-                }
-                resetGyroAngle();
-                setDriveMode(defaultDriveMode);
-                break;
-            case DISABLED:
-            case TEST:
-                setDriveMode(DriveMode.DISABLED);
-                break;
-        }
     }
 
     public static class Config {
@@ -133,8 +97,5 @@ public class WPILibDrive extends AbstractDrive implements Configurable<WPILibDri
         public VictorSPConfig rightMotor;
         public EncoderConfig leftEncoder;
         public EncoderConfig rightEncoder;
-        public DriveMode driveMode;
-        public double maxSpeed;
-        public JsonNode controller;
     }
 }

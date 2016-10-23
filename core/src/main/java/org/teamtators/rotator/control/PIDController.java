@@ -122,6 +122,12 @@ public class PIDController extends AbstractController implements Configurable<PI
     }
 
     @Override
+    public void onEnable() {
+        super.onEnable();
+        reset();
+    }
+
+    @Override
     public void reset() {
         super.reset();
         synchronized (this) {

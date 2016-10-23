@@ -14,7 +14,7 @@ import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.scheduler.Subsystem;
-import org.teamtators.rotator.subsystems.AbstractDrive;
+import org.teamtators.rotator.subsystems.Drive;
 import org.teamtators.rotator.subsystems.AbstractPicker;
 import org.teamtators.rotator.subsystems.AbstractTurret;
 import org.teamtators.rotator.subsystems.AbstractVision;
@@ -28,7 +28,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public interface CoreRobot {
     ObjectMapper objectMapper();
 
-    AbstractDrive drive();
+    Drive drive();
 
     AbstractPicker picker();
 

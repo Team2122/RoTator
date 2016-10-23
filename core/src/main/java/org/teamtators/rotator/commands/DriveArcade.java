@@ -5,11 +5,11 @@ import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.RobotState;
-import org.teamtators.rotator.subsystems.AbstractDrive;
+import org.teamtators.rotator.subsystems.Drive;
 
 public class DriveArcade extends CommandBase implements Configurable<DriveArcade.Config> {
     private Config config;
-    private AbstractDrive drive;
+    private Drive drive;
     private LogitechF310 driverJoystick;
 
     public DriveArcade(CoreRobot robot) {
@@ -27,7 +27,7 @@ public class DriveArcade extends CommandBase implements Configurable<DriveArcade
 
     @Override
     protected void finish(boolean interrupted) {
-        drive.resetSpeeds();
+        drive.resetPowers();
         super.finish(interrupted);
     }
 

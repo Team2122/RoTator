@@ -24,7 +24,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class DesktopModule {
     // Subsystem providers
     @Provides
-    static AbstractDrive providesDrive(SimulationDrive drive) {
+    static Drive providesDrive(SimulationDrive drive) {
         return drive;
     }
 

@@ -1,12 +1,7 @@
 package org.teamtators.rotator.commands;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.config.ControllerFactory;
-import org.teamtators.rotator.control.AbstractController;
-import org.teamtators.rotator.subsystems.AbstractDrive;
 
 /**
  * Drive in a straight line for a certain distance

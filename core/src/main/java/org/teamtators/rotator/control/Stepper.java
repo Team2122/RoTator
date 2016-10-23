@@ -82,8 +82,7 @@ public class Stepper implements Runnable {
     public void add(Steppable steppable) {
         writeLock.lock();
         try {
-            if (steppable instanceof AbstractController)
-                steppable.onEnable();
+            steppable.onEnable();
             steppables.add(steppable);
         } finally {
             writeLock.unlock();
@@ -94,8 +93,7 @@ public class Stepper implements Runnable {
         writeLock.lock();
         try {
             steppables.remove(steppable);
-            if (steppable instanceof AbstractController)
-                steppable.onDisable();
+            steppable.onDisable();
         } finally {
             writeLock.unlock();
         }

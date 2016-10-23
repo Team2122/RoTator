@@ -22,7 +22,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class RioModule {
     // Subsystem providers
     @Provides
-    static AbstractDrive providesDrive(WPILibDrive drive) {
+    static Drive providesDrive(WPILibDrive drive) {
         return drive;
     }
 

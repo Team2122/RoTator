@@ -6,6 +6,8 @@ import org.teamtators.rotator.components.SimulationGyro;
 import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.config.Configurable;
+import org.teamtators.rotator.subsystems.impl.AbstractDrive;
+import org.teamtators.rotator.tester.ComponentTestGroup;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -92,10 +94,6 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
         rightMotor.configure(config.motor);
         leftEncoder.configure(config.encoder);
         rightEncoder.configure(config.encoder);
-        setMaxSpeed(config.maxSpeed);
-        setLeftController(controllerFactory.create(config.controller));
-        setRightController(controllerFactory.create(config.controller));
-        setDriveMode(config.driveMode);
     }
 
     @Override
@@ -190,6 +188,11 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
         return config.length;
     }
 
+    @Override
+    public ComponentTestGroup getTestGroup() {
+        return new ComponentTestGroup("Drive");
+    }
+
     public static class Config {
         public double wheelWidth;
         public double scrubCoef;
@@ -197,8 +200,5 @@ public class SimulationDrive extends AbstractDrive implements Configurable<Simul
         public int length;
         public SimulationMotor.Config motor;
         public SimulationEncoder.Config encoder;
-        public DriveMode driveMode;
-        public JsonNode controller;
-        public double maxSpeed;
     }
 }

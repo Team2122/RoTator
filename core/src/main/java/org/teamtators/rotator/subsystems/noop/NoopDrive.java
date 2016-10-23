@@ -2,15 +2,19 @@ package org.teamtators.rotator.subsystems.noop;
 
 import org.teamtators.rotator.components.Gyro;
 import org.teamtators.rotator.components.SimulationGyro;
-import org.teamtators.rotator.subsystems.AbstractDrive;
+import org.teamtators.rotator.subsystems.Drive;
 import org.teamtators.rotator.subsystems.DriveMode;
+import org.teamtators.rotator.subsystems.impl.AbstractDrive;
+import org.teamtators.rotator.tester.ComponentTestGroup;
 
 /**
  * drive implementation which does nothing
  */
 public class NoopDrive extends AbstractDrive {
-
     private SimulationGyro simulationGyro = new SimulationGyro();
+
+    public NoopDrive() {
+    }
 
     @Override
     public void setLeftPower(double leftPower) {
@@ -48,12 +52,12 @@ public class NoopDrive extends AbstractDrive {
     }
 
     @Override
-    public void setDriveMode(DriveMode driveMode) {
-
+    public Gyro getGyro() {
+        return simulationGyro;
     }
 
     @Override
-    public Gyro getGyro() {
-        return simulationGyro;
+    public ComponentTestGroup getTestGroup() {
+        return null;
     }
 }

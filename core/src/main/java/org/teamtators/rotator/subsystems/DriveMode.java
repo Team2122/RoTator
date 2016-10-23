@@ -12,5 +12,5 @@ public enum DriveMode {
     /**
      * CONTROLLER is when the motors are controlled with the CONTROLLER loop
      */
-    CONTROLLER
+    VELOCITY
 }

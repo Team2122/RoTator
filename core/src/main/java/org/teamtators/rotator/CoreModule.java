@@ -12,7 +12,7 @@ import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.scheduler.CommandStore;
 import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.scheduler.Subsystem;
-import org.teamtators.rotator.subsystems.AbstractDrive;
+import org.teamtators.rotator.subsystems.Drive;
 import org.teamtators.rotator.subsystems.AbstractPicker;
 import org.teamtators.rotator.subsystems.AbstractTurret;
 import org.teamtators.rotator.subsystems.AbstractVision;
@@ -62,7 +62,7 @@ public class CoreModule {
 
     @Provides
     @Singleton
-    public List<Subsystem> providesSubsystems(AbstractDrive drive, AbstractPicker picker, AbstractTurret turret,
+    public List<Subsystem> providesSubsystems(Drive drive, AbstractPicker picker, AbstractTurret turret,
                                               AbstractOperatorInterface operatorInterface, AbstractVision vision) {
         return Arrays.asList(drive, picker, turret, operatorInterface, vision);
     }

@@ -6,11 +6,11 @@ import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.AbstractController;
-import org.teamtators.rotator.subsystems.AbstractDrive;
+import org.teamtators.rotator.subsystems.Drive;
 
 public class DriveRotate extends CommandBase implements Configurable<DriveRotate.Config> {
     private Config config;
-    private AbstractDrive drive;
+    private Drive drive;
     private ControllerFactory controllerFactory;
     private AbstractController controller;
 
