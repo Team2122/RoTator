@@ -68,6 +68,15 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
         vision.setTurretAngle(currentAngle);
 
         double wheelSpeed = turret.getTargetWheelSpeed();
+        if (wheelSpeed == 0) {
+            TreeMap<Double, Double> wheelSpeedMap = config.wheelSpeeds.get(ballAge);
+            if (wheelSpeedMap != null) {
+                Map.Entry<Double, Double> wheelSpeedEntry = wheelSpeedMap.firstEntry();
+                if (wheelSpeedEntry != null) {
+                    wheelSpeed = wheelSpeedEntry.getValue();
+                }
+            }
+        }
         HoodPosition hoodPosition = turret.getHoodPosition();
         if (hoodPosition == HoodPosition.DOWN) hoodPosition = HoodPosition.UP1;
 
@@ -95,7 +104,7 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
 
         turret.setTargetWheelSpeed(wheelSpeed);
         turret.setHoodPosition(hoodPosition);
-        
+
         return turret.hasShot();
     }
 

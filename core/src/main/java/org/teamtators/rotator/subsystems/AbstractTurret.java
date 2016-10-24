@@ -26,7 +26,7 @@ public abstract class AbstractTurret extends Subsystem {
     private AbstractController angleController = null;
     private boolean homed = false;
     private HoodPosition hoodPosition = HoodPosition.DOWN;
-    private BallAge ballAge;
+    private BallAge ballAge = BallAge.NEW;
     private double wheelSpeedOffset = 0.0;
     private boolean hasShot = false;
 

@@ -58,7 +58,8 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
         }
         // check if roller isn't ready to start yet
         double wheelSpeed = turret.getTargetWheelSpeed();
-        if (turret.isAtTargetWheelSpeed() && turret.isAngleOnTarget()) {
+        if (turret.isAtTargetWheelSpeed() && turret.isAngleOnTarget()
+                && wheelSpeed >= config.minShooterWheelSpeed) {
             // start rolling
             rollingStartTime = timestamp;
             double angle = turret.getAngle();
@@ -88,5 +89,6 @@ public class TurretShoot extends CommandBase implements Configurable<TurretShoot
         public double kingRollerPower;
         public double waitTimeout;
         public double shootTime;
+        public double minShooterWheelSpeed;
     }
 }

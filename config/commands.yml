@@ -39,10 +39,10 @@ PickerPick:
   ballAgeThresholds:
 #    0.0: OLD
     0.0: AGED
-    0.75: NEW
+    0.70: NEW
 #    0.0: AGED
   dataLogging: false
-  targetBallDistance: 48.0
+  targetBallDistance: 50.0
 
 PickerShortPick:
   pick: 1.0
@@ -94,6 +94,7 @@ TurretShoot:
   kingRollerPower: 1.0
   waitTimeout: 2.0
   shootTime: 1.0
+  minShooterWheelSpeed: 3000.0
 
 TurretStopWheel:
   class: TurretSetWheelSpeed
@@ -109,30 +110,30 @@ TurretTarget:
       0: 5200
       72: 4900
       84: 4900
-      144: 5200
+      132: 5200
     AGED:
       0: 5000
-      72: 4800
-      84: 4800
-      144: 5000
+      72: 4900
+      84: 4900
+      132: 5100
     OLD:
       0: 5000
-      72: 4800
-      84: 4800
-      144: 5000
+      72: 4900
+      84: 4900
+      132: 5100
   hoodPositions:
     NEW:
       0: UP1
       72: UP2
-      82: UP4
+      90: UP4
     AGED:
       0: UP1
       72: UP2
-      82: UP4
+      90: UP4
     OLD:
       0: UP1
       72: UP2
-      82: UP4
+      90: UP4
   dataLogging: false
   startDelay: .25
 
@@ -242,13 +243,16 @@ $AutoLowBarPickRotate:
   - class: TurretSetRotation
     angle: 42.0
 
-$AutoLowBar:
-  - name: $AutoLowBarPickRotate
-    parallel: true
+$CrossLowBar:
   - class: DriveStraight
     speed: 80.0
     angle: 0.0
     distance: 192.0
+
+$AutoLowBar:
+  - name: $AutoLowBarPickRotate
+    parallel: true
+  - $CrossLowBar
   - $AutoShoot
 
 $AutoLowBar2Ball:
@@ -258,7 +262,7 @@ $AutoLowBar2Ball:
     angle: 42.0
     parallel: true
   - class: DriveStraight
-    speed: 60.0
+    speed: 80.0
     angle: 0.0
     distance: 60.0
   - class: DriveStraight
@@ -274,16 +278,16 @@ $AutoLowBar2Ball:
     parallel: true
   - class: DriveStraight
     speed: -80.0
-    angle: -15.0
-    distance: 60.0
+    angle: -10.0
+    distance: 66.0
   - class: DriveStraight
     speed: 80.0
-    angle: -15.0
-    distance: 48.0
+    angle: -10.0
+    distance: 54.0
   - class: DriveStraight
-    speed: 60.0
+    speed: 80.0
     angle: 0.0
-    distance: 60.0
+    distance: 72.0
   - class: DriveStraight
     speed: 100.0
     angle: 0.0
@@ -294,16 +298,19 @@ $AutoLowBar2Ball:
 #    angle: 0.0
 #    distance: 192.0
 
+$CrossRockWall:
+  - class: DriveStraight
+    speed: 80.0
+    angle: 0.0
+    distance: 240.0
+
 $AutoRockWall2:
   - PickerPick
   - PickerToCheval
   - class: TurretSetRotation
     angle: 45.0
     parallel: true
-  - class: DriveStraight
-    speed: 80.0
-    angle: 0.0
-    distance: 240.0
+  - $CrossRockWall
 #  - PickerToPick
   - $AutoShoot
 
@@ -312,24 +319,23 @@ $AutoMoat3PickRotate:
   - class: TurretSetRotation
     angle: 25.0
 
+$CrossMoat:
+  - class: DriveStraight
+    speed: 80.0
+    angle: 0.0
+    distance: 192.0
+
 $AutoMoat3:
   - PickerPick
   - PickerToCheval
   - class: TurretSetRotation
     angle: 10.0
     parallel: true
-  - class: DriveStraight
-    speed: 80.0
-    angle: 0.0
-    distance: 168.0
+  - $CrossMoat
 #  - PickerToPick
   - $AutoShoot
 
-$AutoCheval4:
-  - PickerPick
-  - class: TurretSetRotation
-    angle: 90.0
-    parallel: true
+$CrossCheval:
   - PickerToCheval
   - DriveStraightCheval
   - PickerToPick
@@ -342,10 +348,23 @@ $AutoCheval4:
     speed: -40.0
     angle: 0.0
     distance: 72.0
+
+$AutoCheval4:
+  - PickerPick
+  - class: TurretSetRotation
+    angle: 90.0
+    parallel: true
+  - $CrossCheval
   - class: DriveRotate
     angle: 90.0
   - PickerToPick
   - $AutoShoot
+
+$CrossRamparts:
+  - class: DriveStraight
+    speed: 80.0
+    angle: 0.0
+    distance: 264.0
 
 $AutoRamparts5:
   - PickerPick
@@ -353,10 +372,7 @@ $AutoRamparts5:
   - class: TurretSetRotation
     angle: -45.0
     parallel: true
-  - class: DriveStraight
-    speed: 80.0
-    angle: 0.0
-    distance: 264.0
+  - $CrossRamparts
 #  - PickerToPick
   - $AutoShoot
 
@@ -376,7 +392,7 @@ $Backup3:
   - class: DriveStraight
     speed: -80.0
     angle: 0.0
-    distance: 168.0
+    distance: 192.0
 
 $Backup5:
   - class: DriveStraight
@@ -397,6 +413,11 @@ AutoChooser:
     - $AutoMoat3
     - $AutoCheval4
     - $AutoRamparts5
+    - $CrossLowBar
+    - $CrossRockWall
+    - $CrossMoat
+    - $CrossCheval
+    - $CrossRamparts
     - $AutoShoot
     - $SequentialTest
 
@@ -413,3 +434,4 @@ BackupChooser:
 $AutoInit:
   - TurretHome
   - AutoChooser
+  - BackupChooser

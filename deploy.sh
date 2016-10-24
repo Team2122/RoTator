@@ -10,7 +10,7 @@ err() {
     echo -e "\e[31m$@\e[0m"
 }
 
-: ${TEAM_NUMBER:=212}
+: ${TEAM_NUMBER:=9122}
 : ${RIO_HOST:=roboRIO-${TEAM_NUMBER}-FRC.local}
 : ${RIO_USER:=lvuser}
 : ${RIO_PORT:=22}
