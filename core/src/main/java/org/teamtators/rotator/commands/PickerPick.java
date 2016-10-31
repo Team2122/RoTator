@@ -5,10 +5,11 @@ import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.datalogging.DataCollector;
 import org.teamtators.rotator.datalogging.LogDataProvider;
-import org.teamtators.rotator.subsystems.AbstractPicker;
-import org.teamtators.rotator.subsystems.AbstractTurret;
-import org.teamtators.rotator.subsystems.BallAge;
-import org.teamtators.rotator.subsystems.PickerPosition;
+import org.teamtators.rotator.components.AbstractPicker;
+import org.teamtators.rotator.components.AbstractTurret;
+import org.teamtators.rotator.components.BallAge;
+import org.teamtators.rotator.components.PickerPosition;
+import org.teamtators.rotator.subsystems.Turret;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.TreeMap;
 public class PickerPick extends CommandBase implements Configurable<PickerPick.Config> {
     private final DataCollector dataCollector;
     private final AbstractPicker picker;
-    private final AbstractTurret turret;
+    private final Turret turret;
     private Config config;
     private LogDataProvider logDataProvider = null;
 
@@ -32,8 +33,8 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
         this.picker = robot.picker();
         this.turret = robot.turret();
         dataCollector = robot.dataCollector();
-        requires(picker);
-        requires(turret);
+//        requires(picker);
+//        requires(turret);
     }
 
     @Override
@@ -67,12 +68,12 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
             return true;
         } else if (Math.abs(delta) <= config.control.highTolerance) {
             turret.setKingRollerPower(config.control.lowPower * sign);
-            picker.resetPower();
-            turret.resetPinchRollerPower();
+            picker.resetPickPower();
+            picker.resetPinchPower();
         } else {
             turret.setKingRollerPower(config.control.highPower * sign);
-            picker.setPower(config.control.pick * sign);
-            turret.setPinchRollerPower(config.control.pinch * sign);
+            picker.setPickPower(config.control.pick * sign);
+            picker.setPinchPower(config.control.pinch * sign);
         }
         turret.setTargetAngle(0);
         return false;
@@ -100,8 +101,8 @@ public class PickerPick extends CommandBase implements Configurable<PickerPick.C
                 turret.setBallAge(ballAge);
             }
         }
-        picker.resetPower();
-        turret.resetPinchRollerPower();
+        picker.resetPickPower();
+        picker.resetPinchPower();
         turret.resetKingRollerPower();
         dataCollector.stopProvider(getLogDataProvider());
     }

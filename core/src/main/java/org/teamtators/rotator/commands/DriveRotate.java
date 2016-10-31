@@ -6,6 +6,7 @@ import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.AbstractController;
+import org.teamtators.rotator.operatorInterface.DriveOutput;
 import org.teamtators.rotator.subsystems.Drive;
 
 public class DriveRotate extends CommandBase implements Configurable<DriveRotate.Config> {
@@ -28,8 +29,7 @@ public class DriveRotate extends CommandBase implements Configurable<DriveRotate
         controller.setName(getName());
         controller.setInputProvider(drive::getGyroAngle);
         controller.setOutputConsumer(output -> {
-            drive.setLeftSpeed(output);
-            drive.setRightSpeed(-output);
+            drive.setSpeeds(DriveOutput.turning(output));
         });
     }
 
@@ -51,7 +51,7 @@ public class DriveRotate extends CommandBase implements Configurable<DriveRotate
             logger.info("Finished" + logLine);
         }
         controller.disable();
-        drive.resetSpeeds();
+        drive.resetPowers();
     }
 
     @Override

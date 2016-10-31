@@ -1,0 +1,26 @@
+Drive:
+  leftMotor: { channel: 0, inverted: true }
+  rightMotor: { channel: 1, inverted: false }
+  leftEncoder: { aChannel: 2, bChannel: 3, reverse: true, distancePerPulse: .06597 }
+  rightEncoder: { aChannel: 0, bChannel: 1, distancePerPulse: .06597 }
+Turret:
+  pinchRollerMotor: { channel: 5, inverted: false }
+  kingRollerMotor: { channel: 3, inverted: false }
+  ballSensor: { channel: 4, minDistance: 300.0, maxDistance: 26.0 }
+  ballCompressionSensor: { channel: 1, scale: 1.0, offset: 0.0 }
+  hoodDeploySolenoid: 0
+  shortSolenoid: 1
+  longSolenoid: 2
+  shooterWheelMotor: { channel: 2, inverted: true }
+  shooterWheelEncoder:
+    aChannel: 4
+    bChannel: 5
+    reverse: true
+    distancePerPulse: 0.0009765625
+    encodingType: k1X
+#    samplesToAverage: 100
+  turretRotationMotor: { channel: 4, inverted: true }
+  turretRotationEncoder: { aChannel: 6, bChannel: 7, reverse: true, distancePerPulse: 0.02538 }
+  leftLimit: { channel: 11, type: NPN }
+  rightLimit: { channel: 10, type: NPN }
+  centerLimit: { channel: 12, type: NPN }

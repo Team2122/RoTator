@@ -1,7 +1,7 @@
-package org.teamtators.rotator.subsystems.noop;
+package org.teamtators.rotator.components.noop;
 
-import org.teamtators.rotator.subsystems.AbstractVision;
-import org.teamtators.rotator.subsystems.VisionData;
+import org.teamtators.rotator.components.AbstractVision;
+import org.teamtators.rotator.components.VisionData;
 
 public class NoopVision extends AbstractVision {
     @Override

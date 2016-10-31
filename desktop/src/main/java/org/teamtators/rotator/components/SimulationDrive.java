@@ -1,12 +1,8 @@
-package org.teamtators.rotator.subsystems;
+package org.teamtators.rotator.components;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.teamtators.rotator.components.Gyro;
-import org.teamtators.rotator.components.SimulationGyro;
 import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.subsystems.impl.AbstractDrive;
 import org.teamtators.rotator.tester.ComponentTestGroup;
 
 import javax.inject.Inject;

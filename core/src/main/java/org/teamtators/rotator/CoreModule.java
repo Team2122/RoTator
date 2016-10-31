@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import dagger.Module;
 import dagger.Provides;
 import org.teamtators.rotator.commands.CoreCommands;
+import org.teamtators.rotator.components.*;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.control.ForController;
 import org.teamtators.rotator.control.Stepper;
@@ -13,11 +14,10 @@ import org.teamtators.rotator.scheduler.CommandStore;
 import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.subsystems.Drive;
-import org.teamtators.rotator.subsystems.AbstractPicker;
-import org.teamtators.rotator.subsystems.AbstractTurret;
-import org.teamtators.rotator.subsystems.AbstractVision;
+import org.teamtators.rotator.subsystems.Turret;
 import org.teamtators.rotator.tester.ManualTester;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.Arrays;
 import java.util.List;
@@ -62,7 +62,15 @@ public class CoreModule {
 
     @Provides
     @Singleton
-    public List<Subsystem> providesSubsystems(Drive drive, AbstractPicker picker, AbstractTurret turret,
+    @Named("subsystems")
+    public List<Subsystem> providesSubsystems(Drive drive, Turret turret) {
+        return Arrays.asList(drive, turret);
+    }
+
+    @Provides
+    @Singleton
+    @Named("components")
+    public List<Component> providesComponents(AbstractDrive drive, AbstractPicker picker, AbstractTurret turret,
                                               AbstractOperatorInterface operatorInterface, AbstractVision vision) {
         return Arrays.asList(drive, picker, turret, operatorInterface, vision);
     }

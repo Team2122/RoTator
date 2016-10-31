@@ -2,21 +2,22 @@ package org.teamtators.rotator;
 
 import dagger.Module;
 import dagger.Provides;
-import org.teamtators.rotator.components.Chooser;
+import org.teamtators.rotator.components.*;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.SystemNanoTimeTimeProvider;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.operatorInterface.SimulationOperatorInterface;
 import org.teamtators.rotator.scheduler.Command;
-import org.teamtators.rotator.subsystems.*;
-import org.teamtators.rotator.subsystems.noop.NoopVision;
+import org.teamtators.rotator.components.noop.NoopVision;
 import org.teamtators.rotator.ui.SimulationChooser;
 import org.teamtators.rotator.ui.SimulationControl;
 import org.teamtators.rotator.ui.WASDJoystick;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -24,7 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class DesktopModule {
     // Subsystem providers
     @Provides
-    static Drive providesDrive(SimulationDrive drive) {
+    static AbstractDrive providesDrive(SimulationDrive drive) {
         return drive;
     }
 

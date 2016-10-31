@@ -2,8 +2,7 @@ package org.teamtators.rotator;
 
 import dagger.Module;
 import dagger.Provides;
-import org.teamtators.rotator.components.Chooser;
-import org.teamtators.rotator.components.WPILibChooser;
+import org.teamtators.rotator.components.*;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.control.WPILibTimeProvider;
 import org.teamtators.rotator.operatorInterface.AbstractOperatorInterface;
@@ -22,7 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class RioModule {
     // Subsystem providers
     @Provides
-    static Drive providesDrive(WPILibDrive drive) {
+    static AbstractDrive providesDrive(WPILibDriveImpl drive) {
         return drive;
     }
 

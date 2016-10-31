@@ -1,4 +1,4 @@
-package org.teamtators.rotator.subsystems;
+package org.teamtators.rotator.components;
 
 import org.teamtators.rotator.scheduler.Subsystem;
 
@@ -6,7 +6,7 @@ import org.teamtators.rotator.scheduler.Subsystem;
  * Interface for picker
  * Picks up the ball with rollers
  */
-public abstract class AbstractPicker extends Subsystem {
+public abstract class AbstractPicker extends Component {
     private PickerPosition position = PickerPosition.HOME;
 
     public AbstractPicker() {
@@ -18,13 +18,27 @@ public abstract class AbstractPicker extends Subsystem {
      *
      * @param power Power for the motor
      */
-    public abstract void setPower(double power);
+    public abstract void setPickPower(double power);
 
     /**
      * Resets the speed for the roller on the picker
      */
-    public void resetPower() {
-        setPower(0f);
+    public void resetPickPower() {
+        setPickPower(0f);
+    }
+
+    /**
+     * Sets the pinch roller's speed
+     *
+     * @param power the speed of the pinch roller
+     */
+    public abstract void setPinchPower(double power);
+
+    /**
+     * Resets the pinch roller's speed
+     */
+    public void resetPinchPower() {
+        setPinchPower(0);
     }
 
     /**

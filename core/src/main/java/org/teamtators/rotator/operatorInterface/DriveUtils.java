@@ -1,4 +1,4 @@
-package org.teamtators.rotator.commands;
+package org.teamtators.rotator.operatorInterface;
 
 /**
  * Utilities for DriveTank input

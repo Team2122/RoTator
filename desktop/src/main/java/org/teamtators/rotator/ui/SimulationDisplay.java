@@ -2,8 +2,8 @@ package org.teamtators.rotator.ui;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.teamtators.rotator.subsystems.SimulationDrive;
-import org.teamtators.rotator.subsystems.SimulationPicker;
+import org.teamtators.rotator.components.SimulationDrive;
+import org.teamtators.rotator.components.SimulationPicker;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -12,7 +12,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -35,6 +34,7 @@ public class SimulationDisplay extends JPanel {
                 SimulationDisplay.this.requestFocusInWindow();
             }
         });
+        setOpaque(false);
         try {
             InputStream imageStream = SimulationDisplay.class.getClassLoader().getResourceAsStream("2016_Field_Labeled.png");
             fieldImage = ImageIO.read(imageStream);
@@ -70,8 +70,6 @@ public class SimulationDisplay extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
         Graphics2D g2d = (Graphics2D) g.create();
 
         double fieldImageWidth = fieldImage.getWidth(null);
@@ -84,15 +82,12 @@ public class SimulationDisplay extends JPanel {
         fieldImageTransform.translate(-fieldImageWidth / 2, -fieldImageHeight / 2);
 
         g2d.drawImage(fieldImage, fieldImageTransform, this);
-        g2d.dispose();
 
         double width = drive.getLength() * config.inchesPerPixel;
         double height = drive.getWidth() * config.inchesPerPixel;
         double x = drive.getX() * config.inchesPerPixel;
         double y = drive.getY() * config.inchesPerPixel;
         double rot = drive.getRotation();
-
-        g2d = (Graphics2D) g.create();
 
         AffineTransform robotTransform = new AffineTransform();
         Dimension preferredSize = getPreferredSize();
@@ -112,16 +107,17 @@ public class SimulationDisplay extends JPanel {
 
         int pickerX;
         int pickerY = -20;
+        double pickerOrigin = -16 * config.inchesPerPixel;
         switch (picker.getPosition()) {
             default:
             case HOME:
-                pickerX = (int) -width / 2;
+                pickerX = (int) pickerOrigin;
                 break;
             case CHEVAL:
-                pickerX = (int) -width / 2 - 10;
+                pickerX = (int) pickerOrigin - 10;
                 break;
             case PICK:
-                pickerX = (int) -width / 2 - 20;
+                pickerX = (int) pickerOrigin - 20;
                 break;
         }
         Rectangle pickerRect = new Rectangle(pickerX, pickerY, 20, 40);

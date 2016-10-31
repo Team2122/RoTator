@@ -8,7 +8,7 @@ import org.teamtators.rotator.components.Gyro;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.EncoderConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
-import org.teamtators.rotator.subsystems.impl.AbstractDrive;
+import org.teamtators.rotator.components.AbstractDrive;
 import org.teamtators.rotator.tester.ComponentTestGroup;
 import org.teamtators.rotator.tester.ITestable;
 import org.teamtators.rotator.tester.components.ADXRS453Test;

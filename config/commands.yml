@@ -3,9 +3,10 @@
 #
 DriveTank:
   deadzone: .15
-  leftMultiplier: 120.0
-  rightMultiplier: 120.0
   exponent: 2.0
+  multiplier:
+    left: 120.0
+    right: 120.0
 
 DriveArcade:
   deadzone: .1

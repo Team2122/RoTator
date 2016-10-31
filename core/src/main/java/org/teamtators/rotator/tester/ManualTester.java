@@ -1,7 +1,7 @@
 package org.teamtators.rotator.tester;
 
 import org.teamtators.rotator.CommandBase;
-import org.teamtators.rotator.commands.DriveUtils;
+import org.teamtators.rotator.operatorInterface.DriveUtils;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.RobotState;
 

@@ -1,9 +1,12 @@
-package org.teamtators.rotator.subsystems.impl;
+package org.teamtators.rotator.components;
 
-import org.teamtators.rotator.components.Gyro;
 import org.teamtators.rotator.tester.ITestable;
 
-public abstract class AbstractDrive implements ITestable {
+public abstract class AbstractDrive extends Component implements ITestable {
+    public AbstractDrive() {
+        super("Drive");
+    }
+
     /**
      * It sets the speed to the left drivetrain motor
      *

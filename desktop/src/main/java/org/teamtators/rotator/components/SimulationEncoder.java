@@ -1,4 +1,4 @@
-package org.teamtators.rotator.subsystems;
+package org.teamtators.rotator.components;
 
 import org.teamtators.rotator.control.Steppable;
 import org.teamtators.rotator.config.Configurable;

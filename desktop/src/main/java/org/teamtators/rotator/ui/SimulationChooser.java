@@ -28,7 +28,6 @@ public class SimulationChooser<T> extends JPanel implements Chooser<T> {
     public void registerOption(String name, T option) {
         optionMap.put(name, option);
         comboBox.addItem(name);
-        System.out.println("Registering "+name);
     }
 
     @Override

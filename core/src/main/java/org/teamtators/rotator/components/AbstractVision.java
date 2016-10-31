@@ -1,4 +1,4 @@
-package org.teamtators.rotator.subsystems;
+package org.teamtators.rotator.components;
 
 import org.teamtators.rotator.scheduler.Subsystem;
 
@@ -6,7 +6,7 @@ import org.teamtators.rotator.scheduler.Subsystem;
  * Interface for the Vision Client
  * Receives vision data from the Raspberry Pi via NetworkTables
  */
-public abstract class AbstractVision extends Subsystem {
+public abstract class AbstractVision extends Component {
 
     public AbstractVision() {super("Vision");}
 

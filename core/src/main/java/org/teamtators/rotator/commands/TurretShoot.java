@@ -4,17 +4,18 @@ import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.control.ITimeProvider;
-import org.teamtators.rotator.subsystems.AbstractTurret;
-import org.teamtators.rotator.subsystems.AbstractVision;
-import org.teamtators.rotator.subsystems.HoodPosition;
-import org.teamtators.rotator.subsystems.VisionData;
+import org.teamtators.rotator.components.AbstractTurret;
+import org.teamtators.rotator.components.AbstractVision;
+import org.teamtators.rotator.components.HoodPosition;
+import org.teamtators.rotator.components.VisionData;
+import org.teamtators.rotator.subsystems.Turret;
 
 /**
  * Fires a ball from the turret
  */
 public class TurretShoot extends CommandBase implements Configurable<TurretShoot.Config> {
     private Config config;
-    private AbstractTurret turret;
+    private Turret turret;
     private AbstractVision vision;
     private ITimeProvider timer;
     private double commandStartTime = Double.NaN;

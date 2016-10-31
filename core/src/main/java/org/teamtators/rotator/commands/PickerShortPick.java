@@ -3,25 +3,24 @@ package org.teamtators.rotator.commands;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.datalogging.DataCollector;
-import org.teamtators.rotator.datalogging.LogDataProvider;
-import org.teamtators.rotator.subsystems.AbstractPicker;
-import org.teamtators.rotator.subsystems.AbstractTurret;
-import org.teamtators.rotator.subsystems.PickerPosition;
+import org.teamtators.rotator.components.AbstractPicker;
+import org.teamtators.rotator.components.AbstractTurret;
+import org.teamtators.rotator.components.PickerPosition;
+import org.teamtators.rotator.subsystems.Turret;
 
 /**
  * Picks up a ball
  */
 public class PickerShortPick extends CommandBase implements Configurable<PickerShortPick.Config> {
     private final AbstractPicker picker;
-    private final AbstractTurret turret;
+    private final Turret turret;
     private Config config;
 
     public PickerShortPick(CoreRobot robot) {
         super("PickerShortPick");
         this.picker = robot.picker();
         this.turret = robot.turret();
-        requires(picker);
+//        requires(picker);
         requires(turret);
     }
 
@@ -44,8 +43,8 @@ public class PickerShortPick extends CommandBase implements Configurable<PickerS
 
     @Override
     protected boolean step() {
-        picker.setPower(config.pick);
-        turret.setPinchRollerPower(config.pinch);
+        picker.setPickPower(config.pick);
+        picker.setPinchPower(config.pinch);
         return turret.getBallDistance() <= config.minBallDistance;
 
     }
@@ -53,8 +52,8 @@ public class PickerShortPick extends CommandBase implements Configurable<PickerS
     @Override
     protected void finish(boolean interrupted) {
         super.finish(interrupted);
-        picker.resetPower();
-        turret.resetPinchRollerPower();
+        picker.resetPickPower();
+        picker.resetPinchPower();
     }
 
     public static class Config {

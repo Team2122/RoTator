@@ -2,6 +2,8 @@ package org.teamtators.rotator.subsystems;
 
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import org.teamtators.rotator.components.AbstractVision;
+import org.teamtators.rotator.components.VisionData;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.VictorSPConfig;
 import org.teamtators.rotator.operatorInterface.LogitechF310;

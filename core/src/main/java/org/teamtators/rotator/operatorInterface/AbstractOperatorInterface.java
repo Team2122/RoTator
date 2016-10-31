@@ -1,8 +1,8 @@
 package org.teamtators.rotator.operatorInterface;
 
-import org.teamtators.rotator.scheduler.Subsystem;
+import org.teamtators.rotator.components.Component;
 
-public abstract class AbstractOperatorInterface extends Subsystem {
+public abstract class AbstractOperatorInterface extends Component {
     public AbstractOperatorInterface() {
         super("OperatorInterface");
     }

@@ -3,6 +3,7 @@ package org.teamtators.rotator.commands;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
+import org.teamtators.rotator.operatorInterface.DriveOutput;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.subsystems.Drive;
@@ -38,22 +39,20 @@ public class DriveTank extends CommandBase implements Configurable<DriveTank.Con
 
     @Override
     protected boolean step() {
-        double leftPower = -driverJoystick.getAxisValue(LogitechF310.Axis.LEFT_STICK_Y);
-        double rightPower = -driverJoystick.getAxisValue(LogitechF310.Axis.RIGHT_STICK_Y);
-        leftPower = DriveUtils.applyDriveModifiers(leftPower,
-                config.deadzone, config.exponent) * config.leftMultiplier;
-        rightPower = DriveUtils.applyDriveModifiers(rightPower,
-                config.deadzone, config.exponent) * config.rightMultiplier;
+        DriveOutput driveOutput = new DriveOutput(-driverJoystick.getAxisValue(LogitechF310.Axis.LEFT_STICK_Y),
+                -driverJoystick.getAxisValue(LogitechF310.Axis.RIGHT_STICK_Y))
+                .deadzone(config.deadzone)
+                .exponent(config.exponent)
+                .mul(config.multiplier);
 
-        drive.setSpeeds(leftPower, rightPower);
+        drive.setSpeeds(driveOutput);
 
         return false;
     }
 
     static class Config {
         public double deadzone;
-        public double leftMultiplier;
-        public double rightMultiplier;
         public double exponent;
+        public DriveOutput multiplier;
     }
 }

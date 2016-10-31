@@ -3,13 +3,14 @@ package org.teamtators.rotator.commands;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.subsystems.AbstractPicker;
-import org.teamtators.rotator.subsystems.AbstractTurret;
-import org.teamtators.rotator.subsystems.HoodPosition;
-import org.teamtators.rotator.subsystems.PickerPosition;
+import org.teamtators.rotator.components.AbstractPicker;
+import org.teamtators.rotator.components.AbstractTurret;
+import org.teamtators.rotator.components.HoodPosition;
+import org.teamtators.rotator.components.PickerPosition;
+import org.teamtators.rotator.subsystems.Turret;
 
 public class TurretSetHoodPosition extends CommandBase implements Configurable<TurretSetHoodPosition.Config> {
-    private AbstractTurret turret;
+    private Turret turret;
     private AbstractPicker picker;
     private Config config;
 

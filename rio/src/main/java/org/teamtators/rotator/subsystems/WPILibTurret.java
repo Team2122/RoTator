@@ -1,12 +1,9 @@
 package org.teamtators.rotator.subsystems;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
-import org.teamtators.rotator.components.AnalogPotentiometer;
-import org.teamtators.rotator.components.DigitalSensor;
-import org.teamtators.rotator.components.DistanceLaser;
+import org.teamtators.rotator.components.*;
 import org.teamtators.rotator.config.*;
 import org.teamtators.rotator.control.ControllerTest;
 import org.teamtators.rotator.scheduler.RobotState;
@@ -20,7 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class WPILibTurret extends AbstractTurret implements Configurable<WPILibTurret.Config>, ITestable, StateListener {
+public class WPILibTurret extends AbstractTurret implements Configurable<WPILibTurret.Config>, ITestable {
 
     @Inject
     ControllerFactory controllerFactory;
@@ -28,7 +25,6 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     Scheduler scheduler;
     @Inject
     ConfigCommandStore commandStore;
-    private VictorSP pinchRollerMotor;
     private VictorSP kingRollerMotor;
     private DistanceLaser ballSensor;
     private AnalogPotentiometer ballCompressionSensor;
@@ -49,7 +45,6 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
 
     @Override
     public void configure(Config config) {
-        this.pinchRollerMotor = config.pinchRollerMotor.create();
         this.kingRollerMotor = config.kingRollerMotor.create();
         this.ballSensor = config.ballSensor.create();
         this.ballCompressionSensor = config.ballCompressionSensor.create();
@@ -63,8 +58,6 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         this.leftLimit = config.leftLimit.create();
         this.rightLimit = config.rightLimit.create();
         this.centerLimit = config.centerLimit.create();
-
-        super.configure(config);
     }
 
     @Override
@@ -73,7 +66,7 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     }
 
     @Override
-    public double getWheelSpeed() {
+    public double getWheelRate() {
         return shooterWheelEncoder.getRate();
     }
 
@@ -83,31 +76,8 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
     }
 
     @Override
-    public void onEnterState(RobotState newState) {
-        switch (newState) {
-            case AUTONOMOUS:
-            case TELEOP:
-                enableShooterWheelController();
-                if (isHomed()) {
-                    enableAngleController();
-                } else {
-                    scheduler.startCommand(commandStore.getCommand("TurretHome"));
-                }
-                break;
-            default:
-                disableShooterWheelController();
-                disableAngleController();
-                break;
-        }
-    }
-
-    @Override
-    public boolean homeTurret() {
-        if (super.homeTurret()) {
-            enableAngleController();
-            return true;
-        }
-        return false;
+    public void resetWheelRotations() {
+        shooterWheelEncoder.reset();
     }
 
     @Override
@@ -140,11 +110,6 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
                 hoodDeploySolenoid.set(true);
                 break;
         }
-    }
-
-    @Override
-    public void setPinchRollerPower(double power) {
-        pinchRollerMotor.set(power);
     }
 
     @Override
@@ -193,9 +158,9 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
         return 1.0 - ballCompressionSensor.getValue();
     }
 
+    @Override
     public ComponentTestGroup getTestGroup() {
         return new ComponentTestGroup("Turret",
-                new VictorSPTest("pinchRollerMotor", pinchRollerMotor),
                 new VictorSPTest("kingRollerMotor", kingRollerMotor),
                 new DistanceLaserTest("ballSensor", ballSensor),
                 new AnalogPotentiometerTest("ballCompressionSensor", ballCompressionSensor),
@@ -204,18 +169,14 @@ public class WPILibTurret extends AbstractTurret implements Configurable<WPILibT
                 new SolenoidTest("longSolenoid", longSolenoid),
                 new VictorSPTest("shooterWheelMotor", shooterWheelMotor),
                 new EncoderTest("shooterWheelEncoder", shooterWheelEncoder),
-                new ControllerTest(getShooterWheelController(), 120),
                 new VictorSPTest("turretRotationMotor", turretRotationMotor),
                 new EncoderTest("turretRotationEncoder", turretRotationEncoder),
-                new ControllerTest(getAngleController(), 110),
                 new DigitalSensorTest("leftLimit", leftLimit),
                 new DigitalSensorTest("rightLimit", rightLimit),
-                new DigitalSensorTest("centerLimit", centerLimit),
-                new TurretTest());
+                new DigitalSensorTest("centerLimit", centerLimit));
     }
 
-    public static class Config extends AbstractTurret.Config {
-        public VictorSPConfig pinchRollerMotor;
+    public static class Config {
         public VictorSPConfig kingRollerMotor;
         public DistanceLaserConfig ballSensor;
         public AnalogPotentiometerConfig ballCompressionSensor;

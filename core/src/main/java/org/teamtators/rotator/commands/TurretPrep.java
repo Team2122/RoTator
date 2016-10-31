@@ -2,12 +2,13 @@ package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
+import org.teamtators.rotator.components.*;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.subsystems.*;
+import org.teamtators.rotator.subsystems.Turret;
 
 public class TurretPrep extends CommandBase implements Configurable<TurretPrep.Config> {
     private Config config;
-    private AbstractTurret turret;
+    private Turret turret;
     private AbstractPicker picker;
     private AbstractVision vision;
 

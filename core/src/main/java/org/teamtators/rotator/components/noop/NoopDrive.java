@@ -1,10 +1,8 @@
-package org.teamtators.rotator.subsystems.noop;
+package org.teamtators.rotator.components.noop;
 
 import org.teamtators.rotator.components.Gyro;
 import org.teamtators.rotator.components.SimulationGyro;
-import org.teamtators.rotator.subsystems.Drive;
-import org.teamtators.rotator.subsystems.DriveMode;
-import org.teamtators.rotator.subsystems.impl.AbstractDrive;
+import org.teamtators.rotator.components.AbstractDrive;
 import org.teamtators.rotator.tester.ComponentTestGroup;
 
 /**

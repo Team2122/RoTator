@@ -1,7 +1,7 @@
 package org.teamtators.rotator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.teamtators.rotator.components.Chooser;
+import org.teamtators.rotator.components.*;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.ControllerFactory;
@@ -15,9 +15,7 @@ import org.teamtators.rotator.scheduler.Command;
 import org.teamtators.rotator.scheduler.Scheduler;
 import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.subsystems.Drive;
-import org.teamtators.rotator.subsystems.AbstractPicker;
-import org.teamtators.rotator.subsystems.AbstractTurret;
-import org.teamtators.rotator.subsystems.AbstractVision;
+import org.teamtators.rotator.subsystems.Turret;
 import org.teamtators.rotator.tester.ManualTester;
 
 import javax.inject.Named;
@@ -32,7 +30,7 @@ public interface CoreRobot {
 
     AbstractPicker picker();
 
-    AbstractTurret turret();
+    Turret turret();
 
     AbstractVision vision();
 
@@ -48,6 +46,10 @@ public interface CoreRobot {
 
     ControllerFactory controllerFactory();
 
+    @Named("components")
+    List<Component> components();
+
+    @Named("subsystems")
     List<Subsystem> subsystems();
 
     TriggerBinder triggerBinder();

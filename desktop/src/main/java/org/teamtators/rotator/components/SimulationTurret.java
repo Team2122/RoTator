@@ -1,7 +1,8 @@
-package org.teamtators.rotator.subsystems;
+package org.teamtators.rotator.components;
 
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.control.Steppable;
+import org.teamtators.rotator.tester.ComponentTestGroup;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,16 +15,14 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
     private SimulationEncoder rotationEncoder = new SimulationEncoder();
     private SimulationMotor kingRollerMotor = new SimulationMotor();
     private SimulationEncoder kingRollerEncoder = new SimulationEncoder();
-    private SimulationMotor pinchRollerMotor = new SimulationMotor();
-    private SimulationEncoder pinchRollerEncoder = new SimulationEncoder();
     private double ballDistance;
+    private double angleRange;
 
     @Inject
     public SimulationTurret() {
         shooterWheelEncoder.setMotor(shooterWheelMotor);
         rotationEncoder.setMotor(rotationMotor);
         kingRollerEncoder.setMotor(kingRollerMotor);
-        pinchRollerEncoder.setMotor(pinchRollerMotor);
     }
 
     @Override
@@ -39,17 +38,15 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
         rotationEncoder.step(delta);
         kingRollerMotor.step(delta);
         kingRollerEncoder.step(delta);
-        pinchRollerMotor.step(delta);
-        pinchRollerEncoder.step(delta);
     }
 
     @Override
-    protected void setWheelPower(double power) {
+    public void setWheelPower(double power) {
         shooterWheelMotor.setPower(power);
     }
 
     @Override
-    public double getWheelSpeed() {
+    public double getWheelRate() {
         return shooterWheelEncoder.getRate();
     }
 
@@ -59,8 +56,8 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
     }
 
     @Override
-    public void setPinchRollerPower(double power) {
-        pinchRollerMotor.setPower(power);
+    public void resetWheelRotations() {
+        shooterWheelEncoder.resetRotations();
     }
 
     @Override
@@ -85,12 +82,12 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
 
     @Override
     public boolean isAtLeftLimit() {
-        return getAngle() <= getShooterWheelController().getMinSetpoint();
+        return getAngle() <= -angleRange;
     }
 
     @Override
     public boolean isAtRightLimit() {
-        return getAngle() >= getShooterWheelController().getMaxSetpoint();
+        return getAngle() >= angleRange;
     }
 
     @Override
@@ -120,20 +117,16 @@ public class SimulationTurret extends AbstractTurret implements Steppable, Confi
         rotationEncoder.configure(config.rotationEncoder);
         kingRollerMotor.configure(config.kingRollerMotor);
         kingRollerEncoder.configure(config.kingRollerEncoder);
-        pinchRollerMotor.configure(config.pinchRollerMotor);
-        pinchRollerEncoder.configure(config.pinchRollerEncoder);
-
-        super.configure(config);
+        this.angleRange = config.angleRange;
     }
 
-    public static class Config extends AbstractTurret.Config {
+    public static class Config {
         public SimulationMotor.Config shooterWheelMotor;
         public SimulationEncoder.Config shooterWheelEncoder;
         public SimulationMotor.Config rotationMotor;
         public SimulationEncoder.Config rotationEncoder;
         public SimulationMotor.Config kingRollerMotor;
         public SimulationEncoder.Config kingRollerEncoder;
-        public SimulationMotor.Config pinchRollerMotor;
-        public SimulationEncoder.Config pinchRollerEncoder;
+        public double angleRange;
     }
 }

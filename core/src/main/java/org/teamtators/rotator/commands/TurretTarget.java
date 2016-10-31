@@ -2,11 +2,12 @@ package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
+import org.teamtators.rotator.components.*;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.control.ITimeProvider;
 import org.teamtators.rotator.datalogging.DataCollector;
 import org.teamtators.rotator.datalogging.LogDataProvider;
-import org.teamtators.rotator.subsystems.*;
+import org.teamtators.rotator.subsystems.Turret;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.TreeMap;
 public class TurretTarget extends CommandBase implements Configurable<TurretTarget.Config> {
     private Config config;
     private ITimeProvider timeProvider;
-    private AbstractTurret turret;
+    private Turret turret;
     private AbstractVision vision;
     private AbstractPicker picker;
 
@@ -37,7 +38,7 @@ public class TurretTarget extends CommandBase implements Configurable<TurretTarg
         this.picker = robot.picker();
         this.dataCollector = robot.dataCollector();
         requires(turret);
-        requires(vision);
+//        requires(vision);
     }
 
     @Override

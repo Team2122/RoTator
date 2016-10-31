@@ -1,21 +1,32 @@
 package org.teamtators.rotator.subsystems;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.teamtators.rotator.components.AbstractTurret;
+import org.teamtators.rotator.components.BallAge;
+import org.teamtators.rotator.components.HoodPosition;
+import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.AbstractController;
+import org.teamtators.rotator.control.ControllerTest;
 import org.teamtators.rotator.control.InputDifferentiator;
 import org.teamtators.rotator.control.LimitPredicates;
 import org.teamtators.rotator.operatorInterface.LogitechF310;
 import org.teamtators.rotator.scheduler.Subsystem;
 import org.teamtators.rotator.tester.ComponentTest;
+import org.teamtators.rotator.tester.ComponentTestGroup;
+import org.teamtators.rotator.tester.ITestable;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Interface for turret
  * Shoots the ball
  */
-public abstract class AbstractTurret extends Subsystem {
+@Singleton
+public class Turret extends Subsystem implements ITestable, Configurable<Turret.Config> {
+    private AbstractTurret turretImpl;
+
     @Inject
     ControllerFactory controllerFactory;
 
@@ -25,35 +36,24 @@ public abstract class AbstractTurret extends Subsystem {
     private AbstractController shooterWheelController = null;
     private AbstractController angleController = null;
     private boolean homed = false;
+<<<<<<< 73489766bd4c99d1f9fa559e942f9b8c0810f38f:core/src/main/java/org/teamtators/rotator/subsystems/AbstractTurret.java
     private HoodPosition hoodPosition = HoodPosition.DOWN;
     private BallAge ballAge = BallAge.NEW;
+=======
+    private BallAge ballAge;
+>>>>>>> Improved subsystems a bit:core/src/main/java/org/teamtators/rotator/subsystems/Turret.java
     private double wheelSpeedOffset = 0.0;
     private boolean hasShot = false;
 
-
-    public AbstractTurret() {
+    @Inject
+    public Turret(AbstractTurret turretImpl) {
         super("Turret");
-    }
-
-    /**
-     * Sets the speed for the roller that shoots the ball
-     *
-     * @param power The speed of the roller that shoots
-     */
-    protected abstract void setWheelPower(double power);
-
-    /**
-     * Resets the speed for the roller that shoots
-     */
-    protected void resetPower() {
-        setWheelPower(0);
+        this.turretImpl = turretImpl;
     }
 
     public double getWheelSpeed() {
         return shooterWheelInputDifferentiator.getControllerInput();
     }
-
-    public abstract double getWheelRotations();
 
     /**
      * @return The wheel speed setpoint in rpm
@@ -102,9 +102,9 @@ public abstract class AbstractTurret extends Subsystem {
 
     protected void setShooterWheelController(AbstractController shooterWheelController) {
         shooterWheelController.setName("shooterWheelController");
-        shooterWheelInputDifferentiator.setInputProvider(this::getWheelRotations);
+        shooterWheelInputDifferentiator.setInputProvider(turretImpl::getWheelRotations);
         shooterWheelController.setInputProvider(shooterWheelInputDifferentiator);
-        shooterWheelController.setOutputConsumer(this::setWheelPower);
+        shooterWheelController.setOutputConsumer(turretImpl::setWheelPower);
         this.shooterWheelController = shooterWheelController;
     }
 
@@ -116,7 +116,7 @@ public abstract class AbstractTurret extends Subsystem {
      * @return the hood's position
      */
     public HoodPosition getHoodPosition() {
-        return hoodPosition;
+        return turretImpl.getHoodPosition();
     }
 
     /**
@@ -125,7 +125,7 @@ public abstract class AbstractTurret extends Subsystem {
      * @param hoodPosition the hood's position
      */
     public void setHoodPosition(HoodPosition hoodPosition) {
-        this.hoodPosition = hoodPosition;
+        turretImpl.setHoodPosition(hoodPosition);
     }
 
     public double getWheelSpeedOffset() {
@@ -137,25 +137,13 @@ public abstract class AbstractTurret extends Subsystem {
     }
 
     /**
-     * Sets the pinch roller's speed
-     *
-     * @param power the speed of the pinch roller
-     */
-    public abstract void setPinchRollerPower(double power);
-
-    /**
-     * Resets the pinch roller's speed
-     */
-    public void resetPinchRollerPower() {
-        setPinchRollerPower(0);
-    }
-
-    /**
      * Sets the king roller's speed
      *
      * @param power the king roller's speed
      */
-    public abstract void setKingRollerPower(double power);
+    public void setKingRollerPower(double power) {
+        turretImpl.setKingRollerPower(power);
+    }
 
     /**
      * Resets the king roller's speed
@@ -169,7 +157,9 @@ public abstract class AbstractTurret extends Subsystem {
      *
      * @param power speed for the turret's rotation motor from -1 to 1
      */
-    public abstract void setRotationPower(double power);
+    public void setRotationPower(double power) {
+        turretImpl.setRotationPower(power);
+    }
 
     /**
      * Resets the turret's rotation motor speed
@@ -182,12 +172,16 @@ public abstract class AbstractTurret extends Subsystem {
      * @return The rotation angle of the turret in degrees. 0 is wherever the turret
      * was when it was last reset
      */
-    public abstract double getAngle();
+    public double getAngle() {
+        return turretImpl.getAngle();
+    }
 
     /**
      * Resets the turret's position encoder. Sets the new 0 point for getAngle
      */
-    public abstract void resetAngleEncoder();
+    public void resetAngleEncoder() {
+        turretImpl.resetAngleEncoder();
+    }
 
     protected AbstractController getAngleController() {
         return angleController;
@@ -197,7 +191,7 @@ public abstract class AbstractTurret extends Subsystem {
         angleController.setName("angleController");
         angleController.setInputProvider(this::getAngle);
         angleController.setOutputConsumer(this::setRotationPower);
-        angleController.setLimitPredicate(LimitPredicates.doubleLimits(this::isAtLeftLimit, this::isAtRightLimit));
+        angleController.setLimitPredicate(LimitPredicates.doubleLimits(turretImpl::isAtLeftLimit, turretImpl::isAtRightLimit));
         this.angleController = angleController;
     }
 
@@ -222,31 +216,20 @@ public abstract class AbstractTurret extends Subsystem {
     }
 
     /**
-     * @return whether or not the turret is all the way to the left
-     */
-    public abstract boolean isAtLeftLimit();
-
-    /**
-     * @return whether or not the turret is all the way to the right
-     */
-    public abstract boolean isAtRightLimit();
-
-    /**
-     * @return whether or not the turret is in the center
-     */
-    public abstract boolean isAtCenterLimit();
-
-    /**
      * @return how far the ball is from the ballSensor
      */
-    public abstract double getBallDistance();
+    public double getBallDistance() {
+        return turretImpl.getBallDistance();
+    }
 
     /**
      * Gets the value from the ball compression sensor.
      * @return The value from the ball compression sensor, between 0-1. Measured
      * in rotations of the analog encoder.
      */
-    public abstract double getBallCompression();
+    public double getBallCompression() {
+        return turretImpl.getBallCompression();
+    }
 
     public void setBallAge(BallAge ballAge) {
         this.ballAge = ballAge;
@@ -265,7 +248,7 @@ public abstract class AbstractTurret extends Subsystem {
     }
 
     public boolean homeTurret() {
-        if (isAtCenterLimit()) {
+        if (turretImpl.isAtCenterLimit()) {
             resetAngleEncoder();
             homed = true;
             logger.info("Turret at center limit, successfully homed");
@@ -284,6 +267,23 @@ public abstract class AbstractTurret extends Subsystem {
 
     public boolean hasShot() {
         return hasShot;
+    }
+
+    public boolean isAtRightLimit() {
+        return turretImpl.isAtRightLimit();
+    }
+
+    public boolean isAtLeftLimit() {
+        return turretImpl.isAtLeftLimit();
+    }
+
+    @Override
+    public ComponentTestGroup getTestGroup() {
+        ComponentTestGroup group = turretImpl.getTestGroup();
+        group.addTest(new ControllerTest(getShooterWheelController(), 120));
+        group.addTest(new ControllerTest(getAngleController(), 110));
+        group.addTest(new TurretTest());
+        return group;
     }
 
     protected class TurretTest extends ComponentTest {
@@ -313,10 +313,10 @@ public abstract class AbstractTurret extends Subsystem {
         public BallAge defaultBallAge;
     }
 
-    protected void configure(Config config) {
+    @Override
+    public void configure(Config config) {
         setShooterWheelController(controllerFactory.create(config.shooterWheelController));
         setAngleController(controllerFactory.create(config.angleController));
         ballAge = config.defaultBallAge;
     }
-
 }

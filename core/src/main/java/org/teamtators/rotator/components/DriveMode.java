@@ -1,4 +1,4 @@
-package org.teamtators.rotator.subsystems;
+package org.teamtators.rotator.components;
 
 /**
  * The different drive modes drive train can be in

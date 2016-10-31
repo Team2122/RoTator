@@ -1,18 +1,21 @@
 package org.teamtators.rotator.subsystems;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.teamtators.rotator.components.DriveMode;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.AbstractController;
 import org.teamtators.rotator.control.ControllerTest;
+import org.teamtators.rotator.operatorInterface.DriveOutput;
 import org.teamtators.rotator.scheduler.RobotState;
 import org.teamtators.rotator.scheduler.StateListener;
 import org.teamtators.rotator.scheduler.Subsystem;
-import org.teamtators.rotator.subsystems.impl.AbstractDrive;
+import org.teamtators.rotator.components.AbstractDrive;
 import org.teamtators.rotator.tester.ComponentTestGroup;
 import org.teamtators.rotator.tester.ITestable;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -20,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Interface for the drive train which drives the robot
  */
+@Singleton
 public final class Drive extends Subsystem implements Configurable<Drive.Config>, ITestable, StateListener {
     private final AbstractDrive driveImpl;
 
@@ -66,6 +70,10 @@ public final class Drive extends Subsystem implements Configurable<Drive.Config>
         setDriveMode(DriveMode.VELOCITY);
         leftController.setSetpoint(leftSpeed);
         rightController.setSetpoint(rightSpeed);
+    }
+
+    public void setSpeeds(DriveOutput driveOutput) {
+        setSpeeds(driveOutput.getLeft(), driveOutput.getRight());
     }
 
     public DriveMode getDriveMode() {

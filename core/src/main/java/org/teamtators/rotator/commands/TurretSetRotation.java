@@ -3,13 +3,14 @@ package org.teamtators.rotator.commands;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.subsystems.AbstractTurret;
+import org.teamtators.rotator.components.AbstractTurret;
+import org.teamtators.rotator.subsystems.Turret;
 
 /**
  * Rotate the turret to an angle
  */
 public class TurretSetRotation extends CommandBase implements Configurable<TurretSetRotation.Config> {
-    private AbstractTurret turret;
+    private Turret turret;
     private Config config;
 
     public TurretSetRotation(CoreRobot robot) {

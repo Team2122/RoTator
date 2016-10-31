@@ -2,8 +2,8 @@ package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
-import org.teamtators.rotator.subsystems.AbstractPicker;
-import org.teamtators.rotator.subsystems.PickerPosition;
+import org.teamtators.rotator.components.AbstractPicker;
+import org.teamtators.rotator.components.PickerPosition;
 
 public class PickerCheval extends CommandBase {
     AbstractPicker picker;
@@ -11,7 +11,7 @@ public class PickerCheval extends CommandBase {
     public PickerCheval(CoreRobot robot) {
         super("PickerCheval");
         this.picker = robot.picker();
-        requires(picker);
+//        requires(picker);
     }
 
     @Override

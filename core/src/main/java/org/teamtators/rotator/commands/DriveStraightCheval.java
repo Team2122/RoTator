@@ -2,7 +2,7 @@ package org.teamtators.rotator.commands;
 
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.subsystems.AbstractPicker;
+import org.teamtators.rotator.components.AbstractPicker;
 
 public class DriveStraightCheval extends DriveStraightBase implements Configurable<DriveStraightBase.Config> {
     private AbstractPicker picker;
@@ -10,7 +10,7 @@ public class DriveStraightCheval extends DriveStraightBase implements Configurab
     public DriveStraightCheval(CoreRobot robot) {
         super("DriveStraightCheval", robot);
         this.picker = robot.picker();
-        requires(picker);
+//        requires(picker);
     }
 
     @Override

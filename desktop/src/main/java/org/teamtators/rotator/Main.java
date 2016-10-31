@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.teamtators.rotator.components.Component;
 import org.teamtators.rotator.config.ConfigCommandStore;
 import org.teamtators.rotator.config.ConfigLoader;
 import org.teamtators.rotator.config.Configurables;
@@ -46,14 +47,25 @@ public class Main implements StateListener {
         commandStore.setRobot(robot);
 
         logger.debug("Loading configs");
-        ObjectNode commandsConfig = (ObjectNode) configLoader.load("commands.yml");
         ObjectNode simulationConfig = (ObjectNode) configLoader.load("simulation.yml");
+        ObjectNode subsystemsConfig = (ObjectNode) configLoader.load("subsystems.yml");
+        ObjectNode commandsConfig = (ObjectNode) configLoader.load("commands.yml");
         ObjectNode triggersConfig = (ObjectNode) configLoader.load("triggers.yml");
+
+        logger.debug("Configuring components");
+        for (Component component : robot.components()) {
+            String name = component.getName();
+            JsonNode config = simulationConfig.get(name);
+            Configurables.configureObject(component, config, robot.objectMapper());
+            if (component instanceof Steppable) {
+                stepper.add((Steppable) component);
+            }
+        }
 
         logger.debug("Configuring subsystems");
         for (Subsystem subsystem : robot.subsystems()) {
             String name = subsystem.getName();
-            JsonNode config = simulationConfig.get(name);
+            JsonNode config = subsystemsConfig.get(name);
             Configurables.configureObject(subsystem, config, robot.objectMapper());
             if (subsystem instanceof StateListener) {
                 scheduler.registerStateListener((StateListener) subsystem);
@@ -82,7 +94,7 @@ public class Main implements StateListener {
         logger.info("Opening window");
         simulationFrame.setVisible(true);
 
-        autoCommand = commandStore.getCommand("AutoChooser");
+        autoCommand = commandStore.getCommand("$AutoInit");
         scheduler.registerStateListener(this);
 
         scheduler.enterState(RobotState.DISABLED);

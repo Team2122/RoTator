@@ -1,16 +1,17 @@
-package org.teamtators.rotator.subsystems.noop;
+package org.teamtators.rotator.components.noop;
 
-import org.teamtators.rotator.subsystems.AbstractTurret;
-import org.teamtators.rotator.subsystems.HoodPosition;
+import org.teamtators.rotator.components.AbstractTurret;
+import org.teamtators.rotator.components.HoodPosition;
+import org.teamtators.rotator.tester.ComponentTestGroup;
 
 public class NoopTurret extends AbstractTurret {
     @Override
-    protected void setWheelPower(double power) {
+    public void setWheelPower(double power) {
 
     }
 
     @Override
-    public double getWheelSpeed() {
+    public double getWheelRate() {
         return 0;
     }
 
@@ -20,17 +21,17 @@ public class NoopTurret extends AbstractTurret {
     }
 
     @Override
+    public void resetWheelRotations() {
+
+    }
+
+    @Override
     public HoodPosition getHoodPosition() {
         return null;
     }
 
     @Override
     public void setHoodPosition(HoodPosition hoodPosition) {
-
-    }
-
-    @Override
-    public void setPinchRollerPower(double power) {
 
     }
 
@@ -77,5 +78,10 @@ public class NoopTurret extends AbstractTurret {
     @Override
     public double getBallCompression() {
         return 0;
+    }
+
+    @Override
+    public ComponentTestGroup getTestGroup() {
+        return super.getTestGroup();
     }
 }

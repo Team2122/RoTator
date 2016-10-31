@@ -3,7 +3,9 @@ package org.teamtators.rotator.subsystems;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
+import org.teamtators.rotator.components.AbstractPicker;
 import org.teamtators.rotator.components.DigitalSensor;
+import org.teamtators.rotator.components.PickerPosition;
 import org.teamtators.rotator.config.Configurable;
 import org.teamtators.rotator.config.DigitalSensorConfig;
 import org.teamtators.rotator.config.VictorSPConfig;
@@ -22,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class WPILibPicker extends AbstractPicker implements Configurable<WPILibPicker.Config>, ITestable {
 
     private VictorSP pickMotor;
+    private VictorSP pinchRollerMotor;
     private Solenoid shortCylinder;
     private Solenoid longCylinder;
     private PickerPosition pickerPosition;
@@ -34,19 +37,20 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
     @Override
     public void configure(Config config) {
         this.pickMotor = config.pickMotor.create();
+        this.pinchRollerMotor = config.pinchRollerMotor.create();
         this.shortCylinder = new Solenoid(config.shortCylinder);
         this.longCylinder = new Solenoid(config.longCylinder);
         this.chevalSensor = config.chevalSensor.create();
     }
 
     @Override
-    public void resetPower() {
-        super.resetPower();
+    public void setPickPower(double power) {
+        pickMotor.set(power);
     }
 
     @Override
-    public void setPower(double power) {
-        pickMotor.set(power);
+    public void setPinchPower(double power) {
+        pinchRollerMotor.set(power);
     }
 
     @Override
@@ -78,6 +82,7 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
     public ComponentTestGroup getTestGroup() {
         return new ComponentTestGroup("Picker",
                 new VictorSPTest("pickMotor", pickMotor),
+                new VictorSPTest("pinchRollerMotor", pinchRollerMotor),
                 new SolenoidTest("shortCylinder", shortCylinder),
                 new SolenoidTest("longCylinder", longCylinder),
                 new DigitalSensorTest("chevalSensor", chevalSensor));
@@ -85,6 +90,7 @@ public class WPILibPicker extends AbstractPicker implements Configurable<WPILibP
 
     public static class Config {
         public VictorSPConfig pickMotor;
+        public VictorSPConfig pinchRollerMotor;
         public int shortCylinder;
         public int longCylinder;
         public DigitalSensorConfig chevalSensor;

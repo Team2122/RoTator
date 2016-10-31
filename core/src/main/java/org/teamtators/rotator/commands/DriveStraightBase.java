@@ -7,6 +7,9 @@ import org.teamtators.rotator.config.ControllerFactory;
 import org.teamtators.rotator.control.AbstractController;
 import org.teamtators.rotator.subsystems.Drive;
 
+import static org.teamtators.rotator.operatorInterface.DriveOutput.straight;
+import static org.teamtators.rotator.operatorInterface.DriveOutput.turning;
+
 /**
  * Created by TatorsDr iverStation on 10/16/2016.
  */
@@ -30,7 +33,7 @@ public abstract class DriveStraightBase extends CommandBase {
         controller.setName(getName());
         controller.setInputProvider(drive::getGyroAngle);
         controller.setOutputConsumer(output -> {
-            drive.setSpeeds(config.speed + output, config.speed - output);
+            drive.setSpeeds(straight(config.speed).plus(turning(output)));
         });
     }
 

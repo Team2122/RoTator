@@ -1,8 +1,4 @@
 Drive:
-  leftMotor: { channel: 0, inverted: true }
-  rightMotor: { channel: 1, inverted: false }
-  leftEncoder: { aChannel: 2, bChannel: 3, reverse: true, distancePerPulse: .06597 }
-  rightEncoder: { aChannel: 0, bChannel: 1, distancePerPulse: .06597 }
   controller:
     type: PID
     P: .01
@@ -11,7 +7,6 @@ Drive:
     minISetpoint: 1.0
     maxIError: 12.0
     dataLogging: false
-  driveMode: CONTROLLER
   maxSpeed: 120.0
 Picker:
   pickMotor: { channel: 6, inverted: false }
@@ -22,21 +17,6 @@ OperatorInterface:
   driverJoystick: 0
   gunnerJoystick: 1
 Turret:
-  pinchRollerMotor: { channel: 5, inverted: false }
-  kingRollerMotor: { channel: 3, inverted: false }
-  ballSensor: { channel: 4, minDistance: 300.0, maxDistance: 26.0 }
-  ballCompressionSensor: { channel: 1, scale: 1.0, offset: 0.0 }
-  hoodDeploySolenoid: 0
-  shortSolenoid: 1
-  longSolenoid: 2
-  shooterWheelMotor: { channel: 2, inverted: true }
-  shooterWheelEncoder:
-    aChannel: 4
-    bChannel: 5
-    reverse: true
-    distancePerPulse: 0.0009765625
-    encodingType: k1X
-#    samplesToAverage: 100
   shooterWheelController:
     type: PID
 #    inputSamplesToAverage 16
@@ -47,8 +27,6 @@ Turret:
     minOutput: 0.0
     target: { within: 1.0 }
 #    dataLogging: true
-  turretRotationMotor: { channel: 4, inverted: true }
-  turretRotationEncoder: { aChannel: 6, bChannel: 7, reverse: true, distancePerPulse: 0.02538 }
   angleController:
     type: PID
     maxAbsoluteSetpoint: 110.0
@@ -59,7 +37,7 @@ Turret:
   leftLimit: { channel: 11, type: NPN }
   rightLimit: { channel: 10, type: NPN }
   centerLimit: { channel: 12, type: NPN }
-  defaultBallAge: NEW
+  defaultBallAge: AGED
 Vision:
   ledPower: { channel: 7, inverted: false } #not finalized
   tableName: TatorVision

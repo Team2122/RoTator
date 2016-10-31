@@ -1,4 +1,4 @@
-package org.teamtators.rotator.subsystems;
+package org.teamtators.rotator.components;
 
 public class VisionData {
     private int frameNumber;

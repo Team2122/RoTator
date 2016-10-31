@@ -3,10 +3,11 @@ package org.teamtators.rotator.commands;
 import org.teamtators.rotator.CommandBase;
 import org.teamtators.rotator.CoreRobot;
 import org.teamtators.rotator.config.Configurable;
-import org.teamtators.rotator.subsystems.AbstractTurret;
+import org.teamtators.rotator.components.AbstractTurret;
+import org.teamtators.rotator.subsystems.Turret;
 
 public class TurretBumpWheelSpeedOffset extends CommandBase implements Configurable<TurretBumpWheelSpeedOffset.Config> {
-    private final AbstractTurret turret;
+    private final Turret turret;
     private double offset;
 
     public TurretBumpWheelSpeedOffset(CoreRobot robot) {
